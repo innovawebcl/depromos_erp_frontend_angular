@@ -1,0 +1,71 @@
+<c-row *ngIf="sociogram">
+  <c-col xs="12">
+    <c-alert
+      *ngIf="sociogram.positive_leaders.length > 0"
+      color="success"
+      style="text-align: center"
+    >
+      Dentro del curso se observan los siguientes liderazgos
+    </c-alert>
+    <c-alert
+      *ngIf="sociogram.positive_leaders.length === 0"
+      color="warning"
+      style="text-align: center"
+    >
+      Sin información que procesar
+    </c-alert>
+  </c-col>
+  <c-col>
+    <c-card class="mb-4" *ngIf="sociogram.positive_leaders.length > 0">
+      <c-card-header style="padding: 1em">
+        <b>Líderes Positivos </b>
+      </c-card-header>
+      <c-card-body>
+        <ul cListGroup>
+          <c-container
+            *ngFor="let positiveLeader of sociogram.positive_leaders"
+          >
+            <li cListGroupItem>
+              <c-row>
+                <c-col xs="12" md="4">
+                  {{ positiveLeader.name }}
+                </c-col>
+                <c-col xs="12" md="8">
+                  <c-progress [value]="positiveLeader.percentage"
+                    >{{ positiveLeader.percentage }}%
+                  </c-progress>
+                </c-col>
+              </c-row>
+            </li>
+          </c-container>
+        </ul>
+      </c-card-body>
+    </c-card>
+
+    <c-card class="mb-4" *ngIf="sociogram.negative_leaders.length > 0">
+      <c-card-header style="padding: 1em">
+        <b>Líderes Negativos</b>
+      </c-card-header>
+      <c-card-body>
+        <ul cListGroup>
+          <c-container
+            *ngFor="let negativeLeader of sociogram.negative_leaders"
+          >
+            <li cListGroupItem>
+              <c-row>
+                <c-col xs="12" md="4">
+                  {{ negativeLeader.name }}
+                </c-col>
+                <c-col xs="12" md="8">
+                  <c-progress [value]="negativeLeader.percentage"
+                    >{{ negativeLeader.percentage }}%
+                  </c-progress>
+                </c-col>
+              </c-row>
+            </li>
+          </c-container>
+        </ul>
+      </c-card-body>
+    </c-card>
+  </c-col>
+</c-row>

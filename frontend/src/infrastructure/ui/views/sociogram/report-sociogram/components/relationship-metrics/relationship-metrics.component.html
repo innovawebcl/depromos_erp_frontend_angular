@@ -1,0 +1,10 @@
+<c-row>
+  <c-col *ngIf="sociogram" xs="12">
+    <c-alert color="light" style="text-align: center">
+      {{ sociogram.communication_preferences }}
+    </c-alert>
+  </c-col>
+  <c-col [ngClass]="sociogram ? 'show' : 'hidden'">
+    <div class="canvas canvas-container" #canvas></div>
+  </c-col>
+</c-row>

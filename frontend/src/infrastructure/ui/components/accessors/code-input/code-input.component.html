@@ -1,0 +1,14 @@
+<div class="code-container">
+    <ng-container *ngFor="let char of code; let i = index; trackBy: trackByIndex">
+        <input
+          #inputRef
+          type="text"
+          maxlength="1"
+          class="code-box"
+          [value]="code[i]"
+          (input)="onInput(i, $event)"
+          (keydown)="onKeyDown(i, $event)"
+          (click)="onTouched()"
+        />
+    </ng-container>
+  </div>

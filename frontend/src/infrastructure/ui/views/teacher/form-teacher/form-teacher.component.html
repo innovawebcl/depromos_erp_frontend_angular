@@ -1,0 +1,363 @@
+<c-container>
+  <c-row>
+    <c-col xs="12">
+      <c-card>
+        <c-card-header>
+          <h5 class="card-title">Formulario de Docente</h5>
+        </c-card-header>
+        <c-card-body>
+          <form
+            cForm
+            novalidate
+            [formGroup]="form"
+            (ngSubmit)="onSubmit()"
+            class="needs-validation"
+          >
+            <h6 class="text-primary mb-3">Datos de Usuario</h6>
+            <c-row class="g-3">
+              <c-col xs="12" md="6">
+                <label cLabel for="username">Nombre de usuario</label>
+                <c-input-group class="has-validation">
+                  <input
+                    cFormControl
+                    formControlName="username"
+                    id="username"
+                    type="text"
+                    placeholder="Nombre de usuario"
+                    [ngClass]="{
+                      'is-invalid':
+                        form.get('username')?.invalid &&
+                        form.get('username')?.touched
+                    }"
+                  />
+                  <c-form-feedback
+                    *ngIf="
+                      form.get('username')?.invalid &&
+                      form.get('username')?.touched
+                    "
+                  >
+                    {{ getErrorMessage("username") }}
+                  </c-form-feedback>
+                </c-input-group>
+              </c-col>
+              <c-col xs="12" md="6">
+                <label cLabel for="password">Contraseña</label>
+                <c-input-group class="has-validation">
+                  <input
+                    cFormControl
+                    formControlName="password"
+                    id="password"
+                    type="password"
+                    placeholder="Contraseña"
+                    [ngClass]="{
+                      'is-invalid':
+                        form.get('password')?.invalid &&
+                        form.get('password')?.touched
+                    }"
+                  />
+                  <c-form-feedback
+                    *ngIf="
+                      form.get('password')?.invalid &&
+                      form.get('password')?.touched
+                    "
+                  >
+                    {{ getErrorMessage("password") }}
+                  </c-form-feedback>
+                </c-input-group>
+              </c-col>
+            </c-row>
+
+            <hr class="my-4" />
+            <h6 class="text-primary mb-3">Información Detallada</h6>
+            <c-row class="g-3">
+              <c-col xs="12" md="6">
+                <label cLabel for="first_name">Nombre</label>
+                <c-input-group class="has-validation">
+                  <input
+                    cFormControl
+                    formControlName="first_name"
+                    id="first_name"
+                    type="text"
+                    placeholder="Nombre"
+                    [ngClass]="{
+                      'is-invalid':
+                        form.get('first_name')?.invalid &&
+                        form.get('first_name')?.touched
+                    }"
+                  />
+                  <c-form-feedback
+                    *ngIf="
+                      form.get('first_name')?.invalid &&
+                      form.get('first_name')?.touched
+                    "
+                  >
+                    {{ getErrorMessage("first_name") }}
+                  </c-form-feedback>
+                </c-input-group>
+              </c-col>
+              <c-col xs="12" md="6">
+                <label cLabel for="last_name">Apellido</label>
+                <c-input-group class="has-validation">
+                  <input
+                    cFormControl
+                    formControlName="last_name"
+                    id="last_name"
+                    type="text"
+                    placeholder="Apellido"
+                    [ngClass]="{
+                      'is-invalid':
+                        form.get('last_name')?.invalid &&
+                        form.get('last_name')?.touched
+                    }"
+                  />
+                  <c-form-feedback
+                    *ngIf="
+                      form.get('last_name')?.invalid &&
+                      form.get('last_name')?.touched
+                    "
+                  >
+                    {{ getErrorMessage("last_name") }}
+                  </c-form-feedback>
+                </c-input-group>
+              </c-col>
+              <c-col xs="12" md="6">
+                <label cLabel for="email">Correo Electrónico</label>
+                <c-input-group class="has-validation">
+                  <input
+                    cFormControl
+                    formControlName="email"
+                    id="email"
+                    type="email"
+                    placeholder="ejemplo@correo.com"
+                    [ngClass]="{
+                      'is-invalid':
+                        form.get('email')?.invalid && form.get('email')?.touched
+                    }"
+                  />
+                  <c-form-feedback
+                    *ngIf="
+                      form.get('email')?.invalid && form.get('email')?.touched
+                    "
+                  >
+                    {{ getErrorMessage("email") }}
+                  </c-form-feedback>
+                </c-input-group>
+              </c-col>
+              <c-col xs="12" md="6">
+                <label cLabel for="birth_date">Fecha de Nacimiento</label>
+                <c-input-group class="has-validation">
+                  <input
+                    cFormControl
+                    formControlName="birth_date"
+                    id="birth_date"
+                    type="date"
+                    [ngClass]="{
+                      'is-invalid':
+                        form.get('birth_date')?.invalid &&
+                        form.get('birth_date')?.touched
+                    }"
+                  />
+                  <c-form-feedback
+                    *ngIf="
+                      form.get('birth_date')?.invalid &&
+                      form.get('birth_date')?.touched
+                    "
+                  >
+                    {{ getErrorMessage("birth_date") }}
+                  </c-form-feedback>
+                </c-input-group>
+              </c-col>
+              <c-col xs="12" md="6">
+                <label cLabel for="rut">RUT</label>
+                <c-input-group class="has-validation">
+                  <input
+                    cFormControl
+                    formControlName="rut"
+                    id="rut"
+                    type="text"
+                    placeholder="11111111-1"
+                    [ngClass]="{
+                      'is-invalid':
+                        form.get('rut')?.invalid && form.get('rut')?.touched
+                    }"
+                    appRutFormat
+                  />
+                  <c-form-feedback
+                    *ngIf="form.get('rut')?.invalid && form.get('rut')?.touched"
+                  >
+                    {{ getErrorMessage("rut") }}
+                  </c-form-feedback>
+                </c-input-group>
+              </c-col>
+            </c-row>
+
+            <hr class="my-4" />
+            <h6 class="text-primary mb-3">Información de Docencia</h6>
+            <c-row class="g-3">
+              <c-col xs="12" md="6">
+                <label cLabel for="subject_specialty">Especialidad</label>
+                <c-input-group class="has-validation">
+                  <input
+                    cFormControl
+                    formControlName="subject_specialty"
+                    id="subject_specialty"
+                    type="text"
+                    placeholder="Especialidad"
+                    [ngClass]="{
+                      'is-invalid':
+                        form.get('subject_specialty')?.invalid &&
+                        form.get('subject_specialty')?.touched
+                    }"
+                  />
+                  <c-form-feedback
+                    *ngIf="
+                      form.get('subject_specialty')?.invalid &&
+                      form.get('subject_specialty')?.touched
+                    "
+                  >
+                    {{ getErrorMessage("subject_specialty") }}
+                  </c-form-feedback>
+                </c-input-group>
+              </c-col>
+            </c-row>
+
+            <hr class="my-4" />
+            <div formArrayName="courses">
+              <h6 class="text-primary mb-3">
+                Cursos
+                <span *ngIf="courses.length === 0" class="text-danger">
+                  Asociación a curso es requerida
+                </span>
+              </h6>
+              <c-row
+                *ngFor="let course of courses.controls; let i = index"
+                [formGroupName]="i"
+                class="g-4 align-items-center"
+              >
+                <c-col xs="12" md="4">
+                  <label cLabel for="course_id_{{ i }}">Curso</label>
+                  <c-input-group class="has-validation">
+                    <select
+                      cFormControl
+                      cSelect
+                      formControlName="course_id"
+                      id="course_id_{{ i }}"
+                      [ngClass]="{
+                        'is-invalid':
+                          courses.at(i).get('course_id')?.invalid &&
+                          courses.at(i).get('course_id')?.touched
+                      }"
+                    >
+                      <option [value]="null" disabled>
+                        Seleccione un curso
+                      </option>
+                      <option
+                        *ngFor="let option of coursesOptions | async"
+                        [value]="option.id"
+                      >
+                        {{ option.name }}
+                      </option>
+                    </select>
+                    <c-form-feedback
+                      *ngIf="
+                        courses.at(i).get('course_id')?.invalid &&
+                        courses.at(i).get('course_id')?.touched
+                      "
+                    >
+                      {{ getCourseErrorMessage(i, "course_id") }}
+                    </c-form-feedback>
+                  </c-input-group>
+                </c-col>
+
+                <c-col xs="12" md="4">
+                  <label cLabel for="role_{{ i }}">Rol</label>
+                  <c-input-group class="has-validation">
+                    <select
+                      cFormControl
+                      cSelect
+                      formControlName="role"
+                      id="role_{{ i }}"
+                      [ngClass]="{
+                        'is-invalid':
+                          courses.at(i).get('role')?.invalid &&
+                          courses.at(i).get('role')?.touched
+                      }"
+                    >
+                      <option [value]="null" disabled>Seleccione un rol</option>
+                      <option *ngFor="let role of roleOptions" [value]="role">
+                        {{ role | translateTeacherRole }}
+                      </option>
+                    </select>
+                    <c-form-feedback
+                      *ngIf="
+                        courses.at(i).get('role')?.invalid &&
+                        courses.at(i).get('role')?.touched
+                      "
+                    >
+                      {{ getCourseErrorMessage(i, "role") }}
+                    </c-form-feedback>
+                  </c-input-group>
+                </c-col>
+
+                <c-col xs="12" md="2">
+                  <c-form-check>
+                    <input
+                      cFormControl
+                      cFormCheckInput
+                      formControlName="is_substitute"
+                      id="is_substitute_{{ i }}"
+                      [checked]="true"
+                      type="checkbox"
+                    />
+                    <label cFormCheckLabel for="is_substitute_{{ i }}">
+                      ¿Es sustituto?
+                    </label>
+                  </c-form-check>
+                </c-col>
+
+                <c-col
+                  xs="12"
+                  md="2"
+                  class="text-end d-flex align-items-center"
+                >
+                  <button
+                    cButton
+                    color="danger"
+                    size="sm"
+                    class="align-middle"
+                    (click)="removeCourse(i)"
+                  >
+                    <c-icon name="cil-trash" size="lg"></c-icon>
+                  </button>
+                </c-col>
+              </c-row>
+            </div>
+            <button
+              type="button"
+              (click)="addCourse()"
+              cButton
+              color="info"
+              class="mt-3"
+            >
+              Agregar Curso
+            </button>
+
+            <c-row>
+              <c-col xs="12">
+                <div class="d-flex justify-content-end">
+                  <button
+                    cButton
+                    [color]="teacher_id ? 'warning' : 'primary'"
+                    type="submit"
+                  >
+                    {{ teacher_id ? "Actualizar" : "Guardar" }}
+                  </button>
+                </div>
+              </c-col>
+            </c-row>
+          </form>
+        </c-card-body>
+      </c-card>
+    </c-col>
+  </c-row>
+</c-container>

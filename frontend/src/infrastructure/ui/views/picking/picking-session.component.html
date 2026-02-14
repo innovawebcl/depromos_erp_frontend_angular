@@ -1,0 +1,95 @@
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <div>
+    <h2 class="mb-0">Picking — Pedido #{{ order?.id }}</h2>
+    <div class="text-medium-emphasis small" *ngIf="order">
+      Estado actual: <span class="badge bg-warning text-dark" *ngIf="order.status === 'picking'">picking</span>
+      <span class="badge bg-secondary" *ngIf="order.status === 'pending'">pending</span>
+      <span class="badge bg-info" *ngIf="order.status === 'ready'">ready</span>
+    </div>
+  </div>
+  <div class="d-flex gap-2">
+    <a class="btn btn-outline-secondary" routerLink="/picking">Cola</a>
+    <a class="btn btn-outline-secondary" [routerLink]="['/orders', order?.id]">Detalle pedido</a>
+  </div>
+</div>
+
+<div *ngIf="loading" class="card"><div class="card-body">Cargando...</div></div>
+
+<div *ngIf="!loading && order" class="row g-3">
+  <div class="col-lg-5">
+    <div class="card mb-3">
+      <div class="card-header fw-semibold">Escaneo / validación</div>
+      <div class="card-body">
+        <label class="form-label">Código (barcode)</label>
+        <div class="input-group">
+          <input class="form-control" [(ngModel)]="code" (keyup.enter)="scan()" placeholder="Escanea o escribe el código" />
+          <button class="btn btn-primary" (click)="scan()" [disabled]="scanning">
+            <span *ngIf="!scanning">Validar</span>
+            <span *ngIf="scanning">...</span>
+          </button>
+        </div>
+        <div class="small text-medium-emphasis mt-2">
+          Si escaneas un ítem equivocado, talla incorrecta o que no pertenece al pedido, el backend debe devolver error/advertencia.
+        </div>
+
+        <div *ngIf="lastMessage" class="alert mt-3" [ngClass]="'alert-' + lastMessage.type">
+          {{ lastMessage.text }}
+        </div>
+      </div>
+      <div class="card-footer">
+        <button class="btn btn-success w-100" (click)="closePicking()" [disabled]="closing">
+          <span *ngIf="!closing">Cerrar picking y habilitar despacho</span>
+          <span *ngIf="closing">Cerrando...</span>
+        </button>
+        <div class="small text-medium-emphasis mt-2">
+          Regla: no se puede cerrar si falta un producto, si la talla es incorrecta o si se escaneó un ítem equivocado.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-7">
+    <div class="card">
+      <div class="card-header fw-semibold">Items del pedido</div>
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table table-striped mb-0 align-middle">
+            <thead>
+              <tr>
+                <th>Producto</th>
+                <th style="width: 90px">Talla</th>
+                <th style="width: 90px">Cant.</th>
+                <th style="width: 140px">Escaneado</th>
+                <th style="width: 120px">Progreso</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let it of order.items || []">
+                <td>
+                  <div class="fw-semibold">{{ it.product_name }}</div>
+                  <div class="small text-medium-emphasis">Código esperado: {{ it.barcode || '—' }}</div>
+                </td>
+                <td>{{ it.size }}</td>
+                <td>{{ it.quantity }}</td>
+                <td>
+                  <span class="badge" [ngClass]="isComplete(it) ? 'bg-success' : 'bg-light text-dark'">
+                    {{ it.scanned_quantity || 0 }} / {{ it.quantity }}
+                  </span>
+                </td>
+                <td>
+                  <div class="progress" style="height: 10px">
+                    <div class="progress-bar" [style.width]="progress(it)"></div>
+                  </div>
+                  <div class="small text-medium-emphasis mt-1">{{ progress(it) }}</div>
+                </td>
+              </tr>
+              <tr *ngIf="(order.items || []).length === 0">
+                <td colspan="5" class="text-center text-medium-emphasis py-4">Sin items</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

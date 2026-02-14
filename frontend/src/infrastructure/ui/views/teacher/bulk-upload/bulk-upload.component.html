@@ -1,0 +1,171 @@
+<ngx-file-drop
+  [dropZoneLabel]="'Arrastra tus archivos aquí o haz clic para subir'"
+  [multiple]="true"
+  (onFileDrop)="onFilesDropped($event)"
+  (click)="fileInput.click()"
+>
+  <div class="custom-drop-zone">
+    <p>Arrastra tus archivos aquí o haz clic para subir</p>
+    <input
+      #fileInput
+      type="file"
+      style="display: none"
+      (change)="onFilesSelected($event)"
+      multiple
+    />
+  </div>
+</ngx-file-drop>
+<div style="margin: 3%"></div>
+
+<ng-container>
+  <c-row>
+    <c-col xs="12" lg="6" *ngIf="validTeachersCount | async">
+      <c-widget-stat-f
+        [title]="'Profesores Ingresados'"
+        class="mb-3"
+        color="primary"
+        padding
+        [value]="(validTeachersCount | async).length"
+      >
+        <ng-template cTemplateId="widgetIconTemplate">
+          <svg [cIcon]="icons.cilChartPie" size="xl" width="24"></svg>
+        </ng-template>
+      </c-widget-stat-f>
+    </c-col>
+    <c-col xs="12" lg="6" *ngIf="validTeacherCoursesCount | async">
+      <c-widget-stat-f
+        [title]="'Profesores asociados a curso Ingresados'"
+        class="mb-3"
+        color="primary"
+        padding
+        [value]="(validTeacherCoursesCount | async).length"
+      >
+        <ng-template cTemplateId="widgetIconTemplate">
+          <svg [cIcon]="icons.cilChartPie" size="xl" width="24"></svg>
+        </ng-template>
+      </c-widget-stat-f>
+    </c-col>
+  </c-row>
+</ng-container>
+<ng-container *ngIf="(teacherErrors | async)?.length > 0">
+  <c-card class="mb-4">
+    <c-card-header ngPreserveWhitespaces>
+      <strong>Errores hoja profesores</strong>
+    </c-card-header>
+    <c-card-body>
+      <c-smart-table
+        [items]="teacherErrors | async"
+        [columns]="teacherColumns"
+        [activePage]="1"
+        [columnSorter]="true"
+        [columnFilter]="true"
+        [itemsPerPageSelect]="true"
+        [itemsPerPage]="20"
+        [sorterValue]="{ column: 'rut', state: 'asc' }"
+        [tableFilter]="true"
+        [tableProps]="{ striped: true, responsive: true }"
+        [tableBodyProps]="{ align: 'middle' }"
+        tableFilterPlaceholder="Buscar error..."
+        noItemsLabel="Listado de errores de profesores vacío"
+        itemsPerPageLabel="Ítems por página"
+        cleaner
+        clickableRows
+        footer
+        header
+        pagination
+      >
+        <ng-template
+          cTemplateId="tableData"
+          let-item="item"
+          let-columnName="columnName"
+        >
+          <td>
+            @switch (columnName) { @case ('details') {
+            <button
+              cButton
+              color="primary"
+              size="sm"
+              (click)="toggleTeacherDetails(item)"
+            >
+              Detalle
+            </button>
+            } @default {
+            {{ item[columnName] }}
+            } }
+          </td>
+        </ng-template>
+        <ng-template cTemplateId="tableDetails" let-item="item">
+          <div *ngIf="details_visible[item.rut]" class="card p-3">
+            <strong>Detalles:</strong>
+            <pre>{{ item.details | json }}</pre>
+            <strong>Errores:</strong>
+            <ul>
+              <li *ngFor="let error of item.errors">{{ error }}</li>
+            </ul>
+          </div>
+        </ng-template>
+      </c-smart-table>
+    </c-card-body>
+  </c-card>
+</ng-container>
+<ng-container *ngIf="(teacherCoursesErrors | async)?.length > 0">
+  <c-card class="mb-4">
+    <c-card-header ngPreserveWhitespaces>
+      <strong>Errores en cursos asignados</strong>
+    </c-card-header>
+    <c-card-body>
+      <c-smart-table
+        [items]="teacherCoursesErrors | async"
+        [columns]="teacherCoursesColumns"
+        [activePage]="1"
+        [columnSorter]="true"
+        [columnFilter]="true"
+        [itemsPerPageSelect]="true"
+        [itemsPerPage]="20"
+        [sorterValue]="{ column: 'rut', state: 'asc' }"
+        [tableFilter]="true"
+        [tableProps]="{ striped: true, responsive: true }"
+        [tableBodyProps]="{ align: 'middle' }"
+        tableFilterPlaceholder="Buscar error..."
+        noItemsLabel="Listado de errores de profesores vacío"
+        itemsPerPageLabel="Ítems por página"
+        cleaner
+        clickableRows
+        footer
+        header
+        pagination
+      >
+        <ng-template
+          cTemplateId="tableData"
+          let-item="item"
+          let-columnName="columnName"
+        >
+          <td>
+            @switch (columnName) { @case ('details') {
+            <button
+              cButton
+              color="primary"
+              size="sm"
+              (click)="toggleGuardianDetails(item)"
+            >
+              Detalle
+            </button>
+            } @default {
+            {{ item[columnName] }}
+            } }
+          </td>
+        </ng-template>
+        <ng-template cTemplateId="tableDetails" let-item="item">
+          <div *ngIf="details_visible[item.rut]" class="card p-3">
+            <strong>Detalles:</strong>
+            <pre>{{ item.details | json }}</pre>
+            <strong>Errores:</strong>
+            <ul>
+              <li *ngFor="let error of item.errors">{{ error }}</li>
+            </ul>
+          </div>
+        </ng-template>
+      </c-smart-table>
+    </c-card-body>
+  </c-card>
+</ng-container>

@@ -1,0 +1,577 @@
+<c-container>
+  <c-row>
+    <c-col xs="12">
+      <c-card
+        class="mb-4 p-2"
+        *ngIf="student$ | async as student"
+        [cBorder]="severeStudent ? 'danger' : 'primary'"
+      >
+        <c-card-header>
+          <c-row>
+            <c-col>
+              <h5>
+                Perfil Estudiante <strong>{{ student.name }}</strong>
+                <ng-container *ngIf="student.active_course?.course_name">
+                  /
+                  <strong>{{
+                    student.active_course?.course_name || ""
+                  }}</strong>
+                </ng-container>
+              </h5>
+            </c-col>
+            <c-col *ngIf="severeStudent">
+              <c-alert color="warning">
+                <strong>¡Atención!</strong> El estudiante ha superado la
+                cantidad de anotaciones negativas permitidas por colegio
+              </c-alert>
+            </c-col>
+          </c-row>
+        </c-card-header>
+        <c-card-body>
+          <c-row class="mb-3">
+            <div #infoSection>
+              <c-card>
+                <c-card-header>
+                  <c-row>
+                    <c-col xs="6">
+                      <h6><strong>Información Personal</strong></h6>
+                    </c-col>
+                    <c-col
+                      xs="6"
+                      style="
+                        display: flex;
+                        flex-direction: row;
+                        justify-content: flex-end;
+                        align-items: center;
+                        gap: 1rem;
+                      "
+                    >
+                      <button
+                        cButton
+                        color="info"
+                        size="sm"
+                        (click)="toggleCollapse('personalInfo')"
+                      >
+                        <c-icon
+                          [name]="
+                            collapses['personalInfo']
+                              ? 'cil-arrow-top'
+                              : 'cil-arrow-bottom'
+                          "
+                        ></c-icon>
+                      </button>
+                      <button
+                        cButton
+                        color="warning"
+                        size="sm"
+                        (click)="goToUpdateForm()"
+                        *ngIf="isAbleToEdit"
+                      >
+                        Editar
+                        <c-icon name="cil-pencil"></c-icon>
+                      </button>
+                    </c-col>
+                  </c-row>
+                </c-card-header>
+                <c-card-body cCollapse [visible]="collapses['personalInfo']">
+                  <c-row>
+                    <!-- Personal Information -->
+                    <c-col xs="12" md="6">
+                      <strong>Email:</strong> {{ student.email }} <br />
+                      <strong>Años en el colegio:</strong>
+                      {{ student.years_in_school }} <br />
+                      <strong>Cursando: </strong>
+                      {{ student.active_course?.course_name || "" }} <br />
+                      <strong>Dirección:</strong> {{ student.address }} <br />
+                      <strong>Diagnóstico médico:</strong>
+                      {{ student.medical_diagnosis || "" }}
+                    </c-col>
+                    <!-- Family Information -->
+                    <c-col xs="12" md="6">
+                      <strong>Personas con las que vive:</strong>
+                      {{ student.people_living_with || "" }} <br />
+                      <strong>Hermanos:</strong>
+                      {{ student.number_of_siblings }}
+                      <br />
+                    </c-col>
+                  </c-row>
+                </c-card-body>
+              </c-card>
+            </div>
+          </c-row>
+          <c-row class="mb-3">
+            <div #guardiansSection>
+              <c-card>
+                <c-card-header>
+                  <c-row>
+                    <c-col xs="6">
+                      <h6><strong>Apoderados</strong></h6>
+                    </c-col>
+                    <c-col
+                      xs="6"
+                      style="
+                        display: flex;
+                        flex-direction: row;
+                        justify-content: flex-end;
+                        align-items: center;
+                        gap: 1rem;
+                      "
+                    >
+                      <button
+                        cButton
+                        color="info"
+                        size="sm"
+                        (click)="toggleCollapse('guardians')"
+                      >
+                        <c-icon
+                          [name]="
+                            collapses['guardians']
+                              ? 'cil-arrow-top'
+                              : 'cil-arrow-bottom'
+                          "
+                        ></c-icon>
+                      </button>
+                    </c-col>
+                  </c-row>
+                </c-card-header>
+                <c-card-body cCollapse [visible]="collapses['guardians']">
+                  <c-row [gutter]="2">
+                    <c-col
+                      xs="12"
+                      md="6"
+                      *ngFor="let guardian of student.guardians"
+                    >
+                      <c-card>
+                        <c-card-body>
+                          <strong>Nombre:</strong> {{ guardian.name }}
+                          {{ guardian.last_name }} <br />
+                          <strong>Parentesco:</strong>
+                          {{ guardian.kinship | translateKinship }} <br />
+                          <strong>Email:</strong> {{ guardian.email }} <br />
+                          <strong>Teléfono:</strong> {{ guardian.phone }}
+                        </c-card-body>
+                      </c-card>
+                    </c-col>
+                  </c-row>
+                </c-card-body>
+              </c-card>
+            </div>
+          </c-row>
+          <c-row class="mb-3" *ngIf="!isSuperAdmin">
+            <div #annotationsSection>
+              <c-card>
+                <c-card-header>
+                  <c-row>
+                    <c-col xs="6">
+                      <h6><strong>Registro de anotaciones</strong></h6>
+                    </c-col>
+                    <c-col
+                      xs="6"
+                      style="
+                        display: flex;
+                        flex-direction: row;
+                        justify-content: flex-end;
+                        align-items: center;
+                        gap: 1rem;
+                      "
+                    >
+                      <button
+                        cButton
+                        color="warning"
+                        size="sm"
+                        (click)="goToAnnotation()"
+                        *ngIf="allowedToStoreAnnotation"
+                      >
+                        Ingresar anotación
+                        <c-icon name="cil-pencil"></c-icon>
+                      </button>
+                      <button
+                        cButton
+                        color="warning"
+                        size="sm"
+                        (click)="generatePDF()"
+                        *ngIf="allowedToStoreAnnotation"
+                      >
+                        <c-spinner
+                          *ngIf="loadingPDF"
+                          aria-hidden="true"
+                          size="sm"
+                          variant="grow"
+                        />
+                        Descargar reporte
+                        <c-icon name="cil-notes"></c-icon>
+                      </button>
+                      <button
+                        cButton
+                        color="info"
+                        size="sm"
+                        (click)="toggleCollapse('annotations')"
+                      >
+                        <c-icon
+                          [name]="
+                            collapses['annotations']
+                              ? 'cil-arrow-top'
+                              : 'cil-arrow-bottom'
+                          "
+                        ></c-icon>
+                      </button>
+                    </c-col>
+                  </c-row>
+                </c-card-header>
+                <card-body
+                  *ngIf="!isSuperAdmin"
+                  cCollapse
+                  [visible]="collapses['annotations']"
+                >
+                  <c-smart-table
+                    [activePage]="1"
+                    [columnSorter]="true"
+                    [columns]="annotationColumns"
+                    [columnFilter]="true"
+                    [itemsPerPageSelect]="true"
+                    [itemsPerPage]="20"
+                    [loading]="isLoading | async"
+                    [items]="annotations$ | async"
+                    [sorterValue]="{ column: 'name', state: 'asc' }"
+                    [tableProps]="{
+                      hover: true,
+                      striped: true,
+                      responsive: true
+                    }"
+                    [tableBodyProps]="{ align: 'middle' }"
+                    noItemsLabel="Listado de anotaciones"
+                    itemsPerPageLabel="Ítems por página"
+                    cleaner
+                    clickableRows
+                    footer
+                    header
+                    pagination
+                  >
+                    <ng-template
+                      cTemplateId="tableData"
+                      let-columnName="columnName"
+                      let-item="item"
+                      let-tdContent="tdContent"
+                    >
+                      <td>
+                        @switch (columnName) { @case ('type') {
+                        <c-badge [color]="getAnnotationLevelColor(item.type)">
+                          {{
+                            mapAnnotationLevel(
+                              annotationLevels$ | async,
+                              item.type
+                            )
+                          }}
+                        </c-badge>
+                        } @case ('created_at') {
+                        {{ tdContent | customDate : "DD de MMMM YYYY. HH:mm" }}
+                        } @case ('actions') {
+                        <div class="d-flex gap-2">
+                          <button
+                            cButton
+                            cTooltip="Eliminar Anotación"
+                            cTooltipPlacement="bottom"
+                            color="danger"
+                            size="sm"
+                            (click)="openDeleteModal(item.id)"
+                            *ngIf="isAdmin"
+                          >
+                            <c-icon name="cil-trash"></c-icon>
+                          </button>
+                        </div>
+                        } @case ('subcategory') {
+                        {{ tdContent || "" }}
+                        <!-- Aquí se renderiza la subcategoría -->
+                        } @default {
+                        {{ tdContent }}
+                        } }
+                      </td>
+                    </ng-template>
+                  </c-smart-table>
+                </card-body>
+              </c-card>
+            </div>
+          </c-row>
+          <c-row class="mb-3" *ngIf="!isSuperAdmin">
+            <div #interviewSection>
+              <c-card>
+                <c-card-header>
+                  <c-row>
+                    <c-col xs="6">
+                      <h6><strong>Citaciones / Entrevistas</strong></h6>
+                    </c-col>
+                    <c-col
+                      xs="6"
+                      style="
+                        display: flex;
+                        flex-direction: row;
+                        justify-content: flex-end;
+                        align-items: center;
+                        gap: 1rem;
+                      "
+                    >
+                      <button
+                        cButton
+                        color="warning"
+                        size="sm"
+                        (click)="goToInterviewForm()"
+                        *ngIf="allowedToStoreAnnotation"
+                      >
+                        Ingresar entrevista
+                        <c-icon name="cil-pencil"></c-icon>
+                      </button>
+                      <button
+                        cButton
+                        color="info"
+                        size="sm"
+                        (click)="toggleCollapse('interviews')"
+                      >
+                        <c-icon
+                          [name]="
+                            collapses['interviews']
+                              ? 'cil-arrow-top'
+                              : 'cil-arrow-bottom'
+                          "
+                        ></c-icon>
+                      </button>
+                    </c-col>
+                  </c-row>
+                </c-card-header>
+                <c-card-body
+                  *ngIf="!isSuperAdmin"
+                  cCollapse
+                  [visible]="collapses['interviews']"
+                >
+                  <c-smart-table
+                    [activePage]="1"
+                    [columnSorter]="true"
+                    [columns]="interviewColumns"
+                    [columnFilter]="true"
+                    [itemsPerPageSelect]="true"
+                    [itemsPerPage]="5"
+                    [loading]="isLoading | async"
+                    [items]="interviews$ | async"
+                    [sorterValue]="{ column: 'name', state: 'asc' }"
+                    [tableProps]="{
+                      hover: true,
+                      striped: true,
+                      responsive: true
+                    }"
+                    [tableBodyProps]="{ align: 'middle' }"
+                    noItemsLabel="Listado de entrevistas"
+                    itemsPerPageLabel="Ítems por página"
+                    cleaner
+                    clickableRows
+                    footer
+                    header
+                    pagination
+                  >
+                    <ng-template
+                      cTemplateId="tableData"
+                      let-columnName="columnName"
+                      let-item="item"
+                      let-tdContent="tdContent"
+                    >
+                      <td>
+                        @switch (columnName) { @case ('interview_date') {
+                        {{ tdContent | customDate : "DD de MMMM YYYY. HH:mm" }}
+                        } @case('actions') {
+                        <div class="d-flex gap-2">
+                          <button
+                            cButton
+                            cTooltip="Ver detalle"
+                            cTooltipPlacement="bottom"
+                            color="info"
+                            size="sm"
+                            (click)="goToInterviewDetail(item.id)"
+                          >
+                            <c-icon name="cil-notes"></c-icon>
+                          </button>
+                        </div>
+                        } @default {
+                        {{ tdContent }}
+                        } }
+                      </td>
+                    </ng-template>
+                  </c-smart-table>
+                </c-card-body>
+              </c-card>
+            </div>
+          </c-row>
+          <c-row class="mb-3" *ngIf="isSuperAdmin">
+                  <div #loginLogsSection>
+                    <c-card>
+                      <c-card-header>
+                        <c-row>
+                          <c-col xs="6">
+                            <h6><strong>Inicios de sesión</strong></h6>
+                          </c-col>
+                          <c-col
+                            xs="6"
+                            style="
+                              display: flex;
+                              flex-direction: row;
+                              justify-content: flex-end;
+                              align-items: center;
+                              gap: 1rem;
+                            "
+                          >
+                            <button
+                              cButton
+                              color="info"
+                              size="sm"
+                              (click)="toggleCollapse('loginLogs')"
+                            >
+                              <c-icon
+                                [name]="
+                                  collapses['loginLogs']
+                                    ? 'cil-arrow-top'
+                                    : 'cil-arrow-bottom'
+                                "
+                              ></c-icon>
+                            </button>
+                          </c-col>
+                        </c-row>
+                      </c-card-header>
+                      <c-card-body cCollapse [visible]="collapses['loginLogs']">
+                        <c-smart-table
+                          [activePage]="1"
+                          [columnSorter]="true"
+                          [columns]="loginLogsColumns"
+                          [columnFilter]="true"
+                          [itemsPerPageSelect]="true"
+                          [itemsPerPage]="10"
+                          [loading]="isLoading | async"
+                          [items]="loginLogs$ | async"
+                          [sorterValue]="{ column: 'created_at', state: 'desc' }"
+                          [tableProps]="{
+                            hover: true,
+                            striped: true,
+                            responsive: true
+                          }"
+                          [tableBodyProps]="{ align: 'middle' }"
+                          noItemsLabel="Sin registros de inicio de sesión"
+                          itemsPerPageLabel="Ítems por página"
+                          cleaner
+                          footer
+                          header
+                          pagination
+                        >
+                          <ng-template
+                            cTemplateId="tableData"
+                            let-columnName="columnName"
+                            let-item="item"
+                            let-tdContent="tdContent"
+                          >
+                            <td>
+                              @switch (columnName) { @case ('created_at') {
+                              {{ tdContent | customDate : "DD de MMMM YYYY. HH:mm" }}
+                              } @default {
+                              {{ tdContent }}
+                              } }
+                            </td>
+                          </ng-template>
+                        </c-smart-table>
+                      </c-card-body>
+                    </c-card>
+                  </div>
+                </c-row>
+        </c-card-body>
+      </c-card>
+    </c-col>
+  </c-row>
+  <c-toaster
+    class="p-3"
+    position="fixed"
+    placement="top-center"
+    *ngIf="severeStudent && student$ | async as student"
+  >
+    <c-toast [autohide]="false" [visible]="true" color="warning">
+      <c-toast-header [closeButton]="true">
+        <strong class="mr-auto">¡Atención!</strong>
+      </c-toast-header>
+      <c-toast-body>
+        <p>
+          El estudiante {{ student.name || "" }} ha superado la cantidad de
+          anotaciones negativas permitidas por colegio:
+          {{ student.institution.amount_of_negative_annotations ?? "" }}
+        </p>
+        <p>
+          Enviamos un correo informando al administrador del colegio para que
+          tome las medidas necesarias.
+        </p>
+      </c-toast-body>
+    </c-toast>
+  </c-toaster>
+</c-container>
+
+<c-modal
+  [(visible)]="deleteModalVisible"
+  title="Confirmar eliminación"
+  color="danger"
+  (closed)="resetDeletedModal()"
+>
+  <div class="modal-body">
+    <p>¿Estás seguro de que deseas eliminar la anotación?</p>
+  </div>
+  <div class="modal-footer">
+    <button cButton color="secondary" (click)="deleteModalVisible = false">
+      Cancelar
+    </button>
+    <button cButton color="danger" (click)="onConfirmDelete()">
+      Confirmar
+    </button>
+  </div>
+</c-modal>
+
+<div
+  id="reporte-container"
+  class="p-4"
+  style="display: none; position: absolute"
+>
+  <ng-container *ngIf="student$ | async as student">
+    <c-card>
+      <c-card-header ngPreserveWhitespaces class="avoid-break">
+        <div class="d-flex justify-content-between mb-2">
+          <h4 style="text-align: center">
+            Registro de anotaciones de {{ student.name }} -
+            {{ student.active_course?.course_name || "" }}
+          </h4>
+        </div>
+      </c-card-header>
+      <c-card-body>
+        <table cTable hover striped responsive>
+          <thead class="avoid-break">
+            <tr>
+              <th>Fecha</th>
+              <th>Observación</th>
+              <th>Tipo</th>
+              <th>Subcategoría</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let annotation of annotations$ | async">
+              <td class="avoid-break">
+                {{
+                  annotation.created_at | customDate : "DD de MMMM YYYY. HH:mm"
+                }}
+              </td>
+              <td class="avoid-break">{{ annotation.observation }}</td>
+              <td class="avoid-break">
+                <c-badge [color]="getAnnotationLevelColor(annotation.type)">
+                  {{
+                    mapAnnotationLevel(
+                      annotationLevels$ | async,
+                      annotation.type
+                    )
+                  }}
+                </c-badge>
+              </td>
+              <td class="avoid-break">{{ annotation.subcategory }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </c-card-body>
+    </c-card>
+  </ng-container>
+</div>

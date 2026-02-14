@@ -1,0 +1,139 @@
+<c-container>
+  <c-row>
+    <c-col xs="12">
+      <c-card class="mb-4">
+        <c-card-header ngPreserveWhitespaces>
+          <c-row>
+            <c-col xs="12" md="6">
+              <strong>Sociograma: {{ form.get("title")?.value }}</strong>
+            </c-col>
+            <c-col
+              xs="12"
+              md="3"
+              class="d-flex justify-content-center align-items-center"
+            >
+              <button
+                type="button"
+                class="btn btn-primary"
+                (click)="addAllCourses()"
+              >
+                Agregar todos los cursos
+              </button>
+            </c-col>
+            <c-col
+              xs="12"
+              md="3"
+              class="d-flex justify-content-center align-items-center"
+            >
+              <button
+                type="button"
+                class="btn btn-primary"
+                (click)="addCourse()"
+                [disabled]="areAllCoursesAdded()"
+              >
+                Agregar Curso
+              </button>
+            </c-col>
+          </c-row>
+        </c-card-header>
+        <c-card-body>
+          <form [formGroup]="form" (ngSubmit)="onSubmit()">
+            <div class="mb-4">
+              <label class="form-label fw-bold">Cursos Asociados:</label>
+              <div
+                [formGroup]="filterGroup"
+                class="input-group"
+                style="width: 50%; padding-top: 1em; padding-bottom: 1em"
+              >
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="Filtrar por título"
+                  formControlName="search"
+                />
+                <button
+                  class="btn btn-outline-secondary"
+                  (click)="resetFilter()"
+                >
+                  Limpiar
+                </button>
+              </div>
+              <div formArrayName="courses">
+                <div
+                  *ngFor="
+                    let course of courses.controls
+                      | filterCourses : filterGroup.get('search')?.value;
+                    let i = index
+                  "
+                  [formGroupName]="i"
+                  class="d-flex align-items-center mb-3"
+                >
+                  <c-col xs="10" md="10">
+                    <c-input-group class="has-validation">
+                      <ng-container
+                        *ngIf="!course.get('course_id')?.value; else courseText"
+                      >
+                        <select
+                          cFormControl
+                          cSelect
+                          formControlName="course_id"
+                          id="course_id_{{ i }}"
+                          [ngClass]="{
+                            'is-invalid':
+                              courses.at(i).get('course_id')?.invalid &&
+                              courses.at(i).get('course_id')?.touched
+                          }"
+                        >
+                          <option [value]="null" disabled>
+                            Seleccione un curso
+                          </option>
+                          <option
+                            *ngFor="let option of getFilteredCourses()"
+                            [value]="option.id"
+                          >
+                            {{ option.name }}
+                          </option>
+                        </select>
+                      </ng-container>
+
+                      <ng-template #courseText>
+                        <p class="form-control-plaintext">
+                          {{ getCourseName(course.get("course_id")?.value) }}
+                        </p>
+                      </ng-template>
+                    </c-input-group>
+                  </c-col>
+                  <c-col
+                    xs="2"
+                    md="2"
+                    style="
+                      display: flex;
+                      flex-direction: row;
+                      justify-content: center;
+                      align-items: center;
+                    "
+                  >
+                    <button
+                      cButton
+                      color="danger"
+                      size="sm"
+                      
+                      (click)="removeCourse(i)"
+                    >
+                      <c-icon name="cil-trash"></c-icon>
+                    </button>
+                  </c-col>
+                </div>
+              </div>
+            </div>
+            <div class="d-flex justify-content-end">
+              <button type="submit" class="btn btn-warning">
+                Guardar Cambios
+              </button>
+            </div>
+          </form>
+        </c-card-body>
+      </c-card>
+    </c-col>
+  </c-row>
+</c-container>

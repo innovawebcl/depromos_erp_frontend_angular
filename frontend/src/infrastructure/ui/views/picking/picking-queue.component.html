@@ -1,0 +1,51 @@
+<div class="d-flex align-items-center justify-content-between mb-3">
+  <div>
+    <h2 class="mb-0">Picking</h2>
+    <div class="text-medium-emphasis small">Cola de pedidos pendientes / en picking.</div>
+  </div>
+  <div>
+    <button class="btn btn-outline-primary" (click)="reload()" [disabled]="loading">
+      <span *ngIf="!loading">Actualizar</span>
+      <span *ngIf="loading">Cargando...</span>
+    </button>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table table-hover mb-0 align-middle">
+        <thead>
+          <tr>
+            <th style="width: 90px">ID</th>
+            <th>Cliente</th>
+            <th>Comuna</th>
+            <th>Estado</th>
+            <th>Total</th>
+            <th style="width: 160px"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let o of orders">
+            <td>#{{ o.id }}</td>
+            <td>
+              <div class="fw-semibold">{{ o.customer_name || '—' }}</div>
+              <div class="small text-medium-emphasis">{{ o.customer_email || '' }}</div>
+            </td>
+            <td>{{ o.commune_name || '—' }}</td>
+            <td>
+              <span class="badge" [ngClass]="'bg-' + statusBadge(o.status)">{{ o.status }}</span>
+            </td>
+            <td>{{ o.total | number }}</td>
+            <td class="text-end">
+              <a class="btn btn-sm btn-primary" [routerLink]="['/picking', o.id]">Abrir</a>
+            </td>
+          </tr>
+          <tr *ngIf="!loading && orders.length === 0">
+            <td colspan="6" class="text-center py-4 text-medium-emphasis">Sin pedidos en cola</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

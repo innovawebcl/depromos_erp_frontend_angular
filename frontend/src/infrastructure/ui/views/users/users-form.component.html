@@ -1,0 +1,54 @@
+<div class="d-flex align-items-center justify-content-between mb-3">
+  <div>
+    <h2 class="mb-0">{{ isNew ? 'Crear usuario' : 'Editar usuario' }}</h2>
+    <div class="text-medium-emphasis small">Define rol, estado y credenciales.</div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-body">
+    <div class="row g-3">
+      <div class="col-md-6">
+        <label class="form-label">Nombre</label>
+        <input class="form-control" [(ngModel)]="form.name" placeholder="Nombre completo" />
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Email</label>
+        <input class="form-control" [(ngModel)]="form.email" placeholder="correo@dominio.com" />
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label">Rol</label>
+        <select class="form-select" [(ngModel)]="form.role_id">
+          <option [ngValue]="null">— Sin rol —</option>
+          <option *ngFor="let r of roles" [ngValue]="r.id">{{ r.name }}</option>
+        </select>
+        <div class="small text-medium-emphasis mt-1">Cada usuario tiene un rol único.</div>
+      </div>
+
+      <div class="col-md-3">
+        <label class="form-label">Estado</label>
+        <select class="form-select" [(ngModel)]="form.active">
+          <option [ngValue]="true">Activo</option>
+          <option [ngValue]="false">Bloqueado</option>
+        </select>
+      </div>
+
+      <div class="col-md-3">
+        <label class="form-label">Contraseña</label>
+        <input class="form-control" type="password" [(ngModel)]="form.password" placeholder="********" />
+        <div class="small text-medium-emphasis mt-1">
+          {{ isNew ? 'Obligatoria al crear.' : 'Opcional: solo si deseas cambiarla.' }}
+        </div>
+      </div>
+    </div>
+
+    <div class="d-flex justify-content-end gap-2 mt-4">
+      <button class="btn btn-outline-secondary" (click)="cancel()" [disabled]="loading">Cancelar</button>
+      <button class="btn btn-primary" (click)="save()" [disabled]="loading">
+        <span *ngIf="!loading">Guardar</span>
+        <span *ngIf="loading">Guardando...</span>
+      </button>
+    </div>
+  </div>
+</div>

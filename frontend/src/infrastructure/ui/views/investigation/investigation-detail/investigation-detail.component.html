@@ -1,0 +1,1026 @@
+<c-container>
+  <c-row>
+    <c-col xs="12">
+      <c-card class="mb-4 p-2" *ngIf="investigation$ | async as investigation">
+        <c-card-header ngPreserveWhitespaces>
+          <div class="d-flex justify-content-between mb-2">
+            <h4 style="text-align: center">
+              Investigación <strong>{{ investigation.title }}</strong>
+            </h4>
+            <button
+              cButton
+              class="align-self-end"
+              (click)="generatePDF()"
+              [disabled]="loadingPDFData$ | async"
+            >
+              <c-spinner
+                *ngIf="loadingPDFData$ | async"
+                aria-hidden="true"
+                size="sm"
+                variant="grow"
+              />
+              Descargar reporte
+            </button>
+          </div>
+          <c-progress
+            [value]="getStatePercentage(investigation.state)"
+            [color]="getStateColor(investigation.state)"
+          >
+            {{ investigation.state | translateInvestigationState }}
+          </c-progress>
+        </c-card-header>
+        <c-card-body>
+          <c-row class="mb-4">
+            <c-col xs="12" md="6">
+              <c-card>
+                <c-card-header>
+                  <h5 class="text-primary mb-3" style="text-align: center">
+                    Motivo de la investigación
+                  </h5>
+                </c-card-header>
+                <c-card-body>
+                  <div class="description-card">
+                    <p>{{ investigation.description }}</p>
+                  </div>
+                </c-card-body>
+              </c-card>
+            </c-col>
+            <c-col xs="12" md="6">
+              <c-card class="p-2">
+                <h6 class="text-primary mb-3">Iniciada en</h6>
+                <p>{{ investigation.created_at | date }}</p>
+                <hr class="my-4" />
+                <h6 class="text-primary mb-3">Encargado</h6>
+                <p>{{ investigation.administrator.username }}</p>
+              </c-card>
+            </c-col>
+          </c-row>
+          <!-- Denuncias-->
+          <c-row class="mb-4">
+            <c-col xs="12">
+              <c-card>
+                <c-card-header>
+                  <h5 class="text-primary mb-3" style="text-align: center">
+                    Denuncias asociadas
+                  </h5>
+                </c-card-header>
+                <c-card-body>
+                  <c-row>
+                    <c-col xs="12" md="12">
+                      <ul cListGroup>
+                        <li
+                          *ngFor="let complaint of complaints$ | async"
+                          class="list-group-item d-flex justify-content-between align-items-center mb-1"
+                        >
+                          <div>
+                            <strong>{{ complaint.name }}</strong> -
+                            {{
+                              complaint.date_event | customDate : "DD-MMM-YYYY"
+                            }}
+                            <em>{{
+                              complaint.role_in_complaint
+                                | translateRoleInComplaint
+                            }}</em>
+                          </div>
+                          <div>
+                            <button
+                              cTooltip="Ver detalle de denuncia"
+                              cTooltipPlacement="bottom"
+                              (click)="toggleComplaintModal(complaint)"
+                              cButton
+                              color="info"
+                              size="sm"
+                              class="me-2"
+                            >
+                              <c-icon name="cil-address-book"></c-icon>
+                            </button>
+                          </div>
+                        </li>
+                      </ul>
+                    </c-col>
+                  </c-row>
+                </c-card-body>
+              </c-card>
+            </c-col>
+          </c-row>
+          <!-- Involucrados-->
+          <c-row class="mb-4">
+            <c-col xs="12">
+              <c-card>
+                <c-card-header>
+                  <h5 class="text-primary mb-3" style="text-align: center">
+                    Involucrados
+                  </h5>
+                </c-card-header>
+                <c-card-body>
+                  <c-smart-table
+                    [activePage]="1"
+                    [columnSorter]="true"
+                    [columns]="involvedColumns"
+                    [itemsPerPage]="5"
+                    [columnFilter]="true"
+                    [loading]="loadingData$ | async"
+                    [items]="involveds$ | async"
+                    [sorterValue]="{ column: 'name', state: 'asc' }"
+                    [tableProps]="{
+                      hover: true,
+                      striped: true,
+                      responsive: true
+                    }"
+                    [tableBodyProps]="{ align: 'middle' }"
+                    noItemsLabel="Listado de involucrados vacío"
+                    cleaner
+                    clickableRows
+                    footer
+                    header
+                    pagination
+                  >
+                    <ng-template
+                      cTemplateId="tableData"
+                      let-columnName="columnName"
+                      let-item="item"
+                      let-tdContent="tdContent"
+                    >
+                      <td>
+                        @switch (columnName) { @case ('actions') {
+                        <div class="d-flex gap-2">
+                          <button
+                            cTooltip="Ver evidencias y comentarios"
+                            cTooltipPlacement="bottom"
+                            cButton
+                            color="info"
+                            size="sm"
+                            (click)="toggleDetails(item.id)"
+                          >
+                            <c-icon
+                              [name]="
+                                involvedDetailsVisible[item.id]
+                                  ? 'cil-folder-open'
+                                  : 'cil-folder'
+                              "
+                            ></c-icon>
+                          </button>
+                        </div>
+                        } @case ('role') {
+                        <span>{{
+                          tdContent | translateRoleInComplaintFull
+                        }}</span>
+                        } @case ('involved_type') {
+                        <span>{{ tdContent | translateRole }}</span>
+                        } @default {
+                        {{ tdContent }}
+                        } }
+                      </td>
+                    </ng-template>
+                    <ng-template cTemplateId="tableDetails" let-item="item">
+                      <div *ngIf="involvedDetailsVisible[item.id]" class="p-3">
+                        <c-row clas="mb-4">
+                          <c-col xs="6" md="6">
+                            <c-card>
+                              <c-card-header>
+                                <strong>Comentarios</strong>
+                                <div
+                                  class="float-end"
+                                  *ngIf="investigation.state !== 'finalized'"
+                                >
+                                  <c-container>
+                                    <c-row>
+                                      <c-col xs="12" md="3">
+                                        <button
+                                          cButton
+                                          cTooltip="Agregar comentario"
+                                          cTooltipPlacement="bottom"
+                                          color="info"
+                                          size="sm"
+                                          (click)="
+                                            toggleInvolvedCommentModal(item)
+                                          "
+                                        >
+                                          <c-icon name="cil-plus"></c-icon>
+                                        </button>
+                                      </c-col>
+                                    </c-row>
+                                  </c-container>
+                                </div>
+                              </c-card-header>
+                              <c-card-body>
+                                <c-row>
+                                  <c-col xs="12">
+                                    <div
+                                      cListGroup
+                                      class="comment-section-container"
+                                    >
+                                      <div
+                                        *ngFor="let comment of item.comments"
+                                        cListGroupItem
+                                      >
+                                        <c-row>
+                                          <c-col xs="12" md="12">
+                                            <div
+                                              class="d-flex justify-content-end"
+                                            >
+                                              <p stlye="font-size: 0.8rem;">
+                                                {{
+                                                  comment.created_at
+                                                    | date : "medium"
+                                                }}
+                                              </p>
+                                            </div>
+                                          </c-col>
+                                        </c-row>
+
+                                        <c-row>
+                                          <c-col xs="12" md="12">
+                                            <div class="comment-container">
+                                              <p>{{ comment.comment }}</p>
+                                            </div>
+                                          </c-col>
+                                        </c-row>
+                                      </div>
+                                      <ng-container
+                                        *ngIf="loadingSubmitComment$ | async"
+                                        [ngTemplateOutlet]="loadingOverlay"
+                                      ></ng-container>
+                                    </div>
+                                  </c-col>
+                                </c-row>
+                              </c-card-body>
+                            </c-card>
+                            <strong></strong>
+                          </c-col>
+                          <c-col xs="6" md="6">
+                            <c-card>
+                              <c-card-header>
+                                <strong>Evidencias</strong>
+                                <div
+                                  class="float-end"
+                                  *ngIf="investigation.state !== 'finalized'"
+                                >
+                                  <c-container>
+                                    <c-row>
+                                      <c-col xs="12" md="3">
+                                        <button
+                                          cTooltip="Agregar evidencia"
+                                          cTooltipPlacement="bottom"
+                                          cButton
+                                          color="info"
+                                          size="sm"
+                                          (click)="
+                                            toggleInvolvedEvidenceModal(item)
+                                          "
+                                        >
+                                          <c-icon name="cil-plus"></c-icon>
+                                        </button>
+                                      </c-col>
+                                    </c-row>
+                                  </c-container>
+                                </div>
+                              </c-card-header>
+                              <c-card-body>
+                                <div
+                                  cListGroup
+                                  class="evidence-section-container"
+                                >
+                                  <button
+                                    *ngFor="let evidence of item.evidences"
+                                    (click)="downloadEvidence(evidence.id)"
+                                    cListGroupItem
+                                  >
+                                    {{ evidence.filename }}
+                                  </button>
+                                  <ng-container
+                                    *ngIf="loadingSubmitEvidence$ | async"
+                                    [ngTemplateOutlet]="loadingOverlay"
+                                  ></ng-container>
+                                </div>
+                              </c-card-body>
+                            </c-card>
+                          </c-col>
+                        </c-row>
+                      </div>
+                    </ng-template>
+                  </c-smart-table>
+                </c-card-body>
+              </c-card>
+            </c-col>
+          </c-row>
+          <!-- Hitos -->
+          <c-row>
+            <c-col xs="12">
+              <c-card class="p-2">
+                <c-card-header>
+                  <h5 class="text-primary mb-3" style="text-align: center">
+                    Hitos
+                  </h5>
+                </c-card-header>
+                <c-card-body>
+                  <c-row clas="mb-4">
+                    <c-col xs="6" md="6">
+                      <c-card>
+                        <c-card-header>
+                          <strong>Comentarios</strong>
+                          <div
+                            class="float-end"
+                            *ngIf="investigation.state !== 'finalized'"
+                          >
+                            <c-container>
+                              <c-row>
+                                <c-col xs="12" md="3">
+                                  <button
+                                    cTooltip="Agregar comentario"
+                                    cTooltipPlacement="bottom"
+                                    (click)="toggleCommentModal()"
+                                    cButton
+                                    color="info"
+                                    size="sm"
+                                  >
+                                    <c-icon name="cil-plus"></c-icon>
+                                  </button>
+                                </c-col>
+                              </c-row>
+                            </c-container>
+                          </div>
+                        </c-card-header>
+                        <c-card-body>
+                          <c-row>
+                            <c-col xs="12">
+                              <div cListGroup class="comment-section-container">
+                                <div
+                                  *ngFor="let comment of investigation.comments"
+                                  cListGroupItem
+                                >
+                                  <c-row>
+                                    <c-col xs="12" md="12">
+                                      <div class="d-flex justify-content-end">
+                                        <p stlye="font-size: 0.8rem;">
+                                          {{
+                                            comment.created_at | date : "medium"
+                                          }}
+                                        </p>
+                                      </div>
+                                    </c-col>
+                                  </c-row>
+
+                                  <c-row>
+                                    <c-col xs="12" md="12">
+                                      <div class="comment-container">
+                                        <p>{{ comment.comment }}</p>
+                                      </div>
+                                    </c-col>
+                                  </c-row>
+                                </div>
+                                <ng-container
+                                  *ngIf="loadingSubmitComment$ | async"
+                                  [ngTemplateOutlet]="loadingOverlay"
+                                ></ng-container>
+                              </div>
+                            </c-col>
+                          </c-row>
+                        </c-card-body>
+                      </c-card>
+                      <strong></strong>
+                    </c-col>
+                    <c-col xs="6" md="6">
+                      <c-card>
+                        <c-card-header>
+                          <strong>Evidencias</strong>
+                          <div
+                            class="float-end"
+                            *ngIf="investigation.state !== 'finalized'"
+                          >
+                            <c-container>
+                              <c-row>
+                                <c-col xs="12" md="3">
+                                  <button
+                                    cTooltip="Agregar Evidencia"
+                                    cTooltipPlacement="bottom"
+                                    (click)="toggleEvidenceModal()"
+                                    cButton
+                                    color="info"
+                                    size="sm"
+                                  >
+                                    <c-icon name="cil-plus"></c-icon>
+                                  </button>
+                                </c-col>
+                              </c-row>
+                            </c-container>
+                          </div>
+                        </c-card-header>
+                        <c-card-body>
+                          <div cListGroup class="evidence-section-container">
+                            <button
+                              *ngFor="let evidence of investigation.evidences"
+                              (click)="downloadGlobalEvidence(evidence.id)"
+                              cListGroupItem
+                            >
+                              {{ evidence.filename }}
+                            </button>
+                            <ng-container
+                              *ngIf="loadingSubmitEvidence$ | async"
+                              [ngTemplateOutlet]="loadingOverlay"
+                            ></ng-container>
+                          </div>
+                        </c-card-body>
+                      </c-card>
+                    </c-col>
+                  </c-row>
+                </c-card-body>
+              </c-card>
+            </c-col>
+          </c-row>
+          <!-- Resolución -->
+          <c-row>
+            <c-col xs="12">
+              <c-card
+                class="p-2"
+                class="resolution-container"
+                style="margin-top: 2em"
+              >
+                <c-card-header>
+                  <!-- direction column -->
+                  <div class="d-flex justify-content-between flex-column">
+                    <h5
+                      class="text-primary"
+                      style="margin: 0; text-align: center"
+                    >
+                      Resolución de la investigación
+                    </h5>
+                    <p
+                      *ngIf="resolutionUpdated"
+                      class="text-success"
+                      style="font-size: 0.8rem; margin: 0"
+                    >
+                      Resolución actualizada con éxito!
+                    </p>
+                  </div>
+                </c-card-header>
+                <c-card-body>
+                  <textarea
+                    cTextarea
+                    id="resolution"
+                    [(ngModel)]="resolution"
+                    rows="5"
+                    class="form-control"
+                    [disabled]="investigation.state === 'finalized'"
+                    placeholder="Escribe aquí la resolución de la investigación"
+                    maxlength="4500"
+                  ></textarea>
+                  <div class="mt-1 text-end text-muted">
+                    {{ resolution.length }}/4500 caracteres
+                  </div>
+                </c-card-body>
+                <c-card-footer>
+                  <button
+                    [disabled]="
+                      !resolution ||
+                      resolution.length === 0 ||
+                      investigation.state === 'finalized'
+                    "
+                    cButton
+                    color="success"
+                    size="md"
+                    (click)="updateInvestigationResolution()"
+                  >
+                    Actualizar resolución
+                  </button>
+                </c-card-footer>
+                <ng-container
+                  *ngIf="loadingSubmitResolution$ | async"
+                  [ngTemplateOutlet]="loadingOverlay"
+                ></ng-container>
+              </c-card>
+            </c-col>
+          </c-row>
+
+          <c-row
+            class="mb-4"
+            *ngIf="investigation.state !== 'finalized'"
+            style="margin-top: 2em"
+          >
+            <c-col xs="12">
+              <div class="d-flex justify-content-end finalize-container">
+                <c-button
+                  cButton
+                  color="primary"
+                  size="md"
+                  (click)="confirmModal = true"
+                >
+                  <ng-container *ngIf="loadingFinalize$ | async; else showText">
+                    <c-spinner aria-hidden="true" size="sm"></c-spinner>
+                  </ng-container>
+                  <ng-template #showText>
+                    <span>Finalizar investigación</span>
+                  </ng-template>
+                </c-button>
+              </div>
+            </c-col>
+          </c-row>
+        </c-card-body>
+      </c-card>
+    </c-col>
+  </c-row>
+</c-container>
+<!-- TODO Refactor modales -->
+
+<c-modal
+  [visible]="complaintModalVisible"
+  (visibleChange)="handleComplaintModalChange($event)"
+>
+  <c-modal-header>
+    <h5 class="text-primary mb-3">
+      Denuncia hecha por <b> {{ selectedComplaint?.role }}</b>
+      <br />
+      {{ selectedComplaint?.name }}
+      de
+      <span class="text-warning">{{ selectedComplaint?.course }}</span>
+    </h5>
+    <button (click)="toggleComplaintModal(null)" cButtonClose></button>
+  </c-modal-header>
+  <c-modal-body>
+    <h6 class="text-warning mb-3">Detalles de la denuncia</h6>
+    <p><strong>Descripción:</strong> {{ selectedComplaint?.description }}</p>
+    <p>
+      <strong>Ubicación:</strong> {{ selectedComplaint?.where_description }}
+    </p>
+    <p>
+      <strong>Estaba solo:</strong> {{ selectedComplaint?.alone ? "Sí" : "No" }}
+    </p>
+    <p>
+      <strong>Con quién:</strong>
+      {{ selectedComplaint?.with_description || "No especificado" }}
+    </p>
+    <c-alert *ngIf="selectedComplaint?.evidences.length === 0" color="secondary"
+      >No se encuentra registro de evidencia
+    </c-alert>
+    <p>
+      <strong>Fecha del evento:</strong> {{ selectedComplaint?.date_event }}
+    </p>
+    <p>
+      <strong>Rol en la denuncia:</strong>
+      {{ selectedComplaint?.role_in_complaint | translateRoleInComplaintFull }}
+    </p>
+    <hr class="my-4" />
+
+    <h6 class="text-warning mb-3">Evidencia de denuncia</h6>
+
+    <c-alert *ngIf="selectedComplaint?.evidences.length === 0" color="secondary"
+      >No se encuentra registro de evidencia
+    </c-alert>
+    <div cListGroup *ngFor="let evidence of selectedComplaint?.evidences">
+      <button
+        cButton
+        cListGroupItem
+        cTooltip="Descargar Evidencia"
+        cTooltipPlacement="bottom"
+        (click)="downloadEvidence(evidence.id)"
+        color="secondary"
+        size="sm"
+        class="d-flex justify-content-between align-items-center"
+      >
+        <span>{{ evidence.file_name }}</span>
+        <c-icon name="cil-cloud-download"></c-icon>
+      </button>
+    </div>
+  </c-modal-body>
+</c-modal>
+
+<c-modal
+  [visible]="involvedEvidenceModalVisible"
+  (visibleChange)="handleInvolvedEvidenceModalChange($event)"
+>
+  <c-modal-header>
+    <h5>
+      Subir evidencia para:
+      {{ selectedInvolved?.name }}
+    </h5>
+    <button (click)="toggleInvolvedEvidenceModal(null)" cButtonClose></button>
+  </c-modal-header>
+  <c-modal-body>
+    <c-row>
+      <c-col xs="12" md="12">
+        <ngx-file-drop
+          dropZoneLabel="Sube tu evidencia aquí"
+          (onFileDrop)="dropped($event, selectedInvolved?.id)"
+          contentClassName="drop-content"
+          [accept]="evidenceAcceptString"
+        >
+          >
+          <ng-template
+            ngx-file-drop-content-tmp
+            let-openFileSelector="openFileSelector"
+          >
+            <div class="drop-container">
+              <h4>Arrastre y suelte su archivo aquí</h4>
+              <button cButton color="secondary" (click)="openFileSelector()">
+                Explorar Archivos
+              </button>
+            </div>
+          </ng-template>
+        </ngx-file-drop>
+      </c-col>
+    </c-row>
+  </c-modal-body>
+</c-modal>
+
+<c-modal
+  [visible]="EvidencesModalVisible"
+  (visibleChange)="handleEvidenceModalChange($event)"
+>
+  <c-modal-header>
+    <h5>Subir evidencia</h5>
+    <button (click)="toggleEvidenceModal()" cButtonClose></button>
+  </c-modal-header>
+  <c-modal-body>
+    <c-row>
+      <c-col xs="12" md="12">
+        <ngx-file-drop
+          dropZoneLabel="Sube tu evidencia aquí"
+          (onFileDrop)="droppedEvidence($event)"
+          contentClassName="drop-content"
+          [accept]="evidenceAcceptString"
+        >
+          >
+          <ng-template
+            ngx-file-drop-content-tmp
+            let-openFileSelector="openFileSelector"
+          >
+            <div class="drop-container">
+              <h4>Arrastre y suelte su archivo aquí</h4>
+              <button cButton color="secondary" (click)="openFileSelector()">
+                Explorar Archivos
+              </button>
+            </div>
+          </ng-template>
+        </ngx-file-drop>
+      </c-col>
+    </c-row>
+  </c-modal-body>
+</c-modal>
+
+<c-modal
+  [visible]="involvedCommentModalVisible"
+  (visibleChange)="handleInvolvedCommentModalChange($event)"
+>
+  <c-modal-header>
+    <h5>Agregar comentario para: {{ selectedInvolvedComment?.name }}</h5>
+    <button (click)="toggleInvolvedCommentModal(null)" cButtonClose></button>
+  </c-modal-header>
+  <c-modal-body>
+    <c-row>
+      <c-col xs="12" md="12">
+        <textarea
+          cTextarea
+          id="newComment"
+          [(ngModel)]="newComment"
+          rows="5"
+          class="form-control"
+          maxlength="4500"
+          placeholder="Escribe aquí tu comentario"
+        ></textarea>
+        <div class="mt-1 text-end text-muted">
+          {{ newComment.length }}/4500 caracteres
+        </div>
+      </c-col>
+    </c-row>
+    <c-row>
+      <c-col xs="12" md="12">
+        <button
+          [disabled]="!newComment || newComment.length === 0"
+          cButton
+          color="success"
+          size="md"
+          (click)="submitInvolvedComment()"
+        >
+          Agregar comentario
+        </button>
+      </c-col>
+    </c-row>
+  </c-modal-body>
+  <ng-template #loadingOverlay>
+    <div
+      class="loading-overlay-child d-flex justify-content-center align-items-center"
+    >
+      <c-spinner color="primary" size="xl" />
+    </div>
+  </ng-template>
+</c-modal>
+
+<c-modal
+  [visible]="CommentModalVisible"
+  (visibleChange)="handleCommentModalChange($event)"
+>
+  <c-modal-header>
+    <h5>Agregar comentario</h5>
+    <button (click)="toggleCommentModal()" cButtonClose></button>
+  </c-modal-header>
+  <c-modal-body>
+    <c-row>
+      <c-col xs="12" md="12">
+        <textarea
+          cTextarea
+          id="newGlobalComment"
+          [(ngModel)]="newGlobalComment"
+          rows="5"
+          class="form-control"
+          maxlength="4500"
+          placeholder="Escribe aquí tu comentario"
+        ></textarea>
+        <div class="mt-1 text-end text-muted">
+          {{ newGlobalComment.length }}/4500 caracteres
+        </div>
+      </c-col>
+    </c-row>
+    <c-row>
+      <c-col xs="12" md="12">
+        <button
+          [disabled]="!newGlobalComment || newGlobalComment.length === 0"
+          cButton
+          color="success"
+          size="md"
+          (click)="submitComment()"
+        >
+          Agregar comentario
+        </button>
+      </c-col>
+    </c-row>
+  </c-modal-body>
+  <ng-template #loadingOverlay>
+    <div
+      class="loading-overlay-child d-flex justify-content-center align-items-center"
+    >
+      <c-spinner color="primary" size="xl" />
+    </div>
+  </ng-template>
+</c-modal>
+
+<c-modal
+  [(visible)]="confirmModal"
+  title="Confirmar Finalización"
+  color="danger"
+  (closed)="resetModal()"
+>
+  <div class="modal-body">
+    <p>¿Estás seguro de que deseas finalizar la investigación?</p>
+  </div>
+  <div class="modal-footer">
+    <button cButton color="secondary" (click)="confirmModal = false">
+      Cancelar
+    </button>
+    <button cButton color="danger" (click)="onConfirm()">Confirmar</button>
+  </div>
+</c-modal>
+
+<div style="margin-top: 15px; margin-bottom: 15px"></div>
+
+<h3 style="text-align: left">Previsualización de informe</h3>
+
+<div id="reporte-container" class="p-4">
+  <ng-container *ngIf="investigation$ | async as investigation">
+    <c-card>
+      <c-card-body>
+        <div class="avoid-break">
+          <div class="d-flex flex-column justify-content-center mb-2">
+            <div style="align-self: flex-start">
+              <c-logo [sociogram]="true"></c-logo>
+            </div>
+            <h1 style="text-align: center">
+              Investigación <strong>{{ investigation.title }}</strong>
+            </h1>
+          </div>
+          <c-card-header ngPreserveWhitespaces>
+            <h4 style="text-align: left">Progreso de investigación</h4>
+            <c-progress
+              [value]="getStatePercentage(investigation.state)"
+              [color]="getStateColor(investigation.state)"
+            >
+              {{ investigation.state | translateInvestigationState }}
+            </c-progress>
+          </c-card-header>
+
+          <div style="margin-top: 15px; margin-bottom: 15px"></div>
+
+          <c-row style="flex-direction: column">
+            <c-col xs="12" md="5" style="margin-top: 1em">
+              <ul cListGroup flush>
+                <li cListGroupItem class="overview-content">
+                  <b>Institución:</b>
+                  <span>{{ institutionName }}</span>
+                </li>
+                <li cListGroupItem class="overview-content">
+                  <b> Motivo de la investigación: </b>
+                  <span>{{ investigation.description }}</span>
+                </li>
+                <li cListGroupItem class="overview-content">
+                  <b>Fecha de inicio: </b>
+                  <span>{{
+                    investigation.created_at | customDate : "DD-MMM-YYYY"
+                  }}</span>
+                </li>
+                <li cListGroupItem class="overview-content">
+                  <b>Encargado de investigación: </b
+                  ><span>{{
+                    mandated ?? "Sin asignación"
+                  }}</span>
+                </li>
+              </ul>
+            </c-col>
+          </c-row>
+          <div style="margin-top: 15px; margin-bottom: 15px"></div>
+          <c-row class="mb-4">
+            <c-col xs="12">
+              <c-card>
+                <c-card-header>
+                  <h5 class="text-primary mb-3" style="text-align: center">
+                    Denuncias asociadas
+                  </h5>
+                </c-card-header>
+                <c-card-body>
+                  <table cTable hover striped responsive>
+                    <thead>
+                      <tr>
+                        <th>Denunciante</th>
+                        <th>Rol</th>
+                        <th>Curso</th>
+                        <th>Descripción</th>
+                        <th>Ubicación</th>
+                        <th>Fecha</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr
+                        *ngFor="
+                          let complaint of investigation.complaints;
+                          let i = index
+                        "
+                      >
+                        <td>
+                          <ng-container
+                            *ngIf="
+                              complaint?.student?.user.user_details as userData
+                            "
+                          >
+                            Estudiante {{ userData.first_name }}
+                            {{ userData.last_name }}
+                          </ng-container>
+                          <ng-container
+                            *ngIf="
+                              complaint?.teacher?.user.user_details as userData
+                            "
+                          >
+                            Profesor {{ userData.first_name }}
+                            {{ userData.last_name }}
+                          </ng-container>
+                        </td>
+                        <td>
+                          {{
+                            complaint.role_in_complaint
+                              | translateRoleInComplaintFull
+                          }}
+                        </td>
+                        <td>
+                          <ng-container
+                            *ngIf="complaint?.student?.courses[0] as course"
+                          >
+                            {{ course.name }}
+                          </ng-container>
+                          <ng-container
+                            *ngIf="complaint?.teacher?.courses[0] as course"
+                          >
+                            {{ course.name }}
+                          </ng-container>
+                        </td>
+                        <td>{{ complaint.description }}</td>
+                        <td>{{ complaint.where_description }}</td>
+                        <td>
+                          {{
+                            complaint.date_event | customDate : "DD-MMM-YYYY"
+                          }}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </c-card-body>
+              </c-card>
+            </c-col>
+          </c-row>
+          <c-row class="mb-4">
+            <c-col xs="12">
+              <c-card>
+                <c-card-header>
+                  <h5 class="text-primary mb-3" style="text-align: center">
+                    Involucrados
+                  </h5>
+                </c-card-header>
+                <c-card-body>
+                  <table cTable hover striped responsive>
+                    <thead>
+                      <tr>
+                        <th>Nombre</th>
+                        <th>Tipo</th>
+                        <th>Rol</th>
+                        <th>Comentarios</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let involved of investigation.involveds">
+                        <td>
+                          <ng-container
+                            *ngIf="
+                              involved.involved?.user?.user_details as userData
+                            "
+                          >
+                            {{ userData.first_name }}
+                            {{ userData.last_name }}
+                          </ng-container>
+                        </td>
+                        <td>
+                          {{ involved.involved_type | translateRole }}
+                        </td>
+                        <td>
+                          {{ involved.role | translateRoleInComplaintFull }}
+                        </td>
+                        <td style="max-width: 30%; word-break: break-word">
+                          <ng-container
+                            *ngIf="
+                              involved.comments.length > 0;
+                              else noComments
+                            "
+                          >
+                            <ul>
+                              <li
+                                *ngFor="let comment of involved.comments"
+                                class="mb-0"
+                              >
+                                {{ comment.comment }}
+                              </li>
+                            </ul>
+                          </ng-container>
+                          <ng-template #noComments>
+                            <span class="text-muted">Sin comentarios</span>
+                          </ng-template>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </c-card-body>
+              </c-card>
+            </c-col>
+          </c-row>
+        </div>
+
+        <div class="avoid-break">
+          <c-row class="mb-4">
+            <c-col xs="12">
+              <c-card>
+                <c-card-header>
+                  <h5 class="text-primary mb-3" style="text-align: center">
+                    Comentarios generales
+                  </h5>
+                </c-card-header>
+                <c-card-body>
+                  <ng-container
+                    *ngIf="investigation.comments.length > 0; else noComments"
+                  >
+                    <ul class="list-group">
+                      <li
+                        *ngFor="let comment of investigation.comments"
+                        class="list-group-item"
+                      >
+                        <p class="mb-1">
+                          <strong>Fecha:</strong>
+                          {{ comment.created_at | customDate : "DD-MMM-YYYY" }}
+                        </p>
+                        <p class="mb-0">
+                          <strong>Comentario:</strong>
+                          {{ comment.comment }}
+                        </p>
+                      </li>
+                    </ul>
+                  </ng-container>
+                </c-card-body>
+              </c-card>
+            </c-col>
+          </c-row>
+          <c-row class="mb-4" *ngIf="investigation.resolution">
+            <c-col xs="12">
+              <c-card>
+                <c-card-header>
+                  <h5 class="text-primary mb-3" style="text-align: center">
+                    Resolución de la investigación
+                  </h5>
+                </c-card-header>
+                <c-card-body>
+                  <div class="description-card">
+                    <p>
+                      {{ investigation.resolution }}
+                    </p>
+                  </div>
+                </c-card-body>
+              </c-card>
+            </c-col>
+          </c-row>
+        </div>
+      </c-card-body>
+    </c-card>
+  </ng-container>
+</div>

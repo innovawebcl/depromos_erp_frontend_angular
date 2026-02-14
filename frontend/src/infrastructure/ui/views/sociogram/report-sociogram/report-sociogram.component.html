@@ -1,0 +1,280 @@
+<c-container>
+  <c-row>
+    <c-col xs="12">
+      <c-card class="mb-4">
+        <c-card-header ngPreserveWhitespaces>
+          <strong>Reporte de sociogramas</strong>
+          <c-row>
+            <c-col xs="12" md="6">
+              <form [formGroup]="courseForm">
+                <select
+                  cSelect
+                  formControlname="courseFormControl"
+                  class="form-select"
+                  (change)="onChange($event)"
+                >
+                  <option [value]="null" disabled>Seleccione una curso</option>
+                  <option
+                    *ngFor="let option of sociogramWithCourses?.courses"
+                    [value]="option.id"
+                  >
+                    {{ option.name }}
+                  </option>
+                </select>
+              </form>
+            </c-col>
+            <c-col
+              xs="12"
+              md="6"
+              style="
+                display: flex;
+                flex-direction: row;
+                justify-content: flex-end;
+                align-items: center;
+              "
+              *ngIf="sociogram"
+            >
+              <button
+                [disabled]="disabledPDF"
+                (click)="generatePDF()"
+                class="btn btn-primary"
+              >
+                <c-spinner
+                  *ngIf="loadingPDF"
+                  aria-hidden="true"
+                  size="sm"
+                  variant="grow"
+                />
+                Generar PDF
+              </button>
+              <button
+                [disabled]="disabledPDF"
+                (click)="sociogramScreenshot()"
+                class="btn btn-primary"
+                style="margin-left: 1em"
+              >
+                <c-spinner
+                  *ngIf="loadingScreenshoot"
+                  aria-hidden="true"
+                  size="sm"
+                  variant="grow"
+                />
+                Descargar sociogramas
+              </button>
+            </c-col>
+          </c-row>
+        </c-card-header>
+
+        <c-card-body>
+          <div id="reporte-container" style="padding: 3em">
+            <c-container>
+              <div class="avoid-break front-page">
+                <h1 style="text-align: center">Resultados de Sociograma</h1>
+                <c-row *ngIf="!sociogram">
+                  <c-col
+                    style="
+                      display: flex;
+                      justify-content: center;
+                      align-items: center;
+                    "
+                  >
+                    <h5>
+                      Selecciona un curso para generar el reporte convivepro
+                    </h5>
+                  </c-col>
+                </c-row>
+                <!-- LOGO -->
+                <c-logo [sociogram]="isValidSociogram"></c-logo>
+
+                <!-- Información adicional -->
+                <c-overview-information
+                  [sociogram]="sociogram"
+                  style="margin: 0 auto; width: fit-content"
+                >
+                </c-overview-information>
+              </div>
+
+              <!-- indicadores-->
+              <div class="avoid-break">
+                <c-container *ngIf="isValidSociogram">
+                  <h2 style="text-align: center">Análisis de Resultados</h2>
+                  <br />
+                  <h4
+                    style="
+                      text-align: left;
+                      text-decoration: underline;
+                      font-weight: bold;
+                    "
+                  >
+                    1. Gráficos e Indicadores
+                  </h4>
+                </c-container>
+
+                <div style="margin-top: 2em"></div>
+
+                <!--Gráficos de métricas simples-->
+
+                <c-simple-metrics
+                  [sociogram]="sociogram"
+                  class="percentage-metrics"
+                >
+                </c-simple-metrics>
+                <div style="margin-top: 2em"></div>
+              </div>
+
+              <!-- Conformidad con establecimiento -->
+              <div class="avoid-break">
+                <div style="margin-top: 2em"></div>
+                <c-container *ngIf="isValidSociogram">
+                  <h4
+                    style="
+                      text-align: left;
+                      text-decoration: underline;
+                      font-weight: bold;
+                    "
+                  >
+                    2. Aspectos Socioemocionales
+                  </h4>
+                </c-container>
+                <div style="margin-top: 2em"></div>
+                <c-institution-metrics
+                  [sociogram]="sociogram"
+                  class="percentage metrics"
+                >
+                </c-institution-metrics>
+
+                <div style="margin-top: 2em"></div>
+              </div>
+
+              <!-- gráfico sociograma-->
+              <div class="avoid-break sociogram-node">
+                <c-container *ngIf="isValidSociogram">
+                  <h4
+                    style="
+                      text-align: left;
+                      text-decoration: underline;
+                      font-weight: bold;
+                    "
+                  >
+                    3. Relaciones Interpersonales
+                  </h4>
+                </c-container>
+                <div style="margin-top: 2em"></div>
+                <c-relationship-metrics [sociogram]="sociogram">
+                </c-relationship-metrics>
+                <div style="margin-top: 2em"></div>
+              </div>
+
+              <!-- Líderes positivos y negativos-->
+              <div class="avoid-break">
+                <c-container *ngIf="isValidSociogram">
+                  <h5 style="text-align: left; font-weight: bold">
+                    3.1 Tipos de Liderazgos
+                  </h5>
+                </c-container>
+                <div style="margin-top: 2em"></div>
+                <c-leaders-metrics
+                  [sociogram]="sociogram"
+                  class="percentage metrics"
+                >
+                </c-leaders-metrics>
+              </div>
+
+              <!-- Gráfico de sociograma para trabajo en grupo -->
+              <div class="avoid-break sociogram-node">
+                <div style="margin-top: 2em"></div>
+                <c-container *ngIf="isValidSociogram">
+                  <h5 style="text-align: left; font-weight: bold">
+                    3.2 Sugerencias para grupos de trabajos
+                  </h5>
+                </c-container>
+                <div style="margin-top: 2em"></div>
+                <c-group-relationship-metrics [sociogram]="sociogram">
+                </c-group-relationship-metrics>
+
+                <div style="margin-top: 2em"></div>
+              </div>
+
+              <!-- Aislamiento -->
+              <div class="avoid-break">
+                <c-container *ngIf="isValidSociogram">
+                  <h5 style="text-align: left; font-weight: bold">
+                    3.3 Aislamiento
+                  </h5>
+                </c-container>
+                <div style="margin-top: 2em"></div>
+                <c-lonely-metrics
+                  [sociogram]="sociogram"
+                  class="percentage metrics"
+                >
+                </c-lonely-metrics>
+              </div>
+
+              <!-- Gráfico de autocuidado-->
+              <div class="avoid-break">
+                <div style="margin-top: 2em"></div>
+
+                <c-container *ngIf="isValidSociogram">
+                  <h5 style="text-align: left; font-weight: bold">
+                    3.4 Autocuidado
+                  </h5>
+                </c-container>
+                <div style="margin-top: 2em"></div>
+                <c-self-health-metrics [sociogram]="sociogram">
+                </c-self-health-metrics>
+              </div>
+
+              <!-- Acoso escolar & áreas a reforzar -->
+              <div class="avoid-break">
+                <div style="margin-top: 2em"></div>
+
+                <c-container *ngIf="isValidSociogram">
+                  <h5 style="text-align: left; font-weight: bold">
+                    3.5 Acoso Escolar (bullying)
+                  </h5>
+                </c-container>
+
+                <div style="margin-top: 2em"></div>
+
+                <c-bullying-metrics [sociogram]="sociogram">
+                </c-bullying-metrics>
+
+                <div style="margin-top: 2em"></div>
+
+                <c-container *ngIf="isValidSociogram">
+                  <h5 style="text-align: left; font-weight: bold">
+                    3.6 Áreas a Reforzar
+                  </h5>
+                </c-container>
+                <div style="margin-top: 2em"></div>
+                <c-reinforcement-metrics [sociogram]="sociogram">
+                </c-reinforcement-metrics>
+              </div>
+
+              <div class="avoid-break">
+                <div style="margin-top: 2em"></div>
+                <c-container *ngIf="isValidSociogram">
+                  <h4
+                    style="
+                      text-align: left;
+                      text-decoration: underline;
+                      font-weight: bold;
+                    "
+                  >
+                    4. Conclusiones y Recomendaciones Generales
+                  </h4>
+                </c-container>
+                <div style="margin-top: 2em"></div>
+
+                <c-end-description-report [sociogram]="isValidSociogram">
+                </c-end-description-report>
+
+                <div style="margin-top: 2em"></div>
+              </div>
+            </c-container>
+          </div>
+        </c-card-body>
+      </c-card>
+    </c-col>
+  </c-row>
+</c-container>

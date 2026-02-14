@@ -1,0 +1,128 @@
+<c-container>
+  <c-row>
+    <c-col xs="12" md="12">
+      <c-card>
+        <c-card-header>
+          <strong>Crear Subcategoría</strong>
+        </c-card-header>
+        <c-card-body>
+          <form cForm novalidate [formGroup]="form" (ngSubmit)="onSubmit()" class="needs-validation">
+            <c-row class="g-3">
+              <c-col xs="12" md="6">
+                <div class="mb-3">
+                  <label cLabel for="custom_label">Tipo de anotación asociado</label>
+                  {{ custom_label}} 
+                  <c-input-group class="has-validation">
+                    <input 
+                      type="text" 
+                      class="form-control" 
+                      formControlName="annotation_level" 
+                      id="annotation_level" 
+                      [value]="custom_label" 
+                      readonly 
+                    />
+                  </c-input-group>
+                </div>
+              </c-col>
+              <c-col xs="12" md="6">
+                <div class="mb-3">
+                  <label cLabel for="custom_label">Nombre de la subcategoría que desea crear ?</label>
+                  <c-input-group class="has-validation">
+                    <input cFormControl formControlName="custom_label" placeholder="Etiqueta personalizada"
+                      aria-describedby="custom_label-span" id="custom_label" type="text" [ngClass]="{
+                              'is-invalid':
+                                form.get('custom_label')?.invalid &&
+                                form.get('custom_label')?.touched
+                            }" />
+                    <c-form-feedback *ngIf="
+                              form.get('custom_label')?.invalid &&
+                              form.get('custom_label')?.touched
+                            " [valid]="form.valid">
+                      {{ getErrorMessage("custom_label") }}
+                    </c-form-feedback>
+                  </c-input-group>
+                </div>
+              </c-col>
+            </c-row>
+            <c-row>
+              <c-col xs="12">
+                <div class="d-flex justify-content-end">
+                  <button cButton class="btn" [ngClass]="{
+                        'btn-primary': !annotation_level_id,
+                        'btn-warning': annotation_level_id
+                      }" type="submit" [disabled]="(loading$ | async)">
+                    <ng-container *ngIf="loading$ | async; else showText">
+                      <c-spinner aria-hidden="true" size="sm"></c-spinner>
+                    </ng-container>
+                    <ng-template #showText>
+                      <span>{{ "Crear Subcategoría" }}</span>
+                    </ng-template>
+                  </button>
+                </div>
+              </c-col>
+            </c-row>
+          </form>
+        </c-card-body>
+      </c-card>
+    </c-col>
+  </c-row>
+</c-container>
+
+
+<c-container class="mt-4">
+  <c-row>
+    <c-col xs="12" md="12">
+      <c-card>
+        <c-card-header>
+          <strong>SubCategorías</strong>
+        </c-card-header>
+        <c-card-body>
+          <form cForm novalidate [formGroup]="form" (ngSubmit)="onSubmit()" class="needs-validation">
+            <c-row class="g-3">
+              <c-smart-table [items]="subcategories" [columns]="[
+                { key: 'subcategory', label: 'Subcategoría' },
+                { key: 'actions', label: 'Acciones' }
+              ]" [loading]="loading$ | async" [tableProps]="{ hover: true, striped: true, responsive: true }">
+                <ng-template cTemplateId="tableData" let-columnName="columnName" let-item="item">
+                  <td>
+                    @switch (columnName) {
+                    @case ('subcategory') {
+                    {{ item.subcategory }}
+                    }
+                    @case ('actions') {
+                    <button cButton color="danger" size="sm" (click)="openDeleteModal(item.id)">
+                      <c-icon name="cil-trash"></c-icon>
+                    </button>
+                    }
+                    }
+                  </td>
+                </ng-template>
+              </c-smart-table>
+
+
+
+            </c-row>
+
+          </form>
+        </c-card-body>
+      </c-card>
+    </c-col>
+  </c-row>
+
+  <c-modal [(visible)]="deleteModalVisible" title="Confirmar eliminación" color="danger" (closed)="resetModal()">
+    <div class="modal-body">
+      <p>
+        ¿Estás seguro de que deseas eliminar la subcatetogía?
+      </p>
+    </div>
+    <div class="modal-footer">
+      <button cButton color="secondary" (click)="resetModal()">
+        Cancelar
+      </button>
+      <button cButton color="danger" (click)="onConfirmDelete()">
+        Confirmar
+      </button>
+    </div>
+  </c-modal>
+
+</c-container>

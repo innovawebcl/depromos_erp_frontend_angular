@@ -1,0 +1,137 @@
+<c-row *ngIf="dashboardResponse$ | async as dashboardResponse">
+  <c-col [xl]="12">
+    <c-container>
+      <c-row>
+        <h5 class="text-primary">Usuarios</h5>
+      </c-row>
+      <c-row>
+        <c-col [sm]="4" *ngFor="let user of userRoles">
+          <c-card class="mb-4">
+            <c-card-body>
+              <div class="d-flex justify-content-between">
+                <h6 cCardTitle class="text-body-secondary text-truncate">
+                  {{ user | translateRole }}
+                </h6>
+                <div
+                  class="bg-primary bg-opacity-25 text-primary rounded p-2 ms-2"
+                >
+                  <svg cIcon name="cilSchool" size="xl"></svg>
+                </div>
+              </div>
+              <div class="fs-4 fw-semibold pb-3">
+                {{ dashboardResponse.users[user] || 0 }}
+              </div>
+            </c-card-body>
+          </c-card>
+        </c-col>
+      </c-row>
+    </c-container>
+    <c-container>
+      <c-row>
+        <h5 class="text-primary">Niveles de Anotaciones</h5>
+      </c-row>
+      <c-row>
+        <c-col [sm]="4" *ngFor="let level of annotationLevels">
+          <c-card class="mb-4">
+            <c-card-body>
+              <div class="d-flex justify-content-between">
+                <h6 cCardTitle class="text-body-secondary text-truncate">
+                  {{ level | translateAnnotation }}
+                </h6>
+                <div
+                  class="bg-primary bg-opacity-25 text-primary rounded p-2 ms-2"
+                >
+                  <svg cIcon name="cilSchool" size="xl"></svg>
+                </div>
+              </div>
+              <div class="fs-4 fw-semibold pb-3">
+                {{ dashboardResponse.annotations[level] || 0 }}
+              </div>
+            </c-card-body>
+          </c-card>
+        </c-col>
+      </c-row>
+    </c-container>
+    <c-container>
+      <c-row>
+        <h5 class="text-primary">Otras métricas</h5>
+      </c-row>
+      <c-row>
+        <c-col [sm]="6">
+          <c-card class="mb-4">
+            <c-card-body>
+              <div class="d-flex justify-content-between">
+                <h6 cCardTitle class="text-body-secondary text-truncate">
+                  Investigaciones
+                </h6>
+                <div
+                  class="bg-primary bg-opacity-25 text-primary rounded p-2 ms-2"
+                >
+                  <svg cIcon name="cilSearch" size="xl"></svg>
+                </div>
+              </div>
+              <div class="fs-4 fw-semibold pb-3">
+                {{ dashboardResponse.investigation }}
+              </div>
+            </c-card-body>
+          </c-card>
+        </c-col>
+        <c-col [sm]="6">
+          <c-card class="mb-4">
+            <c-card-body>
+              <div class="d-flex justify-content-between">
+                <h6 cCardTitle class="text-body-secondary text-truncate">
+                  Denuncias
+                </h6>
+                <div
+                  class="bg-primary bg-opacity-25 text-primary rounded p-2 ms-2"
+                >
+                  <svg cIcon name="cilReportSlash" size="xl"></svg>
+                </div>
+              </div>
+              <div class="fs-4 fw-semibold pb-3">
+                {{ dashboardResponse.complaints }}
+              </div>
+            </c-card-body>
+          </c-card>
+        </c-col>
+        <c-col [sm]="6">
+          <!--  <c-card class="mb-4">
+            <c-card-body>
+              <div class="d-flex justify-content-between">
+                <h6 cCardTitle class="text-body-secondary text-truncate">
+                  Entrevistas
+                </h6>
+                <div class="bg-primary bg-opacity-25 text-primary rounded p-2 ms-2">
+                  <svg cIcon name="cilReportSlash" size="xl"></svg>
+                </div>
+              </div>
+              <div class="fs-4 fw-semibold pb-3">{{
+                dashboardResponse.interviews
+                }}</div>
+            </c-card-body>
+          </c-card> -->
+        </c-col>
+        <c-col [sm]="6">
+          <c-card class="mb-4">
+            <c-card-body>
+              <div class="d-flex justify-content-between">
+                <h6 cCardTitle class="text-body-secondary text-truncate">
+                  Refuerzos Positivos
+                </h6>
+                <div
+                  class="bg-primary bg-opacity-25 text-primary rounded p-2 ms-2"
+                >
+                  <svg cIcon name="cilReportSlash" size="xl"></svg>
+                </div>
+              </div>
+              <div class="fs-4 fw-semibold pb-3">
+                {{ dashboardResponse.positive_reinforcement }}
+              </div>
+            </c-card-body>
+          </c-card>
+        </c-col>
+      </c-row>
+    </c-container>
+  </c-col>
+</c-row>

@@ -1,0 +1,16 @@
+<div class="file-input-container" (click)="triggerFileInput()">
+    <div class="preview" *ngIf="preview; else placeholder">
+        <img [src]="preview" alt="Vista previa" />
+    </div>
+    <ng-template #placeholder>
+        <div class="placeholder">
+            <p>
+                <i class="fas fa-image"></i>
+                <span>Selecciona una imagen</span>
+            </p>
+        </div>
+    </ng-template>
+    <input 
+        #fileInput
+    type="file" (change)="onFileSelected($event)" accept="image/png, image/jpeg" hidden/>
+</div>

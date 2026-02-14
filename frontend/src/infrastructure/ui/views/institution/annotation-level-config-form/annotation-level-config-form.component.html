@@ -1,0 +1,78 @@
+<c-container>
+    <c-row>
+      <c-col xs="12" md="12">
+        <c-card>
+          <c-card-header>
+            <strong>Formulario de Etiqueta de Tipo de Anotación</strong>
+          </c-card-header>
+          <c-card-body>
+            <form cForm novalidate [formGroup]="form" (ngSubmit)="onSubmit()" class="needs-validation">
+              <c-row class="g-3">
+                <c-col xs="12" md="6">
+                    <div class="mb-3">
+                        <label cLabel for="annotation_level">Tipo de anotación asociado</label>
+                        <c-input-group class="has-validation">
+                          <select cFormControl cSelect formControlName="annotation_level" id="annotation_level" [ngClass]="{
+                              'is-invalid':
+                                form.get('annotation_level')?.invalid &&
+                                form.get('annotation_level')?.touched
+                            }">
+                            <option [value]="null" disabled>
+                              Seleccione una opción
+                            </option>
+                            <option *ngFor="let level of annotationLevelOptions" [value]="level">
+                              {{ level | translateAnnotation }}
+                            </option>
+                          </select>
+                          <c-form-feedback *ngIf="
+                              form.get('annotation_level')?.invalid &&
+                              form.get('annotation_level')?.touched
+                            ">
+                            {{ getErrorMessage("annotation_level") }}
+                          </c-form-feedback>
+                        </c-input-group>
+                      </div>
+                </c-col>
+                <c-col xs="12" md="6">
+                    <div class="mb-3">
+                        <label cLabel for="custom_label">Etiqueta con el que será mostrada</label>
+                        <c-input-group class="has-validation">
+                          <input cFormControl formControlName="custom_label" placeholder="Etiqueta personalizada"
+                            aria-describedby="custom_label-span" id="custom_label" type="text" [ngClass]="{
+                              'is-invalid':
+                                form.get('custom_label')?.invalid &&
+                                form.get('custom_label')?.touched
+                            }" />
+                          <c-form-feedback *ngIf="
+                              form.get('custom_label')?.invalid &&
+                              form.get('custom_label')?.touched
+                            " [valid]="form.valid">
+                            {{ getErrorMessage("custom_label") }}
+                          </c-form-feedback>
+                        </c-input-group>
+                      </div>
+                </c-col>
+              </c-row>
+              <c-row>
+                <c-col xs="12">
+                  <div class="d-flex justify-content-end">
+                    <button cButton class="btn" [ngClass]="{
+                        'btn-primary': !annotation_level_id,
+                        'btn-warning': annotation_level_id
+                      }" type="submit" [disabled]="(loading$ | async)">
+                      <ng-container *ngIf="loading$ | async; else showText">
+                        <c-spinner aria-hidden="true" size="sm"></c-spinner>
+                      </ng-container>
+                      <ng-template #showText>
+                        <span>{{ !annotation_level_id ? "Ingresar" : "Actualizar" }}</span>
+                      </ng-template>
+                    </button>
+                  </div>
+                </c-col>
+              </c-row>
+            </form>
+          </c-card-body>
+        </c-card>
+    </c-col>
+    </c-row>
+</c-container>

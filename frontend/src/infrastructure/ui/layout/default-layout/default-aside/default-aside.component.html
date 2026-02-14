@@ -1,0 +1,79 @@
+<c-sidebar
+  #aside1="cSidebar"
+  class="d-print-none hide border-start"
+  colorScheme="light"
+  id="aside1"
+  overlaid
+  placement="end"
+  size="lg"
+>
+  <!--nav for tabs-->
+  <c-sidebar-header class="bg-transparent p-0 position-relative">
+    <c-nav class="w-100" variant="underline-border">
+      <c-nav-item>
+        <a
+          [active]="true"
+          [cTabContent]="asideTabContent"
+          [routerLink]="[]"
+          [tabPaneIdx]="0"
+          cNavLink
+        >
+          <svg alt="CoreUI Icons List" cIcon name="cilList"></svg>
+        </a>
+      </c-nav-item>
+      <c-nav-item>
+        <a
+          [cTabContent]="asideTabContent"
+          [routerLink]="[]"
+          [tabPaneIdx]="1"
+          cNavLink
+        >
+          <svg alt="CoreUI Icons Speech" cIcon name="cilSpeech"></svg>
+        </a>
+      </c-nav-item>
+      <c-nav-item>
+        <a
+          [cTabContent]="asideTabContent"
+          [routerLink]="[]"
+          [tabPaneIdx]="2"
+          cNavLink
+        >
+          <svg alt="CoreUI Icons Settings" cIcon name="cilSettings"></svg>
+        </a>
+      </c-nav-item>
+      <c-nav-item class="ms-auto me-2 d-flex align-items-center">
+        <!--aside toggler-->
+        <button
+          cButtonClose
+          cSidebarToggle="aside1"
+          class="end-0 my-0 top-50 position-absolute translate-middle"
+          toggle="visible"
+        ></button>
+      </c-nav-item>
+    </c-nav>
+  </c-sidebar-header>
+
+  <!--tab content-->
+  <c-tab-content #asideTabContent="cTabContent">
+    <c-tab-pane role="tabpanel">
+      <ng-container *ngTemplateOutlet="tabPane1" />
+    </c-tab-pane>
+    <c-tab-pane class="p-2" role="tabpanel">
+      <ng-container *ngTemplateOutlet="tabPane2" />
+    </c-tab-pane>
+    <c-tab-pane class="p-3" role="tabpanel">
+      <ng-container *ngTemplateOutlet="tabPane3" />
+    </c-tab-pane>
+  </c-tab-content>
+</c-sidebar>
+
+<!--tab pane templates-->
+<ng-template #tabPane1>
+  <div [flush]="true" cListGroup></div>
+</ng-template>
+
+<ng-template #tabPane2>
+  <div [flush]="true" cListGroup></div>
+</ng-template>
+
+<ng-template #tabPane3> </ng-template>

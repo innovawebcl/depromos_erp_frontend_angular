@@ -1,0 +1,23 @@
+<c-row *ngIf="sociogram" style="flex-direction: column">
+  <c-col xs="12" md="5" style="margin-top: 1em">
+    <ul cListGroup flush>
+      <li cListGroupItem class="overview-content">
+        <b>Colegio: </b> <span>{{ sociogram.institution }}</span>
+      </li>
+      <li cListGroupItem class="overview-content">
+        <b>Curso: </b> <span>{{ sociogram.course }}</span>
+      </li>
+      <li cListGroupItem class="overview-content">
+        <b>Profesor/a Jefe: </b><span>{{ sociogram.teacher }}</span>
+      </li>
+      <li cListGroupItem class="overview-content">
+        <b>Fecha del reporte: </b> <span>{{ sociogram.date }}</span>
+      </li>
+    </ul>
+  </c-col>
+  <c-col style="margin-top: 2em; margin-bottom: 2em">
+    <c-alert color="success" style="text-align: center">
+      {{ sociogram.report_description }}
+    </c-alert>
+  </c-col>
+</c-row>

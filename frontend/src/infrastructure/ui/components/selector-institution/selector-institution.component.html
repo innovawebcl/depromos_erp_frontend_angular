@@ -1,0 +1,23 @@
+<div *ngIf="isSuperAdministrator()">
+  <form cForm novalidate [formGroup]="form">
+    <c-input-group>
+      <select
+        cSelect
+        class="form-control"
+        id="institution_id"
+        formControlName="institution_id"
+        aria-label="Selecciona una institución"
+      >
+        <option [value]="null" disabled selected>
+          Selecciona una institución
+        </option>
+        <option
+          *ngFor="let institution of institutions | async"
+          [value]="institution.id"
+        >
+          {{ institution.name }}
+        </option>
+      </select>
+    </c-input-group>
+  </form>
+</div>

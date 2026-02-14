@@ -1,0 +1,70 @@
+<c-row>
+  <c-col [xs]="12" [md]="!isInspectorOrTeacher ? 8 : 12">
+    <ng-container>
+      <c-card class="mb-4">
+        <c-card-body>
+          <c-chart [data]="studentsChartData" type="bar" />
+        </c-card-body>
+      </c-card>
+    </ng-container>
+  </c-col>
+  <c-col [xs]="12" [md]="4">
+    <c-container
+      *ngIf="!isInspectorOrTeacher"
+      class="container-pointer"
+      (click)="navigateToComplaints()"
+    >
+      <c-widget-stat-c
+        title="Total de Denuncias"
+        class="mb-4"
+        [value]="complaints"
+      >
+        <ng-template cTemplateId="widgetIconTemplate">
+          <svg cIcon height="26" name="cil-chart"></svg>
+        </ng-template>
+        <ng-template cTemplateId="widgetProgressTemplate">
+          <c-progress
+            class="mt-3 mb-0"
+            thin
+            [value]="complaints"
+            color="primary"
+          />
+        </ng-template>
+      </c-widget-stat-c>
+    </c-container>
+    <c-container
+      class="container-pointer"
+      (click)="navigateToInvestigation()"
+      *ngIf="!isInspectorOrTeacher"
+    >
+      <c-widget-stat-c
+        title="Total de Investigaciones"
+        class="mb-4"
+        [value]="investigation"
+      >
+        <ng-template cTemplateId="widgetIconTemplate">
+          <svg cIcon height="26" name="cil-chart"></svg>
+        </ng-template>
+        <ng-template cTemplateId="widgetProgressTemplate">
+          <c-progress
+            class="mt-3 mb-0"
+            thin
+            [value]="investigation"
+            color="primary"
+          />
+        </ng-template>
+      </c-widget-stat-c>
+    </c-container>
+  </c-col>
+
+  <ng-container *ngIf="!isInspectorOrTeacher">
+    <c-col [xs]="4" *ngFor="let sociogramChart of sociogramCharts">
+      <c-card class="mb-4">
+        <c-card-body class="p-4">
+          <h5>{{ sociogramChart.label }}</h5>
+          <c-chart [data]="sociogramChart.data" type="bar" />
+        </c-card-body>
+      </c-card>
+    </c-col>
+  </ng-container>
+</c-row>

@@ -1,0 +1,32 @@
+// Fondo principal del login
+body {
+  background: linear-gradient(135deg, #f5f9fc, #eaf3fa); // Fondo amigable y claro.
+}
+
+// Colores corporativos para CoreUI
+$primary: #008fc1 !default; // Azul corporativo.
+$warning: #fc8500 !default; // Naranja corporativo.
+
+.c-card {
+  border-radius: 10px; // Bordes suaves.
+}
+
+.c-card-group .c-card:last-child {
+  background: linear-gradient(135deg, rgba(0, 143, 193, 0.8), rgba(255, 255, 255, 0.8));
+  color: white;
+}
+
+button.c-button {
+  background-color: $warning;
+  color: white;
+  font-weight: bold;
+  &:hover {
+    background-color: darken($warning, 5%);
+  }
+}
+
+h2.text-primary {
+  color: $primary !important;
+  font-size: 1.8rem;
+  font-weight: bold;
+}

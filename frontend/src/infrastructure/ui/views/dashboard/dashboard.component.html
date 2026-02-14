@@ -1,0 +1,27 @@
+<c-row>
+  <h3 class="text-primary" style="margin-bottom: 1em">
+    <span class="text-warning"> Bienvenido</span> {{ name }}
+  </h3>
+
+  <ng-container *ngIf="currentUserRole === 'Administrator'">
+    <administrator-gadget></administrator-gadget>
+  </ng-container>
+
+  <ng-container *ngIf="currentUserRole === 'Student'">
+    <student-gadget></student-gadget>
+  </ng-container>
+
+  <ng-container *ngIf="currentUserRole === 'SuperAdministrator'">
+    <super-administrator-gadget></super-administrator-gadget>
+  </ng-container>
+
+  <ng-container *ngIf="currentUserRole === 'Teacher'">
+    <administrator-gadget></administrator-gadget>
+  </ng-container>
+</c-row>
+
+<c-row *ngIf="!currentUserRole">
+  <c-col>
+    <p>No role assigned. Contact administrator.</p>
+  </c-col>
+</c-row>

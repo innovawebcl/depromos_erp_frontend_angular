@@ -1,0 +1,46 @@
+.construction-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* Ocupa toda la altura de la ventana */
+  text-align: center;
+  background-color: #f8f9fa; /* Color de fondo suave */
+}
+
+.construction-page h1 {
+  color: #6c757d; /* Color de texto gris */
+}
+
+.details-container {
+  padding: 1rem;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+}
+
+.question-container {
+  margin-bottom: 1rem;
+}
+
+.question-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #495057;
+}
+
+.answers-list {
+  list-style-type: none;
+  padding: 0;
+  margin: 0.5rem 0 0;
+}
+
+.answer-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.answer-item .badge {
+  margin-right: 0.5rem;
+  font-size: 0.85rem;
+}

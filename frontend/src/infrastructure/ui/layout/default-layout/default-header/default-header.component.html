@@ -1,0 +1,146 @@
+<!-- <c-header class="mb-4 d-print-none" position="sticky"> -->
+<ng-container>
+  <c-container [fluid]="true" class="px-4">
+    <button
+      [cSidebarToggle]="sidebarId"
+      cHeaderToggler
+      class="d-lg-none pe-3"
+      toggle="visible"
+      style="margin-inline-start: -14px"
+    >
+      <svg cIcon name="cilMenu" size="lg"></svg>
+    </button>
+
+    <c-header-nav
+      class="ms-0"
+      style="
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex: 1;
+      "
+    >
+      <ng-container *ngIf="institution">
+        <div class="d-flex justify-content-start align-items-center gap-2">
+        <img
+          *ngIf="institution.logo_url"
+          [src]="institution.logo_url"
+          alt="Logo de {{ institution.name }}"
+          class="institution-logo"
+        />
+        <h5 class="text-primary fw-semibold">{{ institution.name }}</h5>
+        </div>
+      </ng-container>
+      <div
+        style="display: flex; justify-content: flex-end; align-items: flex-end; flex: 1"
+      >
+        <selector-institution
+          (institutionChange)="setInstitution($event)"
+        ></selector-institution>
+        <ng-container *ngTemplateOutlet="themeDropdown" />
+        <div class="nav-item py-1">
+          <div class="vr h-100 mx-2 text-body text-opacity-75"></div>
+        </div>
+        <ng-container *ngTemplateOutlet="userDropdown" />
+      </div>
+    </c-header-nav>
+  </c-container>
+</ng-container>
+<!-- </c-header> -->
+
+<ng-template #userDropdown>
+  <c-dropdown
+    [popperOptions]="{ placement: 'bottom-start' }"
+    variant="nav-item"
+  >
+    <button [caret]="false" cDropdownToggle class="py-0">
+      <div
+        style="
+          border: 1px solid white;
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          flex-direction: column;
+        "
+      >
+        {{ name | initials }}
+      </div>
+    </button>
+    <ul cDropdownMenu class="pt-0 w-auto">
+      <li>
+        <h6
+          cDropdownHeader
+          class="bg-body-secondary text-body-secondary fw-semibold py-2"
+        >
+          ConvivePro
+        </h6>
+      </li>
+      <li></li>
+      <li *ngIf="isUserAllowedToEditProfile">
+        <a cDropdownItem routerLink="/profile">
+          <svg cIcon class="me-1" name="cilUser"></svg>
+          Perfil
+        </a>
+      </li>
+      <li>
+        <hr cDropdownDivider />
+      </li>
+
+      <li>
+        <a cDropdownItem (click)="logout()">
+          <svg cIcon class="me-1" name="cilAccountLogout"></svg>
+          Cerrar Sesión
+        </a>
+      </li>
+    </ul>
+  </c-dropdown>
+</ng-template>
+
+<ng-template #themeDropdown>
+  <c-dropdown alignment="end" variant="nav-item">
+    <button [caret]="false" cDropdownToggle>
+      @switch (colorMode()) { @case ("dark") {
+      <svg cIcon name="cilMoon" size="lg"></svg>
+      } @case ("auto") {
+      <svg cIcon name="cilContrast" size="lg"></svg>
+      } @default {
+      <svg cIcon name="cilSun" size="lg"></svg>
+      } }
+    </button>
+    <div cDropdownMenu>
+      <button
+        (click)="colorMode.set('light')"
+        [active]="colorMode() === 'light'"
+        [routerLink]="[]"
+        cDropdownItem
+        class="d-flex align-items-center"
+      >
+        <svg cIcon class="me-2" name="cilSun" size="lg"></svg>
+        Light
+      </button>
+      <button
+        (click)="colorMode.set('dark')"
+        [active]="colorMode() === 'dark'"
+        [routerLink]="[]"
+        cDropdownItem
+        class="d-flex align-items-center"
+      >
+        <svg cIcon class="me-2" name="cilMoon" size="lg"></svg>
+        Dark
+      </button>
+      <button
+        (click)="colorMode.set('auto')"
+        [active]="colorMode() === 'auto'"
+        [routerLink]="[]"
+        cDropdownItem
+        class="d-flex align-items-center"
+      >
+        <svg cIcon class="me-2" name="cilContrast" size="lg"></svg>
+        Auto
+      </button>
+    </div>
+  </c-dropdown>
+</ng-template>

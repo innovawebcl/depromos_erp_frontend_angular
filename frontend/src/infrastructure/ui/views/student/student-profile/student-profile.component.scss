@@ -1,0 +1,17 @@
+table {
+    table-layout: fixed;
+    font-size: 0.9375rem;
+}
+
+.obs-col {
+    max-width: 35%;
+    white-space: normal !important;
+    word-break: break-word;
+    overflow-wrap: break-word;
+}
+
+.avoid-break {
+    page-break-inside: avoid;
+    break-inside: avoid;
+    margin-bottom: 16px;
+}

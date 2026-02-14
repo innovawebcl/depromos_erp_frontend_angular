@@ -1,0 +1,68 @@
+<c-container>
+    <c-row>
+      <c-col xs="12">
+        <c-card class="mb-4 p-2" *ngIf="interview$ | async as interview">
+            <c-card-header>
+                <c-row>
+                    <c-col>
+                      <h5 class="text-primary">
+                        Entrevista de alumno <strong>{{ interview.student.user.detail.first_name }} {{ interview.student.user.detail.last_name }}</strong>
+                      </h5>
+                    </c-col>
+                </c-row>
+            </c-card-header>
+            <c-card-body>
+                <c-row class="mb-3">
+                    <c-col xs="12" md="6">
+                        <h4 class="text-primary">Fecha de la entrevista</h4>
+                        <h6>{{ interview.interview_date | customDate: 'DD de MMMM YYYY. HH:mm' }}</h6>
+                    </c-col>
+                    <c-col xs="12" md="6">
+                        <h4 class="text-primary">Razón de la entrevista</h4>
+                        <h6>{{ interview.reason }}</h6>
+                    </c-col>
+                </c-row>
+                <c-row class="mb-3" *ngIf="interview.records">
+                    <c-col xs="12">
+                        <c-card>
+                            <c-card-header>
+                                <h4 class="text-primary">Antecedentes</h4>
+                            </c-card-header>
+                            <c-card-body>
+                                <div class="html-description"
+                                [innerHTML]="interview.records | safeHtml"></div>
+                            </c-card-body>
+                        </c-card>
+                    </c-col>
+                </c-row>
+                <c-row class="mb-3" *ngIf="interview.comments">
+                    <c-col xs="12">
+                        <c-card>
+                            <c-card-header>
+                                <h4 class="text-primary">Comentarios</h4>
+                            </c-card-header>
+                            <c-card-body>
+                                <div class="html-description"
+                                [innerHTML]="interview.comments | safeHtml"></div>
+                            </c-card-body>
+                        </c-card>
+                    </c-col>
+                </c-row>
+                <c-row class="mb-3" *ngIf="interview.agreements">
+                    <c-col xs="12">
+                        <c-card>
+                            <c-card-header>
+                                <h4 class="text-primary">Acuerdos</h4>
+                            </c-card-header>
+                            <c-card-body>
+                                <div class="html-description"
+                                [innerHTML]="interview.agreements | safeHtml"></div>
+                            </c-card-body>
+                        </c-card>
+                    </c-col>
+                </c-row>
+            </c-card-body>
+        </c-card>
+      </c-col>
+    </c-row>
+</c-container>

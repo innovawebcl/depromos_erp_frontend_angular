@@ -1,0 +1,689 @@
+<c-container>
+  <c-row>
+    <c-col xs="12">
+      <c-card>
+        <c-card-header>
+          <strong>Formulario de Estudiante</strong>
+        </c-card-header>
+        <c-card-body>
+          <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+            <h6 class="text-primary mb-3">Datos de Usuario</h6>
+            <c-row class="g-3">
+              <c-col xs="12" md="6">
+                <label cLabel for="username">Nombre de usuario</label>
+                <c-input-group class="has-validation">
+                  <input
+                    cFormControl
+                    formControlName="username"
+                    id="username"
+                    type="text"
+                    placeholder="Nombre de usuario"
+                    [ngClass]="{
+                      'is-invalid':
+                        form.get('username')?.invalid &&
+                        form.get('username')?.touched
+                    }"
+                  />
+                  <c-form-feedback
+                    *ngIf="
+                      form.get('username')?.invalid &&
+                      form.get('username')?.touched
+                    "
+                  >
+                    {{ getErrorMessage("username") }}
+                  </c-form-feedback>
+                </c-input-group>
+              </c-col>
+              <c-col xs="12" md="6">
+                <label cLabel for="password">Contraseña</label>
+                <c-input-group class="has-validation">
+                  <input
+                    cFormControl
+                    formControlName="password"
+                    id="password"
+                    type="password"
+                    placeholder="Contraseña"
+                    [ngClass]="{
+                      'is-invalid':
+                        form.get('password')?.invalid &&
+                        form.get('password')?.touched
+                    }"
+                  />
+                  <c-form-feedback
+                    *ngIf="
+                      form.get('password')?.invalid &&
+                      form.get('password')?.touched
+                    "
+                  >
+                    {{ getErrorMessage("password") }}
+                  </c-form-feedback>
+                </c-input-group>
+              </c-col>
+            </c-row>
+
+            <hr class="my-4" />
+            <h6 class="text-primary mb-3">Información Detallada</h6>
+            <c-row class="g-3">
+              <c-col xs="12" md="6">
+                <label cLabel for="first_name">Nombre</label>
+                <c-input-group class="has-validation">
+                  <input
+                    cFormControl
+                    formControlName="first_name"
+                    id="first_name"
+                    type="text"
+                    placeholder="Nombre"
+                    [ngClass]="{
+                      'is-invalid':
+                        form.get('first_name')?.invalid &&
+                        form.get('first_name')?.touched
+                    }"
+                  />
+                  <c-form-feedback
+                    *ngIf="
+                      form.get('first_name')?.invalid &&
+                      form.get('first_name')?.touched
+                    "
+                  >
+                    {{ getErrorMessage("first_name") }}
+                  </c-form-feedback>
+                </c-input-group>
+              </c-col>
+              <c-col xs="12" md="6">
+                <label cLabel for="second_name">Segundo nombre</label>
+                <c-input-group class="has-validation">
+                  <input
+                    cFormControl
+                    formControlName="second_name"
+                    id="second_name"
+                    type="text"
+                    placeholder="Segundo Nombre"
+                    [ngClass]="{
+                      'is-invalid':
+                        form.get('second_name')?.invalid &&
+                        form.get('second_name')?.touched
+                    }"
+                  />
+                  <c-form-feedback
+                    *ngIf="
+                      form.get('second_name')?.invalid &&
+                      form.get('second_name')?.touched
+                    "
+                  >
+                    {{ getErrorMessage("second_name") }}
+                  </c-form-feedback>
+                </c-input-group>
+              </c-col>
+              <c-col xs="12" md="6">
+                <label cLabel for="last_name">Apellido Paterno</label>
+                <c-input-group class="has-validation">
+                  <input
+                    cFormControl
+                    formControlName="last_name"
+                    id="last_name"
+                    type="text"
+                    placeholder="Apellido Paterno"
+                    [ngClass]="{
+                      'is-invalid':
+                        form.get('last_name')?.invalid &&
+                        form.get('last_name')?.touched
+                    }"
+                  />
+                  <c-form-feedback
+                    *ngIf="
+                      form.get('last_name')?.invalid &&
+                      form.get('last_name')?.touched
+                    "
+                  >
+                    {{ getErrorMessage("last_name") }}
+                  </c-form-feedback>
+                </c-input-group>
+              </c-col>
+              <c-col xs="12" md="6">
+                <label cLabel for="second_last_name">Apellido Materno</label>
+                <c-input-group class="has-validation">
+                  <input
+                    cFormControl
+                    formControlName="second_last_name"
+                    id="second_last_name"
+                    type="text"
+                    placeholder="Apellido Materno"
+                    [ngClass]="{
+                      'is-invalid':
+                        form.get('second_last_name')?.invalid &&
+                        form.get('second_last_name')?.touched
+                    }"
+                  />
+                  <c-form-feedback
+                    *ngIf="
+                      form.get('second_last_name')?.invalid &&
+                      form.get('second_last_name')?.touched
+                    "
+                  >
+                    {{ getErrorMessage("second_last_name") }}
+                  </c-form-feedback>
+                </c-input-group>
+              </c-col>
+              <c-col xs="12" md="6">
+                <label cLabel for="email">Correo Electrónico</label>
+                <c-input-group class="has-validation">
+                  <input
+                    cFormControl
+                    formControlName="email"
+                    id="email"
+                    type="email"
+                    placeholder="ejemplo@correo.com"
+                    [ngClass]="{
+                      'is-invalid':
+                        form.get('email')?.invalid && form.get('email')?.touched
+                    }"
+                  />
+                  <c-form-feedback
+                    *ngIf="
+                      form.get('email')?.invalid && form.get('email')?.touched
+                    "
+                  >
+                    {{ getErrorMessage("email") }}
+                  </c-form-feedback>
+                </c-input-group>
+              </c-col>
+              <c-col xs="12" md="6">
+                <label cLabel for="birth_date">Fecha de Nacimiento</label>
+                <c-input-group class="has-validation">
+                  <input
+                    cFormControl
+                    formControlName="birth_date"
+                    id="birth_date"
+                    type="date"
+                    [ngClass]="{
+                      'is-invalid':
+                        form.get('birth_date')?.invalid &&
+                        form.get('birth_date')?.touched
+                    }"
+                  />
+                  <c-form-feedback
+                    *ngIf="
+                      form.get('birth_date')?.invalid &&
+                      form.get('birth_date')?.touched
+                    "
+                  >
+                    {{ getErrorMessage("birth_date") }}
+                  </c-form-feedback>
+                </c-input-group>
+              </c-col>
+              <c-col xs="12" md="6">
+                <label cLabel for="rut">RUT</label>
+                <c-input-group class="has-validation">
+                  <input
+                    cFormControl
+                    formControlName="rut"
+                    id="rut"
+                    type="text"
+                    placeholder="11111111-1"
+                    [ngClass]="{
+                      'is-invalid':
+                        form.get('rut')?.invalid && form.get('rut')?.touched
+                    }"
+                    appRutFormat
+                  />
+                  <c-form-feedback
+                    *ngIf="form.get('rut')?.invalid && form.get('rut')?.touched"
+                  >
+                    {{ getErrorMessage("rut") }}
+                  </c-form-feedback>
+                </c-input-group>
+              </c-col>
+            </c-row>
+
+            <hr class="my-4" />
+            <!-- Información de Estudiante -->
+            <h6 class="text-primary mb-3">Información de Estudiante</h6>
+            <c-row class="g-3">
+              <c-col xs="12" md="6">
+                <label cLabel for="address">Dirección</label>
+                <c-input-group class="has-validation">
+                  <input
+                    cFormControl
+                    formControlName="address"
+                    id="address"
+                    type="text"
+                    placeholder="Dirección"
+                    [ngClass]="{
+                      'is-invalid':
+                        form.get('address')?.invalid &&
+                        form.get('address')?.touched
+                    }"
+                  />
+                  <c-form-feedback
+                    *ngIf="
+                      form.get('address')?.invalid &&
+                      form.get('address')?.touched
+                    "
+                  >
+                    {{ getErrorMessage("address") }}
+                  </c-form-feedback>
+                </c-input-group>
+              </c-col>
+              <c-col xs="12" md="6">
+                <label cLabel for="medical_diagnosis">Diagnóstico Médico</label>
+                <c-input-group class="has-validation">
+                  <input
+                    cFormControl
+                    formControlName="medical_diagnosis"
+                    id="medical_diagnosis"
+                    type="text"
+                    placeholder="Diagnóstico Médico"
+                    [ngClass]="{
+                      'is-invalid':
+                        form.get('medical_diagnosis')?.invalid &&
+                        form.get('medical_diagnosis')?.touched
+                    }"
+                  />
+                  <c-form-feedback
+                    *ngIf="
+                      form.get('medical_diagnosis')?.invalid &&
+                      form.get('medical_diagnosis')?.touched
+                    "
+                  >
+                    {{ getErrorMessage("medical_diagnosis") }}
+                  </c-form-feedback>
+                </c-input-group>
+              </c-col>
+
+              <c-col xs="12" md="6">
+                <label cLabel for="repeated_courses">Cursos Repetidos</label>
+                <c-input-group class="has-validation">
+                  <c-multi-select
+                    clearSearchOnSelect
+                    visibleItems
+                    formControlName="repeated_courses"
+                    [multiple]="true"
+                    [selectAll]="false"
+                    searchNoResultsLabel="No se encuentra registro de busqueda"
+                    style="width: 100%"
+                    placeholder="Selecciona cursos repetidos"
+                  >
+                    <c-multi-select-option
+                      *ngFor="let option of levels"
+                      [value]="option"
+                      [ngClass]="{
+                        'is-invalid':
+                          form.get('repeated_courses')?.invalid &&
+                          form.get('repeated_courses')?.touched
+                      }"
+                    >
+                      {{ option }}
+                    </c-multi-select-option>
+                  </c-multi-select>
+                  <c-form-feedback
+                    *ngIf="
+                      form.get('repeated_courses')?.invalid &&
+                      form.get('repeated_courses')?.touched
+                    "
+                  >
+                    {{ getErrorMessage("repeated_courses") }}
+                  </c-form-feedback>
+                </c-input-group>
+              </c-col>
+
+              <c-col xs="12" md="6">
+                <label cLabel for="years_in_school">Años en la Escuela</label>
+                <c-input-group class="has-validation">
+                  <input
+                    cFormControl
+                    formControlName="years_in_school"
+                    id="years_in_school"
+                    type="number"
+                    placeholder="Años en la Escuela"
+                    [ngClass]="{
+                      'is-invalid':
+                        form.get('years_in_school')?.invalid &&
+                        form.get('years_in_school')?.touched
+                    }"
+                  />
+                  <c-form-feedback
+                    *ngIf="
+                      form.get('years_in_school')?.invalid &&
+                      form.get('years_in_school')?.touched
+                    "
+                  >
+                    {{ getErrorMessage("years_in_school") }}
+                  </c-form-feedback>
+                </c-input-group>
+              </c-col>
+
+              <c-col xs="12" md="6">
+                <label cLabel for="people_living_with"
+                  >Personas que Viven con el Estudiante</label
+                >
+
+                <c-input-group class="has-validation">
+                  <c-multi-select
+                  cFormControl
+                  clearSearchOnSelect
+                  visibleItems
+                  formControlName="people_living_with"
+                  [multiple]="true"
+                  [selectAll]="false"
+                  searchNoResultsLabel="No se encuentra registro de busqueda"
+                  style="width: 100%;"
+                  placeholder="Selecciona familiares"
+                  [valid]="
+                    form.get('people_living_with')?.invalid &&
+                    form.get('people_living_with')?.touched
+                      ? false
+                      : form.get('people_living_with')?.valid
+                      ? true
+                      : undefined
+                  "
+                  required
+                >
+                  <c-multi-select-option
+                    *ngFor="let option of kinshipArray"
+                    [value]="option"
+                  >
+                    {{ option | translateKinship }}
+                  </c-multi-select-option>
+                </c-multi-select>
+                <c-form-feedback
+                  *ngIf="
+                    form.get('people_living_with')?.invalid &&
+                    form.get('people_living_with')?.touched
+                  "
+                  class="invalid-feedback d-block"
+                  >
+                  {{ getErrorMessage('people_living_with') }}
+                </c-form-feedback>
+                </c-input-group>
+              </c-col>
+              <c-col xs="12" md="6">
+                <label cLabel for="number_of_siblings"
+                  >Número de Hermanos</label
+                >
+                <c-input-group class="has-validation">
+                  <input
+                    cFormControl
+                    formControlName="number_of_siblings"
+                    id="number_of_siblings"
+                    type="number"
+                    placeholder="Número de Hermanos"
+                    [ngClass]="{
+                      'is-invalid':
+                        form.get('number_of_siblings')?.invalid &&
+                        form.get('number_of_siblings')?.touched
+                    }"
+                  />
+                  <c-form-feedback
+                    *ngIf="
+                      form.get('number_of_siblings')?.invalid &&
+                      form.get('number_of_siblings')?.touched
+                    "
+                  >
+                    {{ getErrorMessage("number_of_siblings") }}
+                  </c-form-feedback>
+                </c-input-group>
+              </c-col>
+            </c-row>
+            <!-- Cursos -->
+            <hr class="my-4" />
+            <h6 class="text-primary mb-3">
+              Cursos
+              <span *ngIf="courses.length === 0" class="text-danger">
+                Asociación a curso es requerida
+              </span>
+            </h6>
+            <div formArrayName="courses">
+              <c-row
+                *ngFor="let course of courses.controls; let i = index"
+                [formGroupName]="i"
+                class="g-4 align-items-center"
+              >
+                <c-col xs="10" md="10">
+                  <label cLabel for="course_id_{{ i }}">Curso</label>
+                  <c-input-group class="has-validation">
+                    <select
+                      cFormControl
+                      cSelect
+                      formControlName="course_id"
+                      id="course_id_{{ i }}"
+                      [ngClass]="{
+                        'is-invalid':
+                          courses.at(i).get('course_id')?.invalid &&
+                          courses.at(i).get('course_id')?.touched
+                      }"
+                    >
+                      <option [value]="null" disabled>
+                        Seleccione un curso
+                      </option>
+                      <option
+                        *ngFor="let option of coursesOptions | async"
+                        [value]="option.id"
+                      >
+                        {{ option.name }} - {{ option.level }}
+                      </option>
+                    </select>
+                    <c-form-feedback
+                      *ngIf="
+                        courses.at(i).get('course_id')?.invalid &&
+                        courses.at(i).get('course_id')?.touched
+                      "
+                    >
+                      {{ getCourseErrorMessage(i, "course_id") }}
+                    </c-form-feedback>
+                  </c-input-group>
+                </c-col>
+                <c-col xs="12" md="2" class="text-end">
+                  <button
+                    cButton
+                    color="danger"
+                    size="sm"
+                    class="align-middle"
+                    (click)="removeCourse(i)"
+                  >
+                    <c-icon name="cil-trash" size="lg"></c-icon>
+                  </button>
+                </c-col>
+              </c-row>
+            </div>
+            <button
+              type="button"
+              (click)="addCourse()"
+              cButton
+              color="info"
+              class="mt-3"
+            >
+              Agregar Curso
+            </button>
+
+            <!-- Apoderados -->
+            <hr class="my-4" />
+            <h6 class="text-primary mb-3">
+              Apoderados
+              <span *ngIf="guardians.length === 0" class="text-danger">
+                Asociación a apoderado es requerida
+              </span>
+            </h6>
+            <div formArrayName="guardians">
+              <c-row
+                *ngFor="let guardian of guardians.controls; let i = index"
+                [formGroupName]="i"
+                class="g-4 align-items-center"
+              >
+                <c-col xs="12" md="2">
+                  <label cLabel for="name_{{ i }}">Nombre</label>
+                  <c-input-group class="has-validation">
+                    <input
+                      cFormControl
+                      formControlName="name"
+                      id="name_{{ i }}"
+                      type="text"
+                      placeholder="Nombre del Apoderado"
+                      [ngClass]="{
+                        'is-invalid':
+                          guardians.at(i).get('name')?.invalid &&
+                          guardians.at(i).get('name')?.touched
+                      }"
+                    />
+                    <c-form-feedback
+                      *ngIf="
+                        guardians.at(i).get('name')?.invalid &&
+                        guardians.at(i).get('name')?.touched
+                      "
+                    >
+                      {{ getGuardiansErrorMessage(i, "name") }}
+                    </c-form-feedback>
+                  </c-input-group>
+                </c-col>
+                <c-col xs="12" md="2">
+                  <label cLabel for="last_name_{{ i }}">Apellido</label>
+                  <c-input-group class="has-validation">
+                    <input
+                      cFormControl
+                      formControlName="last_name"
+                      id="last_name_{{ i }}"
+                      type="text"
+                      placeholder="Apellido del Apoderado"
+                      [ngClass]="{
+                        'is-invalid':
+                          guardians.at(i).get('last_name')?.invalid &&
+                          guardians.at(i).get('last_name')?.touched
+                      }"
+                    />
+                    <c-form-feedback
+                      *ngIf="
+                        guardians.at(i).get('last_name')?.invalid &&
+                        guardians.at(i).get('last_name')?.touched
+                      "
+                    >
+                      {{ getGuardiansErrorMessage(i, "last_name") }}
+                    </c-form-feedback>
+                  </c-input-group>
+                </c-col>
+                <c-col xs="12" md="2">
+                  <label cLabel for="email_{{ i }}">Correo Electrónico</label>
+                  <c-input-group class="has-validation">
+                    <input
+                      cFormControl
+                      formControlName="email"
+                      id="email_{{ i }}"
+                      type="email"
+                      placeholder="Correo Electrónico del Apoderado"
+                      [ngClass]="{
+                        'is-invalid':
+                          guardians.at(i).get('email')?.invalid &&
+                          guardians.at(i).get('email')?.touched
+                      }"
+                    />
+                    <c-form-feedback
+                      *ngIf="
+                        guardians.at(i).get('email')?.invalid &&
+                        guardians.at(i).get('email')?.touched
+                      "
+                    >
+                      {{ getGuardiansErrorMessage(i, "email") }}
+                    </c-form-feedback>
+                  </c-input-group>
+                </c-col>
+                <c-col xs="12" md="2">
+                  <label cLabel for="phone_{{ i }}">Teléfono</label>
+                  <c-input-group class="has-validation">
+                    <input
+                      cFormControl
+                      formControlName="phone"
+                      id="phone_{{ i }}"
+                      type="text"
+                      placeholder="Teléfono del Apoderado"
+                      [ngClass]="{
+                        'is-invalid':
+                          guardians.at(i).get('phone')?.invalid &&
+                          guardians.at(i).get('phone')?.touched
+                      }"
+                    />
+                    <c-form-feedback
+                      *ngIf="
+                        guardians.at(i).get('phone')?.invalid &&
+                        guardians.at(i).get('phone')?.touched
+                      "
+                    >
+                      {{ getGuardiansErrorMessage(i, "phone") }}
+                    </c-form-feedback>
+                  </c-input-group>
+                </c-col>
+                <c-col xs="12" md="2">
+                  <label cLabel for="kinship_{{ i }}">Parentesco</label>
+                  <c-input-group class="has-validation">
+                    <select
+                      cFormControl
+                      cSelect
+                      formControlName="kinship"
+                      id="kinship_{{ i }}"
+                      [ngClass]="{
+                        'is-invalid':
+                          guardians.at(i).get('kinship')?.invalid &&
+                          guardians.at(i).get('kinship')?.touched
+                      }"
+                    >
+                      <option [value]="null" disabled>
+                        Seleccione Parentesco
+                      </option>
+                      <option *ngFor="let kin of kinshipOptions" [value]="kin">
+                        {{ kin | translateKinship }}
+                      </option>
+                    </select>
+                    <c-form-feedback
+                      *ngIf="
+                        guardians.at(i).get('kinship')?.invalid &&
+                        guardians.at(i).get('kinship')?.touched
+                      "
+                    >
+                      {{ getGuardiansErrorMessage(i, "kinship") }}
+                    </c-form-feedback>
+                  </c-input-group>
+                </c-col>
+                <c-col
+                  xs="12"
+                  md="2"
+                  class="text-end d-flex align-items-center"
+                >
+                  <button
+                    cButton
+                    color="danger"
+                    size="sm"
+                    class="align-middle"
+                    (click)="removeGuardian(i)"
+                  >
+                    <c-icon name="cil-trash" size="lg"></c-icon>
+                  </button>
+                </c-col>
+              </c-row>
+            </div>
+
+            <button
+              type="button"
+              (click)="addGuardian()"
+              cButton
+              color="info"
+              class="mt-3"
+            >
+              Agregar Apoderado
+            </button>
+
+            <c-row>
+              <c-col xs="12">
+                <div class="d-flex justify-content-end">
+                  <button
+                    cButton
+                    [color]="student_id ? 'warning' : 'primary'"
+                    type="submit"
+                  >
+                    {{ student_id ? "Actualizar" : "Guardar" }}
+                  </button>
+                </div>
+              </c-col>
+            </c-row>
+          </form>
+        </c-card-body>
+      </c-card>
+    </c-col>
+  </c-row>
+</c-container>

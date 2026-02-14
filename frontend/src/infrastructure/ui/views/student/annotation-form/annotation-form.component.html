@@ -1,0 +1,140 @@
+<c-container>
+  <c-row>
+    <c-col xs="12">
+      <c-card>
+        <c-card-header>
+          <h5 class="card-title">
+            Agregar anotación para
+            <ng-container *ngIf="isGeneral; else elseBlock">
+              los estudiantes del curso:
+              <span class="text-danger">{{ courseName }}</span>
+            </ng-container>
+            <ng-template #elseBlock>
+              el estudiante:
+              <span class="text-danger"
+                ><strong>{{ studentName }}</strong></span
+              >
+            </ng-template>
+          </h5>
+        </c-card-header>
+        <c-card-body>
+          <form [formGroup]="form" novalidate (ngSubmit)="onSubmit()">
+            <c-row class="g-3">
+              <c-col xs="12" md="4">
+                <label cLabel for="observation">Observaciones</label>
+                <c-input-group class="has-validation">
+                  <textarea
+                    cFormControl
+                    formControlName="observation"
+                    id="observation"
+                    type="text"
+                    placeholder=""
+                    [ngClass]="{
+                      'is-invalid':
+                        form.get('observation')?.invalid &&
+                        form.get('observation')?.touched
+                    }"
+                    maxlength="4500"
+                  ></textarea>
+                  <c-form-feedback
+                    *ngIf="
+                      form.get('observation')?.invalid &&
+                      form.get('observation')?.touched
+                    "
+                  >
+                    {{ getErrorMessage("observation") }}
+                  </c-form-feedback>
+                </c-input-group>
+                {{ observation.length }}/4500 caracteres
+              </c-col>
+
+              <c-col xs="12" md="4">
+                <label cLabel for="type">Tipo de anotación</label>
+                <c-input-group class="has-validation">
+                  <select
+                    cFormControl
+                    cSelect
+                    formControlName="type"
+                    id="type"
+                    [ngClass]="{
+                      'is-invalid':
+                        form.get('type')?.invalid && form.get('type')?.touched
+                    }"
+                  >
+                    <option [value]="null" disabled>
+                      Seleccione el tipo de anotación
+                    </option>
+                    <option
+                      *ngFor="let annot of annotationLevelOptions"
+                      [value]="annot"
+                    >
+                      {{ mapAnnotationLevel(annotationLevels$ | async, annot) }}
+                    </option>
+                  </select>
+                  <c-form-feedback
+                    *ngIf="
+                      form.get('type')?.invalid && form.get('type')?.touched
+                    "
+                  >
+                    {{ getErrorMessage("type") }}
+                  </c-form-feedback>
+                </c-input-group>
+              </c-col>
+              <c-col xs="12" md="4">
+                <label cLabel for="subcategory">Subcategoría</label>
+                <c-input-group class="has-validation">
+                  <select
+                    cFormControl
+                    cSelect
+                    formControlName="subcategory"
+                    id="subcategory"
+                    [ngClass]="{
+                      'is-invalid':
+                        form.get('subcategory')?.invalid &&
+                        form.get('subcategory')?.touched
+                    }"
+                  >
+                    <option [value]="null" disabled>
+                      Seleccione una subcategoría
+                    </option>
+                    <option *ngFor="let sub of subcategories" [value]="sub.id">
+                      {{ sub.subcategory }}
+                    </option>
+                  </select>
+                  <c-form-feedback
+                    *ngIf="
+                      form.get('subcategory')?.invalid &&
+                      form.get('subcategory')?.touched
+                    "
+                  >
+                    {{ getErrorMessage("subcategory") }}
+                  </c-form-feedback>
+                </c-input-group>
+              </c-col>
+            </c-row>
+            <c-row>
+              <c-col xs="12">
+                <div class="d-flex justify-content-end">
+                  <button
+                    cButton
+                    color="primary"
+                    size="md"
+                    [disabled]="form.invalid || (isLoading$ | async)"
+                    type="submit"
+                  >
+                    <ng-container *ngIf="isLoading$ | async; else showText">
+                      <c-spinner aria-hidden="true" size="sm"></c-spinner>
+                    </ng-container>
+                    <ng-template #showText>
+                      <span>Ingresar anotación</span>
+                    </ng-template>
+                  </button>
+                </div>
+              </c-col>
+            </c-row>
+          </form>
+        </c-card-body>
+      </c-card>
+    </c-col>
+  </c-row>
+</c-container>

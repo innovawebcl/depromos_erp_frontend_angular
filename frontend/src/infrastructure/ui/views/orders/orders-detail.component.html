@@ -1,0 +1,132 @@
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <div>
+    <h2 class="mb-0">Pedido #{{ order?.id }}</h2>
+    <div class="text-medium-emphasis small" *ngIf="order">
+      Estado:
+      <span class="badge" [ngClass]="'bg-' + statusBadge(order.status)">{{ order.status }}</span>
+      <span class="mx-2">•</span>
+      Total: {{ order.total | number }}
+      <span class="mx-2">•</span>
+      Comuna: {{ order.commune_name || '—' }}
+    </div>
+  </div>
+  <div>
+    <a class="btn btn-outline-secondary" routerLink="/orders">Volver</a>
+  </div>
+</div>
+
+<div *ngIf="loading" class="card"><div class="card-body">Cargando...</div></div>
+
+<div *ngIf="!loading && order" class="row g-3">
+  <div class="col-lg-8">
+    <div class="card mb-3">
+      <div class="card-header fw-semibold">Items del pedido</div>
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table table-striped mb-0 align-middle">
+            <thead>
+              <tr>
+                <th>Producto</th>
+                <th style="width: 90px">Talla</th>
+                <th style="width: 90px">Cant.</th>
+                <th style="width: 140px">Escaneado</th>
+                <th style="width: 160px">Código</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let it of order.items || []">
+                <td>
+                  <div class="fw-semibold">{{ it.product_name }}</div>
+                  <div class="small text-medium-emphasis">ID producto: {{ it.product_id }}</div>
+                </td>
+                <td>{{ it.size }}</td>
+                <td>{{ it.quantity }}</td>
+                <td>
+                  <span class="badge bg-light text-dark">{{ it.scanned_quantity || 0 }} / {{ it.quantity }}</span>
+                </td>
+                <td class="small text-medium-emphasis">{{ it.barcode || '—' }}</td>
+              </tr>
+              <tr *ngIf="(order.items || []).length === 0">
+                <td colspan="5" class="text-center text-medium-emphasis py-4">Sin items</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card-footer d-flex justify-content-between">
+        <div class="text-medium-emphasis small">
+          Creado: {{ order.created_at || '—' }}
+        </div>
+        <div>
+          <a class="btn btn-sm btn-outline-primary" [routerLink]="['/picking', order.id]">Ir a picking</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header fw-semibold">Historial</div>
+      <div class="card-body">
+        <ul class="mb-0" *ngIf="(order.timeline || []).length > 0">
+          <li *ngFor="let t of order.timeline">
+            <span class="small text-medium-emphasis">{{ t.at }}</span>
+            <span class="mx-2">—</span>
+            <span class="fw-semibold">{{ t.status }}</span>
+            <span *ngIf="t.note" class="text-medium-emphasis"> ({{ t.note }})</span>
+          </li>
+        </ul>
+        <div *ngIf="(order.timeline || []).length === 0" class="text-medium-emphasis">Sin eventos</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-4">
+    <div class="card mb-3">
+      <div class="card-header fw-semibold">Despacho</div>
+      <div class="card-body">
+        <label class="form-label">Repartidor</label>
+        <select class="form-select" [(ngModel)]="courier_id">
+          <option [ngValue]="null">— sin asignar —</option>
+          <option *ngFor="let c of couriers" [ngValue]="c.id">
+            {{ c.name }} <span *ngIf="c.rating">(⭐ {{ c.rating }})</span>
+          </option>
+        </select>
+
+        <button class="btn btn-outline-primary w-100 mt-2" (click)="assignCourier()" [disabled]="saving || !courier_id">
+          Asignar repartidor
+        </button>
+
+        <hr />
+
+        <label class="form-label">Tiempo estimado (minutos)</label>
+        <input type="number" class="form-control" [(ngModel)]="eta_minutes" min="0" />
+
+        <button class="btn btn-primary w-100 mt-2" (click)="markEnRoute()" [disabled]="saving">
+          Marcar “En ruta”
+        </button>
+
+        <div class="small text-medium-emphasis mt-2">
+          Esta acción debería gatillar notificación push al cliente (según backend).
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header fw-semibold">Entrega</div>
+      <div class="card-body">
+        <label class="form-label">RUT receptor (opcional)</label>
+        <input class="form-control" [(ngModel)]="receiver_rut" placeholder="12.345.678-9" />
+
+        <label class="form-label mt-2">Foto (URL) o respaldo (opcional)</label>
+        <input class="form-control" [(ngModel)]="delivery_photo_url" placeholder="https://..." />
+
+        <button class="btn btn-success w-100 mt-3" (click)="markDelivered()" [disabled]="saving">
+          Cerrar como entregado
+        </button>
+
+        <div class="small text-medium-emphasis mt-2">
+          En el flujo final puedes integrar subida de imagen real; aquí se deja por URL para demo.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

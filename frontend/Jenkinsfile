@@ -1,0 +1,73 @@
+/* groovylint-disable-next-line CompileStatic */
+pipeline {
+    agent any
+        tools {
+            nodejs 'NodeJS:latest'
+        }
+    parameters {
+        string(name:'VERSION', defaultValue:'1.0.0', description:'version to deploy')
+    }
+    environment {
+        SERVER_PROD = '52.7.108.60'
+            SERVER_STAGING = '44.231.28.42'
+            SERVER_DEVELOP = '52.36.116.48'
+            WEBHOOK_PORT = '5001'
+            WEBHOOK_CREDENTIALS_ID = 'WEBHOOK_TOKEN'
+            PROJECT_ROOT = 'workspace'
+            EMAIL_ADDRESS = 'jgmoran@innovaweb.cl'
+            SONAR_PROYECT = 'sonar-plt-api.properties'
+            SONAR_CREDENTIALS_ID = 'SQGlobalPipeline'
+            REGISTRY = 'https://340825633806.dkr.ecr.us-east-1.amazonaws.com' // EJ ECR
+    }
+    stages {
+        stage('init') {
+            steps {
+                script {
+                    gv = load '/var/jenkins_home/GroovyS/pipeline_backend_nodejs.groovy' // se puede migrar a text secret
+                }
+            }
+        }
+        stage('CreateRepositoryIfNotExists') {
+            steps {
+                script {
+                    gv.createRepositoryIfNotExists()
+                }
+            }
+        }
+
+        stage('Install Dependencies') {
+            steps {
+                script {
+                    gv.installDependencies()
+                }
+            }
+        }
+
+        stage('BuildImage') {
+            steps {
+                script {
+                    gv.buildImage()
+                }
+            }
+        }
+        stage('Deploy') {
+            steps {
+                script {
+                    gv.deployApp()
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            echo 'Esta acción se ejecutará siempre, sin importar si el pipeline termina exitosamente o falla.'
+        }
+        success {
+            echo 'Esta acción se ejecutará solo si el pipeline termina exitosamente.'
+        }
+        failure {
+            echo 'Esta acción se ejecutará solo si el pipeline falla.'
+        }
+    }
+}

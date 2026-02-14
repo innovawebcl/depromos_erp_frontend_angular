@@ -1,0 +1,277 @@
+<c-container>
+  <c-row>
+    <c-col xs="12" md="12">
+      <c-card>
+        <c-card-header ngPreserveWhitespaces>
+          <strong>Ingresar una denuncia</strong>
+        </c-card-header>
+        <c-card-body>
+          <form cForm novalidate [formGroup]="form" (ngSubmit)="onSubmit()" class="needs-validation">
+            <c-row class="g-3">
+              <c-col xs="12" md="12">
+                <div class="mb-3">
+                  <label cLabel for="role_in_complaint">¿Fuiste víctima o testigo?</label>
+                  <c-input-group class="has-validation">
+                    <select cFormControl cSelect formControlName="role_in_complaint" id="role_in_complaint" [ngClass]="{
+                        'is-invalid':
+                          form.get('role_in_complaint')?.invalid &&
+                          form.get('role_in_complaint')?.touched
+                      }">
+                      <option [value]="null" disabled>
+                        Seleccione una opción
+                      </option>
+                      <option *ngFor="let role of roleInComplaintOptions" [value]="role">
+                        {{ role | translateRoleInComplaint }}
+                      </option>
+                    </select>
+                    <c-form-feedback *ngIf="
+                        form.get('role_in_complaint')?.invalid &&
+                        form.get('role_in_complaint')?.touched
+                      ">
+                      {{ getErrorMessage("role_in_complaint") }}
+                    </c-form-feedback>
+                  </c-input-group>
+                </div>
+              </c-col>
+              <c-col xs="12" md="12">
+                <div class="mb-3">
+                  <label cLabel for="description">Cuéntanos qué ocurrió...</label>
+                  <c-input-group class="has-validation">
+                    <textarea cFormControl formControlName="description" placeholder=""
+                      aria-describedby="description-span" id="description" type="text" [ngClass]="{
+                        'is-invalid':
+                          form.get('description')?.invalid &&
+                          form.get('description')?.touched
+                      }"></textarea>
+                    <c-form-feedback *ngIf="
+                        form.get('description')?.invalid &&
+                        form.get('description')?.touched
+                      " [valid]="form.valid">
+                      {{ getErrorMessage("description") }}
+                    </c-form-feedback>
+                  </c-input-group>
+                </div>
+              </c-col>
+              <c-col xs="12" md="12">
+                <div class="mb-3">
+                  <label cLabel for="description">¿Dónde ocurrió?</label>
+                  <c-input-group class="has-validation">
+                    <textarea cFormControl formControlName="where_description" placeholder=""
+                      aria-describedby="where_description-span" id="where_description" [ngClass]="{
+                        'is-invalid':
+                          form.get('where_description')?.invalid &&
+                          form.get('where_description')?.touched
+                      }"></textarea>
+                    <c-form-feedback *ngIf="
+                        form.get('where_description')?.invalid &&
+                        form.get('where_description')?.touched
+                      " [valid]="form.valid">
+                      {{ getErrorMessage("where_description") }}
+                    </c-form-feedback>
+                  </c-input-group>
+                </div>
+              </c-col>
+              <c-col xs="12" md="12">
+                <div class="mb-3">
+                  <label cLabel for="date_event">¿Cuándo ocurrió?</label>
+                  <c-input-group class="has-validation">
+                    <c-date-picker size="lg" inputReadOnly locale="es" format="dd MMMM yyy" closeOnSelect
+                      placeholder="Selecciona una fecha" formControlName="date_event" [ngClass]="{
+                        'is-invalid':
+                          form.get('date_event')?.invalid &&
+                          form.get('date_event')?.touched
+                      }" 
+                      [maxDate]="maxDate"/>
+                    <c-form-feedback *ngIf="
+                        form.get('date_event')?.invalid &&
+                        form.get('date_event')?.touched
+                      " [valid]="form.valid">
+                      {{ getErrorMessage("date_event") }}
+                    </c-form-feedback>
+                  </c-input-group>
+                </div>
+              </c-col>
+              <c-col xs="12">
+                <div class="mb-3">
+                  <label cLabel for="alone">¿Estabas solo?</label>
+                  <c-input-group class="has-validation">
+                    <select cFormControl cSelect formControlName="alone" id="alone" [ngClass]="{
+                        'is-invalid':
+                          form.get('alone')?.invalid &&
+                          form.get('alone')?.touched
+                      }">
+                      <option [value]="null" disabled>Seleccione</option>
+                      <option [value]="true">Sí</option>
+                      <option [value]="false">No</option>
+                    </select>
+                    <c-form-feedback *ngIf="
+                        form.get('alone')?.invalid && form.get('alone')?.touched
+                      ">
+                      {{ getErrorMessage("alone") }}
+                    </c-form-feedback>
+                  </c-input-group>
+                </div>
+              </c-col>
+              <c-col xs="12">
+                <div *ngIf="!formAlone" class="mb-3">
+                  <label cLabel for="with_description">¿Quienes estaban contigo?</label>
+                  <c-input-group class="has-validation">
+                    <textarea cFormControl formControlName="with_description" placeholder=""
+                      aria-describedby="with_description-span" id="with_description" type="text" [ngClass]="{
+                        'is-invalid':
+                          form.get('with_description')?.invalid &&
+                          form.get('with_description')?.touched
+                      }"></textarea>
+                    <c-form-feedback *ngIf="
+                        form.get('with_description')?.invalid &&
+                        form.get('with_description')?.touched
+                      " [valid]="form.valid">
+                      {{ getErrorMessage("with_description") }}
+                    </c-form-feedback>
+                  </c-input-group>
+                </div>
+              </c-col>
+            </c-row>
+            <c-row>
+              <c-col xs="12">
+                <div class="mb-3">
+                  <label cLabel for="evidence">¿Tienes evidencia?</label>
+                  <c-input-group class="has-validation">
+                    <c-form-check inline>
+                      <input [disabled]="evidences.length > 0" [checked]="hasEvidence" cFormCheckInput id="evidence"
+                        name="evidence" type="radio" (click)="handleEvidenceChange()" />
+                      <label cFormCheckLabel for="evidence">Si</label>
+                    </c-form-check>
+                    <c-form-check inline>
+                      <input [disabled]="evidences.length > 0" [checked]="!hasEvidence" cFormCheckInput id="evidence"
+                        name="evidence" type="radio" (click)="handleEvidenceChange()" />
+                      <label cFormCheckLabel for="evidence">No</label>
+                    </c-form-check>
+                  </c-input-group>
+                </div>
+              </c-col>
+            </c-row>
+            <c-row *ngIf="hasEvidence">
+              <c-col xs="12">
+                <div class="mb-4">
+                  <c-card>
+                    <c-card-header>
+                      <h5 class="card-title">
+                        <c-icon name="cil-file" size="lg"></c-icon> Evidencias
+                      </h5>
+                    </c-card-header>
+                    <c-card-body>
+                      <c-row>
+                        <c-col xs="6">
+                          <!-- Listado de archivos -->
+                          <ul cListGroup class="evidences-file-list">
+                            <li cListGroupItem *ngFor="let evidence of evidences; let i = index">
+                              <c-row class="mb-2">
+                                <c-col xs="10">
+                                  <span (click)="downloadFile(i)" style="cursor: pointer">
+                                    {{ evidence.filename }}
+                                  </span>
+                                </c-col>
+                                <c-col xs="2">
+                                  <button cButton type="button" color="danger" (click)="removeEvidence(i)">
+                                    <c-icon name="cil-trash" size="lg"></c-icon>
+                                  </button>
+                                </c-col>
+                              </c-row>
+                            </li>
+                          </ul>
+                        </c-col>
+                        <c-col xs="6">
+                          <ngx-file-drop dropZoneLabel="Sube tu evidencia aquí" (onFileDrop)="dropped($event)"
+                            dropZoneClassName="drop-zone" contentClassName="drop-content"
+                            [accept]="evidenceAcceptString">
+                            <ng-template ngx-file-drop-content-tmp let-openFileSelector="openFileSelector">
+                              <div class="drop-container">
+                                <h4>Deja caer los archivos aquí</h4>
+                                <button cButton color="secondary" (click)="openFileSelector()">
+                                  Explorar archivos
+                                </button>
+                              </div>
+                            </ng-template>
+                          </ngx-file-drop>
+                        </c-col>
+                      </c-row>
+                    </c-card-body>
+                  </c-card>
+                </div>
+              </c-col>
+            </c-row>
+            <c-row>
+              <c-col xs="12">
+                <div class="d-flex justify-content-end">
+                  <button cButton color="primary" size="md"
+                    [disabled]="form.invalid || (isLoading$ | async)" type="submit">
+                    <ng-container *ngIf="isLoading$ | async; else showText">
+                      <c-spinner aria-hidden="true" size="sm"></c-spinner>
+                    </ng-container>
+                    <ng-template #showText>
+                      <span> Crear denuncia</span>
+                    </ng-template>
+                  </button>
+                </div>
+              </c-col>
+            </c-row>
+          </form>
+        </c-card-body>
+      </c-card>
+    </c-col>
+  </c-row>
+</c-container>
+
+<c-toaster class="p-3" position="fixed" placement="top-center">
+  <c-toast [autohide]="false" [visible]="wrongFile" color="warning">
+    <c-toast-header [closeButton]="true">
+      <strong class="mr-auto">¡Atención!</strong>
+    </c-toast-header>
+    <c-toast-body>
+      <p>Se aceptan subir máximo {{ maxEvidence }} archivos</p>
+    </c-toast-body>
+  </c-toast>
+</c-toaster>
+
+
+<c-modal
+[(visible)]="confirmModalVisible"
+>
+<c-modal-header>
+  <h5>Acuerdo de Privacidad y Veracidad de los Hechos</h5>
+  <button
+    (click)="resetConfirmModal()"
+    cButtonClose
+  ></button>
+</c-modal-header>
+<c-modal-body>
+  <c-row class="mb-2">
+    <c-col xs="12">
+      <p class="text-body-secondary" style="font-size: 0.8em;">
+        Al realizar una denuncia a través de este formulario web, usted acepta que la información proporcionada será utilizada de acuerdo con la Ley N° 19.628 sobre Protección de la Vida Privada. Los datos personales serán tratados con estricta confidencialidad y serán utilizados exclusivamente para los fines de investigación y resolución de la denuncia presentada. 
+        Usted asegura que toda la información suministrada es veraz, completa y corresponde a hechos reales. En caso de que se determine que la denuncia contiene información falsa o malintencionada, podrá ser rechazada y, dependiendo de la gravedad, se tomarán las medidas legales correspondientes.
+      </p>
+    </c-col>
+  </c-row>
+  <c-row>
+    <c-col xs="12">
+      <c-form-check inline>
+        <input [checked]="acceptTerms" cFormCheckInput id="acceptTerms" name="acceptTerms" type="radio"
+          (click)="handleTermsChange()" />
+        <label cFormCheckLabel for="acceptTerms">Declaro que la información proporcionada es verídica</label>
+      </c-form-check>
+    </c-col>
+  </c-row>
+</c-modal-body>
+<c-modal-footer>
+  <button cButton color="secondary" (click)="resetConfirmModal()">
+    Cancelar
+  </button>
+  <button cButton color="success" 
+  [disabled]="!acceptTerms"
+  (click)="onConfirmSubmit()">
+    Confirmar y enviar
+  </button>
+</c-modal-footer>
+</c-modal>

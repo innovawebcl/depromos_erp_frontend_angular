@@ -1,0 +1,95 @@
+<div class="d-flex align-items-center justify-content-between mb-3">
+  <div>
+    <h2 class="mb-0">Usuarios</h2>
+    <div class="text-medium-emphasis small">Administración de accesos. Cada usuario tiene un rol único.</div>
+  </div>
+  <div>
+    <a class="btn btn-primary" [routerLink]="['/users/new']">Crear usuario</a>
+  </div>
+</div>
+
+<div class="card mb-3">
+  <div class="card-body">
+    <div class="row g-2 align-items-end">
+      <div class="col-md-4">
+        <label class="form-label">Buscar</label>
+        <input class="form-control" [(ngModel)]="search" (input)="page = 1; reload()" placeholder="Nombre o email..." />
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">Rol</label>
+        <select class="form-select" [(ngModel)]="role_id" (ngModelChange)="page = 1; reload()">
+          <option value="all">Todos</option>
+          <option *ngFor="let r of roles" [ngValue]="r.id">{{ r.name }}</option>
+        </select>
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">Estado</label>
+        <select class="form-select" [(ngModel)]="active" (ngModelChange)="page = 1; reload()">
+          <option value="all">Todos</option>
+          <option [ngValue]="true">Activos</option>
+          <option [ngValue]="false">Bloqueados</option>
+        </select>
+      </div>
+      <div class="col-md-2">
+        <label class="form-label">Por página</label>
+        <select class="form-select" [(ngModel)]="per_page" (ngModelChange)="page = 1; reload()">
+          <option [ngValue]="10">10</option>
+          <option [ngValue]="20">20</option>
+          <option [ngValue]="50">50</option>
+        </select>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table table-hover mb-0 align-middle">
+        <thead>
+          <tr>
+            <th style="width: 80px">ID</th>
+            <th>Usuario</th>
+            <th>Rol</th>
+            <th>Estado</th>
+            <th>Creado</th>
+            <th style="width: 220px" class="text-end"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let u of data.data">
+            <td>#{{ u.id }}</td>
+            <td>
+              <div class="fw-semibold">{{ u.name }}</div>
+              <div class="small text-medium-emphasis">{{ u.email }}</div>
+            </td>
+            <td>{{ u.role_name || '—' }}</td>
+            <td>
+              <span class="badge" [ngClass]="'bg-' + badge(u.active)">{{ u.active ? 'Activo' : 'Bloqueado' }}</span>
+            </td>
+            <td class="small text-medium-emphasis">{{ u.created_at || '' }}</td>
+            <td class="text-end">
+              <a class="btn btn-sm btn-outline-primary me-2" [routerLink]="['/users', u.id]">Editar</a>
+              <button class="btn btn-sm" [ngClass]="u.active ? 'btn-outline-secondary' : 'btn-outline-success'" (click)="toggle(u)" [disabled]="loading">
+                {{ u.active ? 'Bloquear' : 'Activar' }}
+              </button>
+            </td>
+          </tr>
+          <tr *ngIf="!loading && data.data.length === 0">
+            <td colspan="6" class="text-center py-4 text-medium-emphasis">Sin resultados</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="card-footer d-flex justify-content-between align-items-center">
+    <div class="text-medium-emphasis small">
+      <span *ngIf="data.meta">Página {{ data.meta.current_page }} de {{ data.meta.last_page }} — Total {{ data.meta.total }}</span>
+      <span *ngIf="!data.meta">—</span>
+    </div>
+    <div class="btn-group">
+      <button class="btn btn-outline-secondary" (click)="prevPage()" [disabled]="page <= 1 || loading">Anterior</button>
+      <button class="btn btn-outline-secondary" (click)="nextPage()" [disabled]="!data.meta || page >= (data.meta.last_page || 1) || loading">Siguiente</button>
+    </div>
+  </div>
+</div>

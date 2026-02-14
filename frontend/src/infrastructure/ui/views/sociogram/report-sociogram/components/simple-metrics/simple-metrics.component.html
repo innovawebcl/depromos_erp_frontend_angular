@@ -1,0 +1,36 @@
+<c-row *ngIf="sociogram">
+  <c-col>
+    <c-alert color="danger" *ngIf="sociogram.simple_metrics_graph.length === 0">
+      Sin información que procesar
+    </c-alert>
+
+    <c-card
+      class="mb-4"
+      *ngFor="let simple_metrics of sociogram.simple_metrics_graph"
+    >
+      <c-card-header style="padding: 1em">
+        <b> {{ simple_metrics.question }}</b>
+      </c-card-header>
+      <c-card-body>
+        <ul cListGroup>
+          <c-container
+            *ngFor="let key_answer of getKeysByObject(simple_metrics.answers)"
+          >
+            <li cListGroupItem>
+              <c-row>
+                <c-col xs="12" md="4">
+                  {{ key_answer | translateReport }}
+                </c-col>
+                <c-col xs="12" md="8">
+                  <c-progress [value]="simple_metrics.answers[key_answer]"
+                    >{{ simple_metrics.answers[key_answer] }}%
+                  </c-progress>
+                </c-col>
+              </c-row>
+            </li>
+          </c-container>
+        </ul>
+      </c-card-body>
+    </c-card>
+  </c-col>
+</c-row>

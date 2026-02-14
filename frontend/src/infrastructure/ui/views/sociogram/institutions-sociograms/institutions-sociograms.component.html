@@ -1,0 +1,163 @@
+<c-container>
+  <c-row>
+    <c-col xs="12">
+      <c-card class="mb-4">
+        <c-card-header ngPreserveWhitespaces>
+          <c-row>
+            <c-col xs="12">
+              <strong>Sociograma: {{ form.get("title")?.value }}</strong>
+            </c-col>
+            <c-row
+              style="
+                justify-content: flex-end;
+                align-items: center;
+                display: flex;
+                flex-direction: row;
+              "
+            >
+              <c-col
+                xs="12"
+                md="4"
+                class="d-flex justify-content-end align-items-center"
+              >
+                <button
+                  type="button"
+                  class="btn btn-primary"
+                  (click)="addAllInstitutions()"
+                >
+                  Agregar todas las instituciones
+                </button>
+              </c-col>
+              <c-col
+                xs="12"
+                md="4"
+                class="d-flex justify-content-end align-items-center"
+              >
+                <button
+                  type="button"
+                  class="btn btn-primary"
+                  (click)="addInstitutions()"
+                  [disabled]="areAllInstitutionsAdded()"
+                >
+                  Agregar Institutición
+                </button>
+              </c-col>
+            </c-row>
+          </c-row>
+        </c-card-header>
+        <c-card-body>
+          <form [formGroup]="form"  (ngSubmit)="onSubmit($event)">
+            <div class="mb-4">
+              <label class="form-label fw-bold">Instituciones Asociadas:</label>
+              <div
+                [formGroup]="filterGroup"
+                class="input-group"
+                style="width: 50%; padding-top: 1em; padding-bottom: 1em"
+              >
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="Filtrar por título"
+                  formControlName="search"
+                />
+                <button class="btn btn-secondary" (click)="resetFilter()">
+                  Limpiar
+                </button>
+              </div>
+              <div formArrayName="institutions">
+                <div
+                  *ngFor="
+                    let institution of institutions.controls
+                      | filterCourses : filterGroup.get('search')?.value;
+                    let i = index
+                  "
+                  [formGroupName]="i"
+                  class="d-flex align-items-center mb-3"
+                >
+                  <c-card style="width: 100%">
+                    <c-row style="padding: 0.5em">
+                      <c-col xs="10" md="10">
+                        <c-input-group class="has-validation">
+                          <ng-container
+                            *ngIf="
+                              !institution.get('institution_id')?.value;
+                              else institutionText
+                            "
+                          >
+                            <select
+                              cFormControl
+                              cSelect
+                              formControlName="institution_id"
+                              id="institution_{{ i }}"
+                              [ngClass]="{
+                                'is-invalid':
+                                  institutions.at(i).get('institution_id')
+                                    ?.invalid &&
+                                  institutions.at(i).get('institution_id')
+                                    ?.touched
+                              }"
+                            >
+                              <option [value]="null" disabled>
+                                Seleccione una institución
+                              </option>
+                              <option
+                                *ngFor="let option of getFilteredInstitutions()"
+                                [value]="option.id"
+                              >
+                                {{ option.name }}
+                              </option>
+                            </select>
+                          </ng-container>
+
+                          <ng-template #institutionText>
+                            <p class="form-control-plaintext">
+                              {{
+                                getInstitutionName(
+                                  institutions.at(i).get("institution_id").value
+                                )
+                              }}
+                            </p>
+                          </ng-template>
+                        </c-input-group>
+                      </c-col>
+                      <c-col
+                        xs="2"
+                        md="2"
+                        style="
+                          display: flex;
+                          flex-direction: row;
+                          justify-content: center;
+                          align-items: center;
+                        "
+                      >
+                        <button
+                          cTooltip="Desvincular institución"
+                          cTooltipPlacement="bottom"
+                          cButton
+                          color="danger"
+                          size="sm"
+                          (click)="removeInstitution(i)"
+                        >
+                          <c-icon name="cil-trash"></c-icon>
+                        </button>
+                      </c-col>
+                    </c-row>
+                  </c-card>
+                </div>
+              </div>
+            </div>
+            <div class="d-flex justify-content-end">
+              <button
+                type="submit"
+                class="btn btn-warning"
+                style="color: white"
+              >
+                Guardar Cambios
+              </button>
+            </div>
+          </form>
+        </c-card-body>
+      </c-card>
+    </c-col>
+  </c-row>
+</c-container>

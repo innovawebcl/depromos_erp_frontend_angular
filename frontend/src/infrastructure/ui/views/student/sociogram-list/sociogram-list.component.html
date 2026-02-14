@@ -1,0 +1,118 @@
+<c-container>
+  <c-row>
+    <c-col xs="12">
+      <c-card class="mb-4">
+        <c-card-header ngPreserveWhitespaces>
+          <strong>Listado de sociogramas por curso</strong>
+        </c-card-header>
+        <c-card-body>
+          <c-smart-table
+            [activePage]="1"
+            [columnSorter]="true"
+            [columns]="columns"
+            [columnFilter]="true"
+            [itemsPerPageSelect]="true"
+            [itemsPerPage]="20"
+            [items]="sociogramsByCourses"
+            [sorterValue]="{ column: 'name', state: 'asc' }"
+            [tableFilter]="true"
+            [tableProps]="{ hover: true, striped: true, responsive: true }"
+            [tableBodyProps]="{ align: 'middle' }"
+            tableFilterPlaceholder="Buscar curso..."
+            noItemsLabel="Listado de cursos"
+            itemsPerPageLabel="Ítems por página"
+            cleaner
+            clickableRows
+            footer
+            header
+            pagination
+          >
+            <ng-template
+              cTemplateId="tableData"
+              let-columnName="columnName"
+              let-item="item"
+              let-tdContent="tdContent"
+            >
+              <td>
+                @switch (columnName) { @case ('actions') {
+                <div class="d-flex gap-2">
+                  <button
+                    cButton
+                    cButton
+                    cTooltip="Lista de sociogramas"
+                    cTooltipPlacement="bottom"
+                    color="primary"
+                    size="sm"
+                    (click)="toggleDetails(item.id)"
+                  >
+                    <c-icon name="cil-notes"></c-icon>
+                  </button>
+                </div>
+                } @default {
+                {{ tdContent }}
+                } }
+              </td>
+            </ng-template>
+            <ng-template cTemplateId="tableDetails" let-item="item">
+              <div *ngIf="details_visible[item.id]" class="details-container">
+                <c-container
+                  *ngFor="let sociogram of sociograms"
+                  class="question-container"
+                >
+                  <c-card
+                    cBorder="{ top: { color: primary, width: 3 } }"
+                    textColor="primary"
+                    class="mb-3"
+                  >
+                    <c-card-header>
+                      <c-container>
+                        <c-row>
+                          <c-col xs="12" md="4">
+                            {{ sociogram.title }} - Versión
+                            {{ sociogram.version }}
+                          </c-col>
+                          <c-col xs="12" md="4">
+                            <c-progress
+                              [value]="getStudentSociogramProgress(sociogram)"
+                              color="primary"
+                            >
+                              {{ getStudentSociogramProgress(sociogram) }} %
+                            </c-progress>
+                          </c-col>
+                          <c-col
+                            xs="12"
+                            md="4"
+                            style="
+                              display: flex;
+                              justify-content: flex-end;
+                              align-items: center;
+                            "
+                          >
+                            <button
+                              cButton
+                              color="primary"
+                              [disabled]="sociogram.active === 0"
+                              (click)="
+                                startQuestionnaire(item.id, sociogram.id)
+                              "
+                            >
+                              {{
+                                sociogram.is_finished_sociogram
+                                  ? "Ver respuestas"
+                                  : "Iniciar cuestionario"
+                              }}
+                            </button>
+                          </c-col>
+                        </c-row>
+                      </c-container>
+                    </c-card-header>
+                  </c-card>
+                </c-container>
+              </div>
+            </ng-template>
+          </c-smart-table>
+        </c-card-body>
+      </c-card>
+    </c-col>
+  </c-row>
+</c-container>

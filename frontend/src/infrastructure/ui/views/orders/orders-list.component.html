@@ -1,0 +1,94 @@
+<div class="d-flex align-items-center justify-content-between mb-3">
+  <div>
+    <h2 class="mb-0">Pedidos</h2>
+    <div class="text-medium-emphasis small">Lista de pedidos y estados operativos.</div>
+  </div>
+</div>
+
+<div class="card mb-3">
+  <div class="card-body">
+    <div class="row g-2 align-items-end">
+      <div class="col-md-3">
+        <label class="form-label">Estado</label>
+        <select class="form-select" [(ngModel)]="status" (ngModelChange)="setStatus($event)">
+          <option value="all">Todos</option>
+          <option value="pending">Pendientes</option>
+          <option value="picking">En picking</option>
+          <option value="ready">Listos para despacho</option>
+          <option value="en_route">En ruta</option>
+          <option value="delivered">Entregados</option>
+          <option value="cancelled">Cancelados</option>
+        </select>
+      </div>
+      <div class="col-md-5">
+        <label class="form-label">Buscar</label>
+        <input class="form-control" [(ngModel)]="search" (input)="reload()" placeholder="ID, código, cliente..." />
+      </div>
+      <div class="col-md-2">
+        <label class="form-label">Por página</label>
+        <select class="form-select" [(ngModel)]="per_page" (ngModelChange)="reload()">
+          <option [ngValue]="10">10</option>
+          <option [ngValue]="20">20</option>
+          <option [ngValue]="50">50</option>
+        </select>
+      </div>
+      <div class="col-md-2">
+        <button class="btn btn-outline-primary w-100" (click)="reload()" [disabled]="loading">
+          <span *ngIf="!loading">Actualizar</span>
+          <span *ngIf="loading">Cargando...</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table table-hover mb-0 align-middle">
+        <thead>
+          <tr>
+            <th style="width: 90px">ID</th>
+            <th>Cliente</th>
+            <th>Comuna</th>
+            <th>Total</th>
+            <th>Estado</th>
+            <th>Creado</th>
+            <th style="width: 140px"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let o of data.data">
+            <td>#{{ o.id }}</td>
+            <td>
+              <div class="fw-semibold">{{ o.customer_name || '—' }}</div>
+              <div class="small text-medium-emphasis">{{ o.customer_email || '' }}</div>
+            </td>
+            <td>{{ o.commune_name || '—' }}</td>
+            <td>{{ o.total | number }}</td>
+            <td>
+              <span class="badge" [ngClass]="'bg-' + statusBadge(o.status)">{{ o.status }}</span>
+            </td>
+            <td class="small text-medium-emphasis">{{ o.created_at || '' }}</td>
+            <td class="text-end">
+              <a class="btn btn-sm btn-primary" [routerLink]="['/orders', o.id]">Ver</a>
+            </td>
+          </tr>
+          <tr *ngIf="!loading && data.data.length === 0">
+            <td colspan="7" class="text-center py-4 text-medium-emphasis">Sin resultados</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="card-footer d-flex justify-content-between align-items-center">
+    <div class="text-medium-emphasis small">
+      <span *ngIf="data.meta">Página {{ data.meta.current_page }} de {{ data.meta.last_page }} — Total {{ data.meta.total }}</span>
+      <span *ngIf="!data.meta">—</span>
+    </div>
+    <div class="btn-group">
+      <button class="btn btn-outline-secondary" (click)="prevPage()" [disabled]="page <= 1 || loading">Anterior</button>
+      <button class="btn btn-outline-secondary" (click)="nextPage()" [disabled]="!data.meta || page >= (data.meta.last_page || 1) || loading">Siguiente</button>
+    </div>
+  </div>
+</div>

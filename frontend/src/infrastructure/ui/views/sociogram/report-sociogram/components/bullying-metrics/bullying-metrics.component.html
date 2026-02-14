@@ -1,0 +1,37 @@
+<c-row *ngIf="sociogram">
+  <c-col>
+    <c-alert color="warning" style="text-align: center">
+      Con respecto a indicadores de acoso escolar, el curso manifiesta lo
+      siguiente:
+    </c-alert>
+    <c-card class="mb-4" *ngFor="let bullying_metric of sociogram.bullying">
+      <c-card-header style="padding: 1em">
+        <b>{{ bullying_metric.question }}</b>
+      </c-card-header>
+      <c-card-body>
+        <ul cListGroup>
+          <c-container
+            *ngFor="let key_answer of getKeysByObject(bullying_metric.answers)"
+          >
+            <li cListGroupItem>
+              <c-row>
+                <c-col xs="12" md="4">
+                  {{ key_answer | translateReport }}
+                </c-col>
+                <c-col xs="12" md="8">
+                  <c-progress [value]="bullying_metric.answers[key_answer]"
+                    >{{ bullying_metric.answers[key_answer] }}%
+                  </c-progress>
+                </c-col>
+              </c-row>
+            </li>
+          </c-container>
+        </ul>
+      </c-card-body>
+    </c-card>
+    <c-alert color="warning" style="text-align: center">
+      Más allá del resultado obtenido, SIEMPRE es importante estar reforzando
+      este ámbito dentro de la conceptualización y reflexiones.
+    </c-alert>
+  </c-col>
+</c-row>

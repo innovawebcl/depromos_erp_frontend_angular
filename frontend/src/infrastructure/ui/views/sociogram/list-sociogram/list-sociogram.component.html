@@ -1,0 +1,238 @@
+<c-container>
+  <c-row>
+    <c-col xs="12">
+      <c-card class="mb-4">
+        <c-card-header ngPreserveWhitespaces>
+          <strong>Listado de sociogramas</strong>
+
+          <div class="float-end">
+            <c-container>
+              <c-row>
+                <c-col xs="12" *ngIf="isSuperAdmin">
+                  <button
+                    cButton
+                    color="primary"
+                    size="sm"
+                    style="color: white"
+                    (click)="onCreate()"
+                    [disabled]="validateRegisterNewSociogram()"
+                  >
+                    Registrar nuevo sociograma
+                  </button>
+                </c-col>
+              </c-row>
+            </c-container>
+          </div>
+        </c-card-header>
+        <c-card-body>
+          <c-smart-table
+            [activePage]="1"
+            [columnSorter]="true"
+            [columns]="columns"
+            [columnFilter]="true"
+            [itemsPerPageSelect]="true"
+            [itemsPerPage]="20"
+            [loading]="isLoading | async"
+            [items]="sociograms | async"
+            [sorterValue]="{ column: 'title', state: 'asc' }"
+            [tableFilter]="true"
+            [tableProps]="{ hover: true, striped: true, responsive: true }"
+            [tableBodyProps]="{ align: 'middle' }"
+            tableFilterPlaceholder="Buscar sociograma..."
+            noItemsLabel="Listado de sociogramas vacío"
+            itemsPerPageLabel="Ítems por página"
+            cleaner
+            clickableRows
+            footer
+            header
+            pagination
+          >
+            <ng-template
+              cTemplateId="tableData"
+              let-columnName="columnName"
+              let-item="item"
+              let-tdContent="tdContent"
+            >
+              <td>
+                @switch (columnName) { @case ('actions') {
+                <div class="d-flex gap-2">
+                  <button
+                    cButton
+                    cTooltip="Visualizar Preguntas y Respuestas de Sociograma"
+                    cTooltipPlacement="bottom"
+                    color="primary"
+                    size="sm"
+                    (click)="toggleDetails(item.id)"
+                  >
+                    <c-icon
+                      [name]="
+                        details_visible[item.id]
+                          ? 'cil-arrow-top'
+                          : 'cil-arrow-bottom'
+                      "
+                    ></c-icon>
+                  </button>
+
+                  <button
+                    cButton
+                    cTooltip="Instituciones asociadas a Sociograma"
+                    cTooltipPlacement="bottom"
+                    color="info"
+                    size="sm"
+                    *ngIf="isSuperAdmin"
+                    (click)="onAssingInstitutions(item.id)"
+                  >
+                    <c-icon name="cil-institution"></c-icon>
+                  </button>
+
+                  <button
+                    cButton
+                    cTooltip="Cursos asociados a Sociograma"
+                    cTooltipPlacement="bottom"
+                    color="info"
+                    size="sm"
+                    *ngIf="isAdmin"
+                    (click)="onAssingCourses(item.id)"
+                  >
+                    <c-icon name="cil-school"></c-icon>
+                  </button>
+
+                  <button
+                    cButton
+                    cTooltip="Editar Sociograma"
+                    cTooltipPlacement="bottom"
+                    color="info"
+                    size="sm"
+                    *ngIf="isSuperAdmin"
+                    (click)="onUpdate(item.id)"
+                  >
+                    <c-icon name="cil-pencil"></c-icon>
+                  </button>
+
+                  <button
+                    cButton
+                    cTooltip="Duplicar Sociograma"
+                    cTooltipPlacement="bottom"
+                    color="info"
+                    size="sm"
+                    *ngIf="isSuperAdmin"
+                    (click)="onCopy(item.id)"
+                  >
+                    <c-icon name="cil-copy"></c-icon>
+                  </button>
+
+                  <button
+                    cButton
+                    cTooltip="Generar Reporte de Sociograma"
+                    cTooltipPlacement="bottom"
+                    color="info"
+                    size="sm"
+                    *ngIf="isAdmin || isTeacher"
+                    (click)="onLoadReport(item.id)"
+                  >
+                    <c-icon name="cil-notes"></c-icon>
+                  </button>
+
+                  <button
+                    cButton
+                    cTooltip="Eliminar Sociograma"
+                    cTooltipPlacement="bottom"
+                    color="danger"
+                    size="sm"
+                    *ngIf="isSuperAdmin"
+                    (click)="openDeleteModal(item.id, item.title)"
+                  >
+                    <c-icon name="cil-trash"></c-icon>
+                  </button>
+                </div>
+                } @case ('questionsCount') {
+                {{ item.questions?.length || 0 }}
+                } @default {
+                {{ tdContent }}
+                } }
+              </td>
+            </ng-template>
+            <ng-template cTemplateId="tableDetails" let-item="item">
+              <!--      <div *ngIf="details_visible[item.id]">
+                <tr class="table-secondary">
+                  <td colspan="4">
+                    <strong>Preguntas:</strong>
+                    <ul>
+                      <li *ngFor="let question of item.questions">
+                        {{ question.title }}
+                        <ul>
+                          <li *ngFor="let answer of question.answers">
+                            {{ answer.text }}
+                          </li>
+                        </ul>
+                      </li>
+                    </ul>
+                  </td>
+                </tr>
+              </div> -->
+              <div *ngIf="details_visible[item.id]" class="details-container">
+                <div class="card">
+                  <div class="card-header bg-light">
+                    <strong>Preguntas</strong>
+                  </div>
+                  <div class="card-body">
+                    <div
+                      *ngFor="let question of item.questions"
+                      class="question-container"
+                    >
+                      <h6 class="question-title">
+                        <span class="badge bg-primary me-2">Pregunta:</span>
+                        {{ question.title }}
+                      </h6>
+                      <ul class="answers-list">
+                        <div class="possible-answers">
+                          <strong class="text-muted">Respuestas:</strong>
+                          <div class="d-flex flex-wrap gap-2 mt-2">
+                            <span
+                              *ngFor="
+                                let label of getAnswerLabels(
+                                  question.enum_as_options
+                                )
+                              "
+                              class="badge bg-info text-dark"
+                            >
+                              {{ label }}
+                            </span>
+                          </div>
+                        </div>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </ng-template>
+          </c-smart-table>
+        </c-card-body>
+      </c-card>
+    </c-col>
+  </c-row>
+
+  <!-- Modal de Confirmación -->
+  <c-modal
+    [(visible)]="deleteModalVisible"
+    title="Confirmar eliminación"
+    color="danger"
+    (closed)="resetModal()"
+  >
+    <div class="modal-body">
+      <p>
+        ¿Estás seguro de que deseas eliminar el sociograma
+        <strong>{{ selectedSociogramName }}</strong
+        >?
+      </p>
+    </div>
+    <div class="modal-footer">
+      <button cButton color="secondary" (click)="deleteModalVisible = false">
+        Cancelar
+      </button>
+      <button cButton color="danger" (click)="onConfirmDelete()">
+        Confirmar
+      </button>
+    </div>
+  </c-modal>
+</c-container>

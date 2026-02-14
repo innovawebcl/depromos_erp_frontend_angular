@@ -1,0 +1,6 @@
+<div class="d-flex justify-content-end gap-2">
+    <c-date-picker size="lg" inputReadOnly locale="es" format="dd MMMM yyyy" closeOnSelect
+        placeholder="Selecciona una fecha" [ngModel]="date" (ngModelChange)="onDateChange($event)"></c-date-picker>
+    <c-time-picker size="lg" locale="es" [time]="time" (timeChange)="onTimeChange($event)"
+        placeholder="Selecciona una hora"></c-time-picker>
+</div>

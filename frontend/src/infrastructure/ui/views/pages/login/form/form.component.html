@@ -1,0 +1,88 @@
+<form
+  cForm
+  novalidate
+  [formGroup]="form"
+  (ngSubmit)="onSubmit()"
+  class="g-3 needs-validation"
+>
+  <c-col md="12">
+    <div class="mb-3">
+      <label cLabel for="username">Usuario</label>
+      <c-input-group class="has-validation">
+        <span cInputGroupText id="username-span">
+          <svg cIcon name="cilUser"></svg>
+        </span>
+        <input
+          cFormControl
+          formControlName="username"
+          placeholder="Nombre de usuario"
+          aria-describedby="username-span"
+          id="username"
+          type="text"
+          [disabled]="isLoading | async"
+          [ngClass]="{
+            'is-invalid':
+              form.get('username')?.invalid && form.get('username')?.touched
+          }"
+        />
+        <c-form-feedback
+          *ngIf="form.get('username')?.invalid && form.get('username')?.touched"
+          [valid]="form.valid"
+        >
+          {{ getErrorMessage("username") }}
+        </c-form-feedback>
+      </c-input-group>
+    </div>
+  </c-col>
+
+  <c-col md="12">
+    <div class="mb-3">
+      <label cLabel for="password">Contraseña</label>
+      <c-input-group class="has-validation">
+        <span cInputGroupText id="password-span">
+          <svg cIcon name="cilLockLocked"></svg>
+        </span>
+        <input
+          cFormControl
+          class="is-invalid"
+          formControlName="password"
+          placeholder="*************"
+          aria-describedby="password-span"
+          id="password"
+          type="password"
+          [disabled]="isLoading | async"
+          [ngClass]="{
+            'is-invalid':
+              form.get('password')?.invalid && form.get('password')?.touched
+          }"
+        />
+        <c-form-feedback
+          *ngIf="form.get('password')?.invalid && form.get('password')?.touched"
+          [valid]="form.valid"
+        >
+          {{ getErrorMessage("password") }}
+        </c-form-feedback>
+      </c-input-group>
+    </div>
+  </c-col>
+
+  <c-col xs="6" [offset]="{ xs: 8 }">
+    <button
+      cButton
+      class="me-1"
+      style="
+        background-color: #fd7607;
+        color: white;
+        border: none;
+        outline: none;
+      "
+      type="submit"
+      [disabled]="isLoading | async"
+    >
+      <ng-container *ngIf="isLoading | async; else showText">
+        <c-spinner aria-hidden="true" size="sm"></c-spinner>
+      </ng-container>
+      <ng-template #showText> Ingresar </ng-template>
+    </button>
+  </c-col>
+</form>

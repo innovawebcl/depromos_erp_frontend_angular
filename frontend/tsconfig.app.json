@@ -1,0 +1,22 @@
+/* To learn more about this file see: https://angular.io/config/tsconfig. */
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./out-tsc/app",
+    "types": ["@angular/localize"],
+    "paths": {
+      "@core-ports/*": ["./src/core/interfaces/ports/*"],
+      "@core-interfaces/*": ["./src/core/interfaces/*"],
+      "@core-services/*": ["./src/core/interfaces/services/*"],
+      "@infra-adapters/*": ["./src/infrastructure/adapters/*"],
+      "@infra-env/*": ["./src/infrastructure/environments/*"],
+      "@infra-ui/*": ["./src/infrastructure/ui/*"],
+      "@utils/*": ["./src/utils/*"],
+      "@docs-components/*": ["./src/infrastructure/ui/components/*"],
+      "@angular/*": ["../node_modules/@angular/*"],
+      "@coreui/*": ["../node_modules/@coreui/*"]
+    }
+  },
+  "files": ["src/main.ts"],
+  "include": ["src/**/*.d.ts", "**/*.ts"]
+}

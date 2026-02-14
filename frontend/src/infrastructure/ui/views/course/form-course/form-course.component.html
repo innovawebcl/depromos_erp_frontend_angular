@@ -1,0 +1,89 @@
+<c-container>
+  <c-row>
+    <c-col xs="12" md="12">
+      <c-card>
+        <c-card-header>
+          <strong>Formulario de Curso</strong>
+        </c-card-header>
+        <c-card-body>
+          <form
+            cForm
+            novalidate
+            [formGroup]="form"
+            (ngSubmit)="onSubmit()"
+            class="needs-validation"
+          >
+            <c-row class="g-3">
+              <c-col xs="12" md="6">
+                <div class="mb-3">
+                  <label cLabel for="name">Nombre</label>
+                  <c-input-group class="has-validation">
+                    <input
+                      cFormControl
+                      formControlName="name"
+                      placeholder="Nombre de curso"
+                      aria-describedby="name-span"
+                      id="name"
+                      type="text"
+                      [ngClass]="{
+                        'is-invalid':
+                          form.get('name')?.invalid && form.get('name')?.touched
+                      }"
+                    />
+                    <c-form-feedback
+                      *ngIf="
+                        form.get('name')?.invalid && form.get('name')?.touched
+                      "
+                      [valid]="form.valid"
+                    >
+                      {{ getErrorMessage("name") }}
+                    </c-form-feedback>
+                  </c-input-group>
+                </div>
+              </c-col>
+
+              <!-- <c-col xs="12" md="6">
+                <div class="mb-3">
+                  <label cLabel for="level">Nivel de Curso</label>
+                  <c-input-group class="has-validation">
+                    <input
+                      cFormControl
+                      formControlName="level"
+                      placeholder="Nivel de curso"
+                      aria-describedby="level-span"
+                      id="level"
+                      type="number"
+                      [ngClass]="{
+                        'is-invalid':
+                          form.get('level')?.invalid &&
+                          form.get('level')?.touched
+                      }"
+                    />
+                    <c-form-feedback
+                      *ngIf="
+                        form.get('level')?.invalid && form.get('level')?.touched
+                      "
+                      [valid]="form.valid"
+                    >
+                      {{ getErrorMessage("level") }}
+                    </c-form-feedback>
+                  </c-input-group>
+                </div>
+              </c-col> -->
+            </c-row>
+
+            <c-row>
+              <c-col xs="12">
+                <div class="d-flex justify-content-end">
+                  <button cButton class="btn btn-primary" type="submit">
+                    Ingresar
+                  </button>
+                </div>
+              </c-col>
+            </c-row>
+          </form>
+        </c-card-body>
+      </c-card>
+    </c-col>
+  </c-row>
+</c-container>

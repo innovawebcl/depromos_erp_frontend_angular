@@ -1,0 +1,55 @@
+$file-border-color: #ccc;
+$file-hover-color: #007bff;
+$file-placeholder-color: #888;
+$file-delete-bg: rgba(244, 67, 54, 0.9);
+
+
+.file-input-container {
+    position: relative;
+    border: 2px dashed $file-border-color;
+    padding: 16px;
+    border-radius: 8px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.3s ease, background-color 0.2s ease;
+
+    &:hover {
+        border-color: $file-hover-color;
+        background-color: rgba(0, 123, 255, 0.05);
+    }
+
+    input[type="file"] {
+        display: none;
+    }
+
+    .placeholder {
+        // white
+        background-color: #f8f9fa;
+        font-size: 14px;
+        padding: 20px;
+        cursor: pointer;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        p {
+            color: $file-placeholder-color;
+        }
+    }
+
+    .preview {
+        display: inline-block;
+
+        img {
+            max-width: 100%;
+            max-height: 200px;
+            object-fit: contain;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease;
+
+            &:hover {
+                transform: scale(1.02);
+            }
+        }
+    }
+}

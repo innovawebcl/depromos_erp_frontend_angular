@@ -1,0 +1,103 @@
+<c-row *ngIf="sociogram">
+  <c-col>
+    <!-- Salud mental-->
+
+    <c-alert color="success" style="text-align: center">
+      La importancia dada a la salud mental, está en su mayoría calificada como
+    </c-alert>
+    <c-card
+      class="mb-4"
+      *ngFor="let mental_health_metric of sociogram.self_care.mental_health"
+    >
+      <c-card-header style="padding: 1em">
+        <b> {{ mental_health_metric.question }}</b>
+      </c-card-header>
+      <c-card-body>
+        <ul cListGroup>
+          <c-container
+            *ngFor="
+              let key_answer of getKeysByObject(mental_health_metric.answers)
+            "
+          >
+            <li cListGroupItem>
+              <c-row>
+                <c-col xs="12" md="4">
+                  {{ key_answer | translateReport }}
+                </c-col>
+                <c-col xs="12" md="8">
+                  <c-progress [value]="mental_health_metric.answers[key_answer]"
+                    >{{ mental_health_metric.answers[key_answer] }}%
+                  </c-progress>
+                </c-col>
+              </c-row>
+            </li>
+          </c-container>
+        </ul>
+      </c-card-body>
+    </c-card>
+    <!-- Nutrición-->
+
+    <c-alert color="success" style="text-align: center">
+      La importancia dada a la nutrición, está en su mayoría calificada como
+    </c-alert>
+    <c-card
+      class="mb-4"
+      *ngFor="let nutrition_metric of sociogram.self_care.nutrition"
+    >
+      <c-card-header style="padding: 1em">
+        <b> {{ nutrition_metric.question }}</b>
+      </c-card-header>
+      <c-card-body>
+        <ul cListGroup>
+          <c-container
+            *ngFor="let key_answer of getKeysByObject(nutrition_metric.answers)"
+          >
+            <li cListGroupItem>
+              <c-row>
+                <c-col xs="12" md="4">
+                  {{ key_answer | translateReport }}
+                </c-col>
+                <c-col xs="12" md="8">
+                  <c-progress [value]="nutrition_metric.answers[key_answer]"
+                    >{{ nutrition_metric.answers[key_answer] }}%
+                  </c-progress>
+                </c-col>
+              </c-row>
+            </li>
+          </c-container>
+        </ul>
+      </c-card-body>
+    </c-card>
+    <!-- Horas de sueño -->
+
+    <c-alert color="success" style="text-align: center">
+      La importancia dada a las horas de sueño, está en su mayoría calificada
+      como
+    </c-alert>
+    <c-card class="mb-4" *ngFor="let sleep_metric of sociogram.self_care.sleep">
+      <c-card-header style="padding: 1em">
+        <b> {{ sleep_metric.question }}</b>
+      </c-card-header>
+      <c-card-body>
+        <ul cListGroup>
+          <c-container
+            *ngFor="let key_answer of getKeysByObject(sleep_metric.answers)"
+          >
+            <li cListGroupItem>
+              <c-row>
+                <c-col xs="12" md="4">
+                  {{ key_answer | translateReport }}
+                </c-col>
+                <c-col xs="12" md="8">
+                  <c-progress [value]="sleep_metric.answers[key_answer]"
+                    >{{ sleep_metric.answers[key_answer] }}%
+                  </c-progress>
+                </c-col>
+              </c-row>
+            </li>
+          </c-container>
+        </ul>
+      </c-card-body>
+    </c-card>
+  </c-col>
+</c-row>

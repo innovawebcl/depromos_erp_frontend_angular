@@ -1,0 +1,13 @@
+.scrollable-list {
+    max-height: 300px; /* Set the maximum height for the scrollable area */
+    overflow-y: auto; /* Enable vertical scrolling */
+    border: 1px solid #dee2e6; /* Optional: Add a border to make the area visually distinct */
+    border-radius: 0.375rem; /* Optional: Add a border radius for rounded corners */
+    padding: 0.5rem; /* Optional: Add some padding inside the scrollable area */
+    background-color: #fff; /* Optional: Ensure background contrasts well with text */
+  }
+
+.table-selected {
+  background-color: #d1e7dd; /* Bootstrap "success" background color */
+  color: #0f5132; /* Bootstrap "success" text color */
+}

@@ -1,0 +1,95 @@
+<c-container>
+  <c-row>
+    <c-col xs="12">
+      <c-card>
+        <c-card-header>
+          <h5 class="card-title">Formulario Refuerzo Positivo</h5>
+        </c-card-header>
+        <c-card-body>
+          <form
+            cForm
+            novalidate
+            [formGroup]="form"
+            (ngSubmit)="onSubmit()"
+            class="needs-validation"
+          >
+            <c-row class="g-3">
+              <c-col xs="12" md="6">
+                <label cLabel for="message">Refuerzo Positivo</label>
+                <select
+                  aria-label="Refuerzo Positivo"
+                  cSelect
+                  id="message"
+                  formControlName="message"
+                  [ngClass]="{
+                    'is-invalid':
+                      form.get('message')?.invalid &&
+                      form.get('message')?.touched
+                  }"
+                >
+                  <option value="null">Selecciona una opción</option>
+                  <option
+                    *ngFor="let option of messageOptions"
+                    [value]="option.value"
+                  >
+                    {{ option.value }}
+                  </option>
+                </select>
+                <c-form-feedback
+                  *ngIf="
+                    form.get('message')?.invalid && form.get('message')?.touched
+                  "
+                >
+                  {{ getErrorMessage("message") }}
+                </c-form-feedback>
+              </c-col>
+              <c-col xs="12" md="6">
+                <label cLabel for="receiver_student_id"
+                  >Compañero de Curso</label
+                >
+                <c-multi-select
+                  clearSearchOnSelect
+                  visibleItems
+                  aria-label="Compañero de Curso"
+                  formControlName="receiver_student_id"
+                  [multiple]="false"
+                  [selectAll]="false"
+                  searchNoResultsLabel="No se encuentra registro de busqueda"
+                  [ngClass]="{
+                    'is-invalid':
+                      form.get('receiver_student_id')?.invalid &&
+                      form.get('receiver_student_id')?.touched
+                  }"
+                >
+                  <c-multi-select-option
+                    *ngFor="let classmate of classmateList"
+                    [value]="classmate.value"
+                  >
+                    {{ classmate.label }}
+                  </c-multi-select-option>
+                </c-multi-select>
+
+                <c-form-feedback
+                  *ngIf="
+                    form.get('receiver_student_id')?.invalid &&
+                    form.get('receiver_student_id')?.touched
+                  "
+                >
+                  {{ getErrorMessage("receiver_student_id") }}
+                </c-form-feedback>
+              </c-col>
+            </c-row>
+
+            <c-row>
+              <c-col xs="12">
+                <div class="d-flex justify-content-end">
+                  <button cButton color="primary" type="submit">Guardar</button>
+                </div>
+              </c-col>
+            </c-row>
+          </form>
+        </c-card-body>
+      </c-card>
+    </c-col>
+  </c-row>
+</c-container>

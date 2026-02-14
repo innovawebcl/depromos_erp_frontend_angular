@@ -1,0 +1,115 @@
+<c-container>
+  <c-row>
+    <c-col xs="12">
+      <c-card class="mb-4">
+        <c-card-header ngPreserveWhitespaces>
+          <strong>Listado de Administradores</strong>
+          <div class="float-end">
+            <c-container>
+              <c-row>
+                <c-col xs="12" [md]="12">
+                  <button
+                    cButton
+                    color="primary"
+                    size="sm"
+                    (click)="onCreate()"
+                    [disabled]="!isInstitutionSelected"
+                  >
+                    Registrar nuevo administrador
+                  </button>
+                </c-col>
+              </c-row>
+            </c-container>
+          </div>
+        </c-card-header>
+        <c-card-body>
+          <c-smart-table
+            [activePage]="1"
+            [columnSorter]="true"
+            [columns]="columns"
+            [columnFilter]="true"
+            [itemsPerPageSelect]="true"
+            [loading]="isLoading"
+            [itemsPerPage]="20"
+            [items]="administrators"
+            [sorterValue]="{ column: 'name', state: 'asc' }"
+            [tableFilter]="true"
+            [tableProps]="{ hover: true, striped: true, responsive: true }"
+            [tableBodyProps]="{ align: 'middle' }"
+            tableFilterPlaceholder="Buscar administradores..."
+            noItemsLabel="Listado de administradores vacío"
+            itemsPerPageLabel="Ítems por página"
+            cleaner
+            clickableRows
+            footer
+            header
+            pagination
+          >
+            <ng-template
+              cTemplateId="tableData"
+              let-columnName="columnName"
+              let-item="item"
+              let-tdContent="tdContent"
+            >
+              <td>
+                @switch (columnName) { @case ('actions') {
+                <div class="d-flex gap-2">
+                  <button
+                    *ngIf="(isAdmin && isInspector(item.role)) || isSuperAdmin"
+                    cTooltip="Editar Administrador"
+                    cTooltipPlacement="bottom"
+                    cButton
+                    color="info"
+                    size="sm"
+                    (click)="onUpdate(item.id)"
+                  >
+                    <c-icon name="cil-pencil"></c-icon>
+                  </button>
+
+                  <button
+                    *ngIf="!isAdmin"
+                    cTooltip="Eliminar Administrador"
+                    cTooltipPlacement="bottom"
+                    cButton
+                    color="danger"
+                    size="sm"
+                    (click)="openDeleteModal(item.id, item.name)"
+                  >
+                    <c-icon name="cil-trash"></c-icon>
+                  </button>
+                </div>
+                } @default {
+                {{ tdContent }}
+                } }
+              </td>
+            </ng-template>
+          </c-smart-table>
+        </c-card-body>
+      </c-card>
+    </c-col>
+  </c-row>
+
+  <!-- Modal de Confirmación -->
+  <c-modal
+    [(visible)]="deleteModalVisible"
+    title="Confirmar eliminación"
+    color="danger"
+    (closed)="resetModal()"
+  >
+    <div class="modal-body">
+      <p>
+        ¿Estás seguro de que deseas eliminar el administrador
+        <strong>{{ selectedAdminName }}</strong
+        >?
+      </p>
+    </div>
+    <div class="modal-footer">
+      <button cButton color="secondary" (click)="deleteModalVisible = false">
+        Cancelar
+      </button>
+      <button cButton color="danger" (click)="onConfirmDelete()">
+        Confirmar
+      </button>
+    </div>
+  </c-modal>
+</c-container>
