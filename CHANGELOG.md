@@ -3,6 +3,37 @@
 Todas las versiones notables de este proyecto se documentan en este archivo.
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y [Semantic Versioning](https://semver.org/lang/es/).
 
+## [1.2.0] - 2026-03-10
+
+Infraestructura de contenedores para producción y desarrollo.
+
+### Dockerfile Producción
+- Multi-stage build: Node 20-alpine (build) → Nginx 1.25-alpine (serve)
+- Angular app compilada a estáticos servidos por Nginx
+- Non-root user (nginx) para seguridad
+- Healthcheck integrado
+- Output path consistente: `dist/depromos-erp/browser`
+
+### Dockerfile Desarrollo
+- `Dockerfile.dev` con Node 20-alpine y Angular CLI hot-reload
+- `docker-compose.yml` standalone para desarrollo frontend (puerto 4200)
+- Volume mounts para `src/` y `angular.json`
+
+### Nginx
+- Proxy reverso `/api/*` → `api:8000` (backend Laravel)
+- SPA fallback (`try_files $uri $uri/ /index.html`)
+- Gzip level 6 para JS, CSS, JSON, SVG
+- Security headers: X-Frame-Options, X-Content-Type-Options, X-XSS-Protection, Referrer-Policy, Permissions-Policy
+- Cache agresivo (1 año, immutable) para assets hasheados
+- Denegación de acceso a archivos ocultos
+
+### Environments
+- `environment.production.ts`: `apiUrl` cambiado a `/api` (relativo, proxy nginx)
+- `environment.staging.ts`: `apiUrl` cambiado a `/api` (relativo, proxy nginx)
+- `.dockerignore` para excluir node_modules, dist, .angular del build
+
+---
+
 ## [1.1.0] - 2026-03-10
 
 Alineación completa del frontend con backend v1.2.0. Corrección de inconsistencias críticas en endpoints, contratos de datos, auth flow y eliminación de código muerto sin backend.
