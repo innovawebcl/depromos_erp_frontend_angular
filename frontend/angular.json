@@ -6,7 +6,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "convivepro": {
+    "depromos-erp": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -32,7 +32,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/convivepro",
+            "outputPath": "dist/depromos-erp",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": ["zone.js"],
@@ -109,16 +109,16 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "convivepro:build:production"
+              "buildTarget": "depromos-erp:build:production"
             },
             "staging": {
-              "buildTarget": "convivepro:build:staging"
+              "buildTarget": "depromos-erp:build:staging"
             },
             "development": {
-              "buildTarget": "convivepro:build:development"
+              "buildTarget": "depromos-erp:build:development"
             },
             "local": {
-              "buildTarget": "convivepro:build:local"
+              "buildTarget": "depromos-erp:build:local"
             }
           },
           "defaultConfiguration": "local"
@@ -126,7 +126,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "buildTarget": "convivepro:build"
+            "buildTarget": "depromos-erp:build"
           }
         },
         "test": {
