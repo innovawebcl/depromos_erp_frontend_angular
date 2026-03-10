@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { environment } from '@infra-environments/environment';
+import { environment } from '@infra-env/environment';
 import { Observable } from 'rxjs';
 import type { PickingScanResponse } from './picking.models';
 import type { Order } from '../orders/orders.models';
@@ -16,10 +16,16 @@ export class PickingService {
   }
 
   scan(orderId: number, code: string): Observable<PickingScanResponse> {
-    return this.http.post<PickingScanResponse>(`${this.base}/picking/orders/${orderId}/scan`, { code });
+    return this.http.post<PickingScanResponse>(
+      `${this.base}/orders/${orderId}/picking/scan`,
+      { code }
+    );
   }
 
   close(orderId: number): Observable<Order> {
-    return this.http.post<Order>(`${this.base}/picking/orders/${orderId}/close`, {});
+    return this.http.post<Order>(
+      `${this.base}/orders/${orderId}/picking/close`,
+      {}
+    );
   }
 }

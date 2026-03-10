@@ -20,6 +20,9 @@ export class UsersFormComponent implements OnInit {
 
   form: UserUpsert = {
     name: '',
+    first_name: '',
+    last_name: '',
+    username: '',
     email: '',
     password: '',
     role_id: null,
@@ -47,6 +50,9 @@ export class UsersFormComponent implements OnInit {
         next: (u: UserDetail) => {
           this.form = {
             name: u.name,
+            first_name: u.first_name ?? '',
+            last_name: u.last_name ?? '',
+            username: u.username,
             email: u.email,
             role_id: u.role_id ?? null,
             active: u.active,
@@ -62,10 +68,13 @@ export class UsersFormComponent implements OnInit {
   }
 
   save(): void {
-    if (!this.form.name || !this.form.email) return;
+    if (!this.form.username || !this.form.email) return;
 
     const payload: UserUpsert = {
-      name: this.form.name,
+      name: this.form.name || `${this.form.first_name ?? ''} ${this.form.last_name ?? ''}`.trim(),
+      first_name: this.form.first_name || null,
+      last_name: this.form.last_name || null,
+      username: this.form.username,
       email: this.form.email,
       role_id: this.form.role_id,
       active: this.form.active,

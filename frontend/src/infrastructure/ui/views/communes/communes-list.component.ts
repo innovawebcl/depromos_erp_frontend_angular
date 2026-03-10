@@ -25,7 +25,11 @@ type Commune = { id: number; name: string; active: boolean; current_tariff?: num
             <tr *ngFor="let c of items">
               <td>{{c.id}}</td>
               <td>{{c.name}}</td>
-              <td><span class="badge" [class.bg-success]="c.active" [class.bg-secondary]="!c.active">{{c.active?'Sí':'No'}}</span></td>
+              <td>
+                <button class="btn btn-sm" [class.btn-success]="c.active" [class.btn-secondary]="!c.active" (click)="toggle(c)" [disabled]="toggling">
+                  {{c.active ? 'Activa' : 'Inactiva'}}
+                </button>
+              </td>
               <td>{{(c.current_tariff ?? 0) | number:'1.0-0'}}</td>
               <td class="text-end"><a class="btn btn-sm btn-outline-primary" [routerLink]="['/communes', c.id]">Ver histórico</a></td>
             </tr>
@@ -40,6 +44,7 @@ export class CommunesListComponent {
   private api = inject(BackofficeApi);
   items: Commune[] = [];
   loading = false;
+  toggling = false;
 
   async ngOnInit() { await this.load(); }
 
@@ -50,6 +55,16 @@ export class CommunesListComponent {
       this.items = (res.data ?? res) as Commune[];
     } finally {
       this.loading = false;
+    }
+  }
+
+  async toggle(c: Commune) {
+    this.toggling = true;
+    try {
+      await firstValueFrom(this.api.patch(`/communes/${c.id}/toggle`, {}));
+      c.active = !c.active;
+    } finally {
+      this.toggling = false;
     }
   }
 }

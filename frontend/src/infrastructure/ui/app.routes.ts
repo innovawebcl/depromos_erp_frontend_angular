@@ -118,29 +118,6 @@ export const routes: Routes = [
       ),
     data: { title: 'Iniciar Sesión' },
   },
-  {
-    path: 'forgot-password',
-    loadComponent: () =>
-      import('./views/pages/login/login.component').then(
-        (m) => m.LoginComponent
-      ),
-    data: { title: 'Recuperar Contraseña' },
-  },
-  {
-    path: 'validate-code',
-    loadComponent: () =>
-      import('./views/pages/login/login.component').then(
-        (m) => m.LoginComponent
-      ),
-    data: { title: 'Validar Código' },
-  },
-  {
-    path: 'reset-password',
-    loadComponent: () =>
-      import('./views/pages/login/login.component').then(
-        (m) => m.LoginComponent
-      ),
-    canActivate: [AuthGuard],
-  },
+
   { path: '**', redirectTo: '404' },
 ];

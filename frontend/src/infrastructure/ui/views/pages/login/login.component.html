@@ -11,92 +11,17 @@
             <c-card-body>
               <div class="text-center mb-4">
                 <h2 class="text-primary">
-                  <ng-container [ngSwitch]="authScreen">
-                    <span *ngSwitchCase="'login'">Bienvenido a <span class="text-warning">Convive</span>Pro</span>
-                    <span *ngSwitchCase="'forgot-password'">📩 Recuperar contraseña</span>
-                    <span *ngSwitchCase="'validate-code'">🔢 Validar código</span>
-                    <span *ngSwitchCase="'reset-password'">🔄 Restablecer contraseña</span>
-                  </ng-container>
+                  Bienvenido a <span class="text-warning">Depromos</span> ERP
                 </h2>
                 <p class="text-muted">
-                  <ng-container [ngSwitch]="authScreen">
-                    <span *ngSwitchCase="'login'">
-                      Ingresa tus credenciales para acceder.
-                    </span>
-                    <span *ngSwitchCase="'forgot-password'">
-                      Introduce tu correo para recibir un código de recuperación.
-                    </span>
-                    <span *ngSwitchCase="'validate-code'">
-                      Introduce el código que enviamos a tu correo.
-                    </span>
-                    <span *ngSwitchCase="'reset-password'">
-                      Ingresa tu nueva contraseña.
-                    </span>
-                  </ng-container>
-                </p>
-                <p *ngIf="authScreen === 'reset-password'" class="text-muted small">
-                  <strong>¡Es tu primera vez iniciando sesión!</strong> Por favor, cambia tu contraseña para continuar.
+                  Ingresa tus credenciales para acceder.
                 </p>
               </div>
-              <div *ngIf="successMessage" class="alert alert-success text-center">
-                {{ successMessage }}
-              </div>
 
-              <ng-container [ngSwitch]="authScreen">
-                <app-form
-                  *ngSwitchCase="'login'"
-                  (formSubmit)="onSubmit($event)"
-                  [isLoading]="isLoading"
-                ></app-form>
-                <forgot-password
-                  *ngSwitchCase="'forgot-password'"
-                  (formSubmit)="onForgotPasswordSubmit($event)"
-                  [isLoading]="isLoading"
-                  ></forgot-password>
-                <validate-code
-                  *ngSwitchCase="'validate-code'"
-                  (formSubmit)="onValidateCodeSubmit($event)"
-                  [isLoading]="isLoading"
-                ></validate-code>
-                <reset-password
-                  *ngSwitchCase="'reset-password'"
-                  (formSubmit)="onResetPasswordSubmit($event)"
-                  [isLoading]="isLoading"
-                ></reset-password>
-                <p *ngSwitchDefault class="text-center">
-                  <span class="text-muted">¿?</span>
-                </p>
-
-                <!-- <app-form-request-password *ngSwitchCase="'request-password'" (formSubmit)="onRequestPassword($event)"></app-form-request-password>
-
-                <app-form-validate-code *ngSwitchCase="'validate-code'" (formSubmit)="onValidateCode($event)"></app-form-validate-code>
-
-                <app-form-reset-password *ngSwitchCase="'reset-password'" (formSubmit)="onResetPassword($event)"></app-form-reset-password> -->
-              </ng-container>
-
-              <ng-container *ngIf="authScreen === 'login'; else returnToLogin">
-                <div class="text-center mt-3">
-                  <a
-                    [routerLink]="'/forgot-password'"
-                    class="text-primary"
-                    style="text-decoration: none; font-weight: bold;"
-                  >
-                  ¿Olvidaste tu contraseña?
-                  </a>
-                </div>
-              </ng-container>
-
-              <ng-template #returnToLogin>
-                <div class="text-center mt-3">
-                  <a
-                  (click)="logout()"
-                    class="text-primary"
-                    style="text-decoration: none; font-weight: bold; cursor: pointer;"
-                  >
-                  Regresar al inicio de sesión
-                  </a>
-                </div>
-              </ng-template>
+              <app-form
+                (formSubmit)="onSubmit($event)"
+                [isLoading]="isLoading"
+              ></app-form>
             </c-card-body>
           </c-card>
 

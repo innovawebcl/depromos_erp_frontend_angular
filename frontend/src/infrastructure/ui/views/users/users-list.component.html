@@ -50,6 +50,7 @@
           <tr>
             <th style="width: 80px">ID</th>
             <th>Usuario</th>
+            <th>Username</th>
             <th>Rol</th>
             <th>Estado</th>
             <th>Creado</th>
@@ -60,10 +61,11 @@
           <tr *ngFor="let u of data.data">
             <td>#{{ u.id }}</td>
             <td>
-              <div class="fw-semibold">{{ u.name }}</div>
+              <div class="fw-semibold">{{ u.first_name || u.last_name ? (u.first_name ?? '') + ' ' + (u.last_name ?? '') : u.name }}</div>
               <div class="small text-medium-emphasis">{{ u.email }}</div>
             </td>
-            <td>{{ u.role_name || '—' }}</td>
+            <td class="text-medium-emphasis">{{ u.username }}</td>
+            <td>{{ u.role?.name || '—' }}</td>
             <td>
               <span class="badge" [ngClass]="'bg-' + badge(u.active)">{{ u.active ? 'Activo' : 'Bloqueado' }}</span>
             </td>
@@ -76,7 +78,7 @@
             </td>
           </tr>
           <tr *ngIf="!loading && data.data.length === 0">
-            <td colspan="6" class="text-center py-4 text-medium-emphasis">Sin resultados</td>
+            <td colspan="7" class="text-center py-4 text-medium-emphasis">Sin resultados</td>
           </tr>
         </tbody>
       </table>

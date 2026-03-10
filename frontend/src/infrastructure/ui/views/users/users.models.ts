@@ -18,10 +18,14 @@ export interface RoleSummary {
 export interface UserRow {
   id: number;
   name: string;
+  first_name?: string | null;
+  last_name?: string | null;
+  username: string;
   email: string;
   active: boolean;
   role_id: number | null;
-  role_name?: string | null;
+  role?: RoleSummary | null;
+  first_login?: boolean;
   created_at?: string | null;
 }
 
@@ -31,6 +35,9 @@ export interface UserDetail extends UserRow {
 
 export interface UserUpsert {
   name: string;
+  first_name?: string | null;
+  last_name?: string | null;
+  username: string;
   email: string;
   password?: string | null;
   role_id: number | null;

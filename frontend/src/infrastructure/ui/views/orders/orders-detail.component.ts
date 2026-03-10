@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { environment } from '@infra-environments/environment';
+import { environment } from '@infra-env/environment';
 import { OrdersService } from './orders.service';
 import type { Order } from './orders.models';
 

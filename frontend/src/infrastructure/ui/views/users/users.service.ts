@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { environment } from '@infra-environments/environment';
+import { environment } from '@infra-env/environment';
 import { Observable } from 'rxjs';
 import type { Paginated, RoleSummary, UserDetail, UserRow, UserUpsert } from './users.models';
 

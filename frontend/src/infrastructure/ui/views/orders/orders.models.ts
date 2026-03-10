@@ -16,6 +16,41 @@ export interface OrderItem {
   barcode?: string | null;
 }
 
+export interface DeliveryAddress {
+  id: number;
+  street: string;
+  number?: string | null;
+  apartment?: string | null;
+  city: string;
+  commune?: string | null;
+  region?: string | null;
+  zip_code?: string | null;
+  latitude?: number | null;
+  longitude?: number | null;
+  instructions?: string | null;
+  contact_name?: string | null;
+  contact_phone?: string | null;
+}
+
+export interface Payment {
+  id: number;
+  amount: number;
+  method: string;
+  status: string;
+  transaction_id?: string | null;
+  gateway?: string | null;
+  paid_at?: string | null;
+  created_at?: string;
+}
+
+export interface StatusHistoryEntry {
+  id: number;
+  from_status: OrderStatus | null;
+  to_status: OrderStatus;
+  changed_by_user_id?: number | null;
+  created_at?: string;
+}
+
 export interface Order {
   id: number;
   code?: string | null;
@@ -34,7 +69,9 @@ export interface Order {
   created_at?: string;
   updated_at?: string;
   items?: OrderItem[];
-  timeline?: Array<{ at: string; status: OrderStatus; note?: string | null }>;
+  delivery_address?: DeliveryAddress | null;
+  payments?: Payment[];
+  status_history?: StatusHistoryEntry[];
 }
 
 export interface Paginated<T> {

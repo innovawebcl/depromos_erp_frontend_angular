@@ -8,13 +8,23 @@
 <div class="card">
   <div class="card-body">
     <div class="row g-3">
-      <div class="col-md-6">
+      <div class="col-md-4">
         <label class="form-label">Nombre</label>
-        <input class="form-control" [(ngModel)]="form.name" placeholder="Nombre completo" />
+        <input class="form-control" [(ngModel)]="form.first_name" placeholder="Nombre" />
       </div>
+      <div class="col-md-4">
+        <label class="form-label">Apellido</label>
+        <input class="form-control" [(ngModel)]="form.last_name" placeholder="Apellido" />
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Nombre de usuario <span class="text-danger">*</span></label>
+        <input class="form-control" [(ngModel)]="form.username" placeholder="usuario123" required />
+        <div class="small text-medium-emphasis mt-1">Se usa para iniciar sesión.</div>
+      </div>
+
       <div class="col-md-6">
-        <label class="form-label">Email</label>
-        <input class="form-control" [(ngModel)]="form.email" placeholder="correo@dominio.com" />
+        <label class="form-label">Email <span class="text-danger">*</span></label>
+        <input class="form-control" type="email" [(ngModel)]="form.email" placeholder="correo@dominio.com" required />
       </div>
 
       <div class="col-md-6">

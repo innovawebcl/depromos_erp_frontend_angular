@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { environment } from '@infra-environments/environment';
+import { environment } from '@infra-env/environment';
 import { Observable } from 'rxjs';
 import type { ModuleDef, RoleRow, RoleUpsert } from './roles.models';
 

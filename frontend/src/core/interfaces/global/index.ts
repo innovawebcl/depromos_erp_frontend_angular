@@ -1,6 +1,5 @@
 export enum UserRole {
-  Administrator = 'Administrator',
-  SuperAdministrator = 'SuperAdministrator',
+  Admin = 'admin',
 }
 
 export enum StorageKeys {
