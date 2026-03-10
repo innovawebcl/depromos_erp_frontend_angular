@@ -1,47 +1,27 @@
-version: '3.9'
+# =============================================================================
+# Depromos ERP Frontend - Docker Compose (Desarrollo Local)
+# Para desarrollo standalone del frontend con hot-reload
+#
+# Uso:
+#   docker compose up --build
+#
+# Nota: Para el stack completo (frontend + backend + mysql),
+#       usar el docker-compose.yml del repositorio backend.
+# =============================================================================
 
 services:
-  db:
-    image: mysql:8.0
-    environment:
-      MYSQL_DATABASE: backoffice
-      MYSQL_USER: backoffice
-      MYSQL_PASSWORD: backoffice
-      MYSQL_ROOT_PASSWORD: root
-    ports:
-      - "33066:3306"
-    command: --default-authentication-plugin=mysql_native_password
-    volumes:
-      - db_data:/var/lib/mysql
 
-  api:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-    environment:
-      APP_ENV: local
-      APP_DEBUG: "true"
-      DB_CONNECTION: mysql
-      DB_HOST: db
-      DB_PORT: 3306
-      DB_DATABASE: backoffice
-      DB_USERNAME: backoffice
-      DB_PASSWORD: backoffice
-    ports:
-      - "8080:80"
-    depends_on:
-      - db
-
-  web:
+  # --- Frontend Dev Server (Angular CLI con hot-reload) ---
+  web-dev:
     build:
       context: ./frontend
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
+    container_name: depromos-web-dev
     environment:
-      API_URL: http://localhost:8080/api
+      NODE_ENV: development
     ports:
       - "4200:4200"
-    depends_on:
-      - api
-
-volumes:
-  db_data:
+    volumes:
+      - ./frontend/src:/app/src
+      - ./frontend/angular.json:/app/angular.json
+    command: ["npx", "ng", "serve", "--host", "0.0.0.0", "--port", "4200", "--poll", "2000"]
