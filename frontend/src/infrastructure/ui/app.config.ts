@@ -24,10 +24,6 @@ import { registerLocaleData } from '@angular/common';
 import { provideToastr } from 'ngx-toastr';
 import { messageInterceptor } from '@infra-adapters/interceptors/message.interceptor';
 import localeEs from '@angular/common/locales/es';
-import { QuillModule, provideQuillConfig } from 'ngx-quill';
-import Counter from '@infra-ui/components/quill-counter/Counter';
-
-
 
 registerLocaleData(localeEs);
 
@@ -55,25 +51,6 @@ export const appConfig: ApplicationConfig = {
         authErrorInterceptor,
       ])
     ),
-    provideQuillConfig({
-      modules: {
-        syntax: false, // Enable syntax highlighting if needed
-        toolbar: [
-          ['bold', 'italic', 'underline'], // Text formatting buttons
-          [{ header: 1 }, { header: 2 }], // Headers
-          [{ list: 'ordered' }, { list: 'bullet' }], // Lists
-          [{ color: [] }, { background: [] }], // Text color/background
-          ['link', 'image'], // Links and images
-          ['clean'], // Clear formatting
-        ],
-      },
-      placeholder: 'Escribe aquí...', // Set global placeholder
-      theme: 'snow', // Set default theme (e.g., 'snow' or 'bubble')
-      customModules: [{
-      implementation: Counter,
-      path: 'modules/counter'
-    }],
-    }),
     importProvidersFrom(SidebarModule, DropdownModule),
     { provide: LOCALE_ID, useValue: 'es' },
   ],

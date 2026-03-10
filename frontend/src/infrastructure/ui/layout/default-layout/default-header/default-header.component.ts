@@ -40,10 +40,6 @@ import {
 import { IconDirective } from '@coreui/icons-angular';
 import { AuthManager } from '@infra-adapters/services/auth.service';
 import { InitialsPipe } from '@infra-adapters/pipe/Initials.pipe';
-import { SelectorInstitutionComponent } from '@infra-ui/components/selector-institution/selector-institution.component';
-import { UserRole } from '@core-interfaces/global';
-import { BehaviorSubject } from 'rxjs';
-import { Iinstitution } from '@core-ports/outputs/institution';
 
 @Component({
   selector: 'app-default-header',
@@ -82,7 +78,6 @@ import { Iinstitution } from '@core-ports/outputs/institution';
     NgStyle,
     FormDirective,
     InitialsPipe,
-    SelectorInstitutionComponent,
     AlertComponent,
     HeaderComponent,
   ],
@@ -92,9 +87,6 @@ export class DefaultHeaderComponent extends HeaderComponent implements OnInit {
   readonly colorMode = this.#colorModeService.colorMode;
 
   name: string = '';
-  institution: Iinstitution | null = null;
-
-  isUserAllowedToEditProfile = false;
 
   constructor(
     private cd: ChangeDetectorRef,
@@ -114,7 +106,6 @@ export class DefaultHeaderComponent extends HeaderComponent implements OnInit {
     if (info) {
       this.name = `${info.first_name ?? 'N'} ${info.last_name ?? 'N'}`;
     }
-    this.isUserAllowedToEditProfile = this.getIfUserAllowedToEditProfile();
   }
 
   @Input() sidebarId: string = 'sidebar1';
@@ -122,15 +113,5 @@ export class DefaultHeaderComponent extends HeaderComponent implements OnInit {
   logout() {
     this.authService.cleanSession();
     this.router.navigate(['/login']);
-  }
-
-  setInstitution(institution: Iinstitution) {
-    this.institution = institution;
-    this.cd.detectChanges();
-  }
-
-  private getIfUserAllowedToEditProfile() {
-    const role = this.authService.UserSessionData()?.role;
-    return role === UserRole.Student || role === UserRole.Teacher;
   }
 }

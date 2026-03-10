@@ -7,8 +7,6 @@ import { UserRole } from '@core-interfaces/global';
 })
 export class TranslateRolePipe implements PipeTransform {
   private roleMap: Record<UserRole, string> = {
-    [UserRole.Student]: 'Estudiante',
-    [UserRole.Teacher]: 'Profesor',
     [UserRole.Administrator]: 'Administrador',
     [UserRole.SuperAdministrator]: 'Super Administrador',
   };

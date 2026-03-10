@@ -1,6 +1,5 @@
 import type {
   UserRole,
-  AdministratorRole,
   DateOrNull,
 } from '@core-interfaces/global';
 
@@ -13,7 +12,6 @@ export interface IuserInput {
   rut: string;
   birth_date: DateOrNull;
   role: UserRole;
-  admin_role: AdministratorRole | null;
 }
 
 export type UserArgs =
@@ -24,5 +22,4 @@ export type UserArgs =
   | 'email'
   | 'rut'
   | 'birth_date'
-  | 'role'
-  | 'admin_role';
+  | 'role';

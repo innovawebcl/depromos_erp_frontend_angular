@@ -12,7 +12,7 @@ import * as Icons from './icons/icon-subset';
   imports: [RouterOutlet],
 })
 export class AppComponent implements OnInit {
-  title = 'Convivepro Backoffice';
+  title = 'Depromos ERP';
 
   constructor(
     private router: Router,

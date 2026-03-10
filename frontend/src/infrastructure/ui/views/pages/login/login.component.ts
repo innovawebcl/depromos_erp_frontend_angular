@@ -187,7 +187,6 @@ export class LoginComponent implements OnInit {
 
   logout() {
     this.authService.cleanSession();
-    this.authService.cleanInstitution();
     this.router.navigate(['/login']);
   }
 

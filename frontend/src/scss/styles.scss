@@ -29,14 +29,6 @@
 @import "_dropzone.scss";
 @import "_loading.scss";
 
-@import 'node_modules/quill/dist/quill.bubble.css';
-@import 'node_modules/quill/dist/quill.snow.css';
-
-.quill-editor {
-  height: 200px;
-  max-width: 100%;
-  width: 100%;
-}
 
 .toast-container {
   position: fixed;

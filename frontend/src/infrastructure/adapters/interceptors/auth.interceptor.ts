@@ -8,13 +8,11 @@ export const authInterceptor: HttpInterceptorFn = (
   next: HttpHandlerFn
 ): Observable<HttpEvent<any>> => {
   const token = sessionStorage.getItem(StorageKeys.session_token);
-  const institution_id = sessionStorage.getItem(StorageKeys.institution_id);
 
   if (token) {
     const clonedRequest = req.clone({
       setHeaders: {
         Authorization: `Bearer ${token}`,
-        'x-institution': institution_id ?? '0',
       },
       withCredentials: true,
     });

@@ -20,23 +20,12 @@
         flex: 1;
       "
     >
-      <ng-container *ngIf="institution">
-        <div class="d-flex justify-content-start align-items-center gap-2">
-        <img
-          *ngIf="institution.logo_url"
-          [src]="institution.logo_url"
-          alt="Logo de {{ institution.name }}"
-          class="institution-logo"
-        />
-        <h5 class="text-primary fw-semibold">{{ institution.name }}</h5>
-        </div>
-      </ng-container>
+      <div class="d-flex justify-content-start align-items-center gap-2">
+        <h5 class="text-primary fw-semibold">Depromos ERP</h5>
+      </div>
       <div
         style="display: flex; justify-content: flex-end; align-items: flex-end; flex: 1"
       >
-        <selector-institution
-          (institutionChange)="setInstitution($event)"
-        ></selector-institution>
         <ng-container *ngTemplateOutlet="themeDropdown" />
         <div class="nav-item py-1">
           <div class="vr h-100 mx-2 text-body text-opacity-75"></div>
@@ -75,16 +64,10 @@
           cDropdownHeader
           class="bg-body-secondary text-body-secondary fw-semibold py-2"
         >
-          ConvivePro
+          Depromos ERP
         </h6>
       </li>
       <li></li>
-      <li *ngIf="isUserAllowedToEditProfile">
-        <a cDropdownItem routerLink="/profile">
-          <svg cIcon class="me-1" name="cilUser"></svg>
-          Perfil
-        </a>
-      </li>
       <li>
         <hr cDropdownDivider />
       </li>

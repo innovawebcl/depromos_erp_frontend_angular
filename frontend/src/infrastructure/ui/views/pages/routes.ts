@@ -1,7 +1,4 @@
 import { Routes } from '@angular/router';
-import { UserRole } from '@core-interfaces/global';
-import { AuthGuard } from '@infra-adapters/guards/auth.guard';
-import { RoleGuard } from '@infra-adapters/guards/role.guard';
 
 export const routes: Routes = [
   {

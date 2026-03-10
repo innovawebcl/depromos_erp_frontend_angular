@@ -66,7 +66,7 @@ export class OrdersDetailComponent implements OnInit {
         const list = Array.isArray(res) ? res : (res?.data ?? []);
         this.couriers = list.map((c: any) => ({
           id: c.id,
-          name: c.name ?? c.full_name ?? `${c.first_name ?? ''} ${c.last_name ?? ''}`.trim() || `#${c.id}`,
+          name: c.name ?? c.full_name ?? (`${c.first_name ?? ''} ${c.last_name ?? ''}`.trim() || `#${c.id}`),
           rating: c.rating ?? c.avg_rating ?? null,
         }));
       },

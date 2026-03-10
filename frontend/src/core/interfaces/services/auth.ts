@@ -18,13 +18,4 @@ export interface IAuthService {
    * * Remueve token JWT que mantiene sesión activa
    */
   cleanSession(): void;
-  /**
-   * * Registra token id de institución en caso de ser super administrador
-   * @param id
-   */
-  setInstitution(id: number): void;
-  /**
-   * * Remueve token JWT que mantiene sesión activa
-   */
-  cleanInstitution(): void;
 }

@@ -10,9 +10,8 @@
       "@core-services/*": ["./src/core/interfaces/services/*"],
       "@infra-adapters/*": ["./src/infrastructure/adapters/*"],
       "@infra-env/*": ["./src/infrastructure/environments/*"],
+      "@infra-environments/*": ["./src/infrastructure/environments/*"],
       "@infra-ui/*": ["./src/infrastructure/ui/*"],
-      "@utils/*": ["./src/utils/*"],
-      "@docs-components/*": ["./src/infrastructure/ui/components/*"],
       "@angular/*": ["../node_modules/@angular/*"],
       "@coreui/*": ["../node_modules/@coreui/*"]
     }

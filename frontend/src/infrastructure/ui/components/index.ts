@@ -1,1 +1,2 @@
-export * from './public-api';
+// Depromos ERP - Shared components barrel
+export {};

@@ -3,10 +3,6 @@ import { DefaultLayoutComponent } from './layout';
 import { ModuleGuard } from '@infra-adapters/guards/module.guard';
 import { AuthGuard } from '@infra-adapters/guards/auth.guard';
 import { InvalidSessionGuard } from '@infra-adapters/guards/invalidSession.guard';
-import { RoleGuard } from '@infra-adapters/guards/role.guard';
-import { UserRole } from '@core-interfaces/global';
-import { InstitutionResolver } from '@infra-adapters/resolver/institution.resolver';
-import { FirstLoginGuard } from '@infra-adapters/guards/firstLogin.guard';
 
 export const routes: Routes = [
   {
@@ -17,11 +13,8 @@ export const routes: Routes = [
   {
     path: '',
     component: DefaultLayoutComponent,
-    data: {
-      title: 'Home',
-    },
-    resolve: { institutions: InstitutionResolver },
-    canActivate: [AuthGuard, FirstLoginGuard],
+    canActivate: [AuthGuard],
+    data: { title: 'Home' },
     children: [
       {
         path: 'dashboard',
@@ -98,108 +91,6 @@ export const routes: Routes = [
         loadChildren: () =>
           import('./views/roles/routes').then((m) => m.routes),
       },
-      {
-        path: 'profile',
-        canActivate: [RoleGuard],
-        data: { roles: [UserRole.Teacher, UserRole.Student] },
-        loadChildren: () =>
-          import('./views/profile/routes').then((m) => m.routes),
-      },
-      {
-        path: 'institutions',
-        canActivate: [RoleGuard],
-        data: { roles: [UserRole.SuperAdministrator, UserRole.Administrator] },
-        loadChildren: () =>
-          import('./views/institution/routes').then((m) => m.routes),
-      },
-      {
-        path: 'sociograms',
-        canActivate: [RoleGuard],
-        data: {
-          roles: [
-            UserRole.SuperAdministrator,
-            UserRole.Administrator,
-            UserRole.Teacher,
-          ],
-        },
-        loadChildren: () =>
-          import('./views/sociogram/routes').then((m) => m.routes),
-      },
-      {
-        path: 'courses',
-        canActivate: [RoleGuard],
-        data: {
-          roles: [
-            UserRole.SuperAdministrator,
-            UserRole.Administrator,
-            UserRole.Teacher,
-          ],
-        },
-        loadChildren: () =>
-          import('./views/course/routes').then((m) => m.routes),
-      },
-      {
-        path: 'teachers',
-        canActivate: [RoleGuard],
-        data: { roles: [UserRole.SuperAdministrator, UserRole.Administrator] },
-        loadChildren: () =>
-          import('./views/teacher/routes').then((m) => m.routes),
-      },
-      {
-        path: 'students',
-        canActivate: [RoleGuard],
-        data: {
-          roles: [
-            UserRole.SuperAdministrator,
-            UserRole.Administrator,
-            UserRole.Student,
-            UserRole.Teacher,
-          ],
-        },
-        loadChildren: () =>
-          import('./views/student/routes').then((m) => m.routes),
-      },
-      {
-        path: 'complaints',
-        runGuardsAndResolvers: 'always',
-        loadChildren: () =>
-          import('./views/complaint/routes').then((m) => m.routes),
-        canActivate: [RoleGuard],
-        data: {
-          roles: [
-            UserRole.Teacher,
-            UserRole.Student,
-            UserRole.Administrator,
-            UserRole.SuperAdministrator,
-          ],
-        },
-      },
-      {
-        path: 'investigation',
-        loadChildren: () =>
-          import('./views/investigation/routes').then((m) => m.routes),
-        canActivate: [RoleGuard],
-        data: {
-          roles: [UserRole.Administrator],
-        },
-      },
-      {
-        path: 'admins',
-        loadChildren: () => import('./views/user/routes').then((m) => m.routes),
-        canActivate: [RoleGuard],
-        data: {
-          roles: [UserRole.Administrator, UserRole.SuperAdministrator],
-        },
-      },
-      {
-        path: 'positivereinforcement',
-        loadChildren: () =>
-          import('./views/positive-reinforcement/routes').then((m) => m.routes),
-        canActivate: [RoleGuard],
-        data: {
-          roles: [UserRole.Administrator, UserRole.Teacher, UserRole.Student],
-        },
-      },
     ],
   },
   {
@@ -208,9 +99,7 @@ export const routes: Routes = [
       import('./views/pages/page404/page404.component').then(
         (m) => m.Page404Component
       ),
-    data: {
-      title: 'Page 404',
-    },
+    data: { title: 'Page 404' },
   },
   {
     path: '500',
@@ -218,9 +107,7 @@ export const routes: Routes = [
       import('./views/pages/page500/page500.component').then(
         (m) => m.Page500Component
       ),
-    data: {
-      title: 'Page 500',
-    },
+    data: { title: 'Page 500' },
   },
   {
     path: 'login',
@@ -229,9 +116,7 @@ export const routes: Routes = [
       import('./views/pages/login/login.component').then(
         (m) => m.LoginComponent
       ),
-    data: {
-      title: 'Iniciar Sesión',
-    },
+    data: { title: 'Iniciar Sesión' },
   },
   {
     path: 'forgot-password',
@@ -239,9 +124,7 @@ export const routes: Routes = [
       import('./views/pages/login/login.component').then(
         (m) => m.LoginComponent
       ),
-    data: {
-      title: 'Forgot Password Page',
-    },
+    data: { title: 'Recuperar Contraseña' },
   },
   {
     path: 'validate-code',
@@ -249,9 +132,7 @@ export const routes: Routes = [
       import('./views/pages/login/login.component').then(
         (m) => m.LoginComponent
       ),
-    data: {
-      title: 'Validate Code Page',
-    },
+    data: { title: 'Validar Código' },
   },
   {
     path: 'reset-password',
@@ -259,7 +140,7 @@ export const routes: Routes = [
       import('./views/pages/login/login.component').then(
         (m) => m.LoginComponent
       ),
-      canActivate: [AuthGuard],
+    canActivate: [AuthGuard],
   },
   { path: '**', redirectTo: '404' },
 ];

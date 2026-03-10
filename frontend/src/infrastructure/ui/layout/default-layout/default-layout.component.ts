@@ -23,15 +23,7 @@ import {
   DefaultFooterComponent,
   DefaultHeaderComponent,
 } from '.';
-import {
-  navAdministrator,
-  navInspectors,
-  navStudents,
-  navSuperAdministrator,
-  navTeachers,
-  buildBackofficeNav,
-} from './_nav';
-import { AdministratorRole, UserRole } from '@core-interfaces/global';
+import { buildBackofficeNav } from './_nav';
 import { AuthManager } from '@infra-adapters/services/auth.service';
 
 @Component({
@@ -61,34 +53,12 @@ import { AuthManager } from '@infra-adapters/services/auth.service';
   ],
 })
 export class DefaultLayoutComponent {
-  navigation: { [key: string]: INavData[] } = {
-    [UserRole.Administrator]: navAdministrator,
-    [UserRole.Student]: navStudents,
-    [UserRole.SuperAdministrator]: navSuperAdministrator,
-    [UserRole.Teacher]: navTeachers,
-    [AdministratorRole.SchoolSupervisor]: navInspectors,
-  };
-
   constructor(private authService: AuthManager) {}
 
-  get navItems() {
+  get navItems(): INavData[] {
     const user = this.authService.UserSessionData();
-
-    // Backoffice: si el JWT trae modules{}, construimos menú dinámico
     const modules = (user as any)?.modules as Record<string, boolean> | undefined;
-    if (modules) {
-      return buildBackofficeNav(modules);
-    }
-
-    // Navegación antigua (ConvivePro) por roles
-    if (
-      user &&
-      user.role === UserRole.Administrator &&
-      user.admin_role === AdministratorRole.SchoolSupervisor
-    ) {
-      return this.navigation[user.admin_role];
-    }
-    return this.navigation[user!.role];
+    return buildBackofficeNav(modules);
   }
 
   onScrollbarUpdate($event: any) {}
