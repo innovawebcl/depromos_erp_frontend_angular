@@ -3,6 +3,32 @@
 Todas las versiones notables de este proyecto se documentan en este archivo.
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y [Semantic Versioning](https://semver.org/lang/es/).
 
+## [1.1.0] - 2026-03-10
+
+Alineación completa del frontend con backend v1.2.0. Corrección de inconsistencias críticas en endpoints, contratos de datos, auth flow y eliminación de código muerto sin backend.
+
+### Correcciones Críticas
+- **C1:** URLs de picking service corregidas (`/picking-sessions` → `/picking`)
+- **C2:** Eliminados componentes forgot-password, validate-code, reset-password (sin endpoints en backend)
+- **C3:** Interfaces User actualizadas con `first_name`, `last_name`, `username`, `role` como objeto
+- **C5:** UserRole enum alineado con JWT claims del backend (`role: 'admin'`)
+
+### Mejoras de Consistencia
+- **C4:** Formulario y listado de usuarios con campos username, first_name, last_name
+- **C6:** auth.service mejorado con `isLoggedIn()`, verificación de expiración JWT, `getModules()`
+- **A1:** Interfaces DeliveryAddress, Payment, StatusHistoryEntry agregadas a orders.models.ts
+- **A3:** Alias de environment unificado (`@infra-environments` → `@infra-env`), alias duplicado eliminado de tsconfig
+- **M2:** Toggle de comunas implementado en communes-list
+
+### Limpieza
+- 9 archivos eliminados (componentes sin backend)
+- 23 archivos modificados
+- Última referencia a ConvivePro eliminada (alt text en layout)
+- Login simplificado: solo formulario de autenticación
+- Interfaces de login limpiadas (IForgotPasswordInput, IValidateCodeInput, IResetPasswordInput eliminadas)
+
+---
+
 ## [1.0.0] - 2026-03-10
 
 Primera versión estable post-refactorización. Eliminación completa del código legacy de ConvivePro y optimización de dependencias.
