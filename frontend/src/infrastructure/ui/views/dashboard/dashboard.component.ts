@@ -1,7 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { AuthManager } from '@infra-adapters/services/auth.service';
-import { RowComponent } from '@coreui/angular-pro';
+import {
+  RowComponent,
+  ColComponent,
+  CardComponent,
+  CardBodyComponent,
+} from '@coreui/angular-pro';
+import { IconComponent } from '@coreui/icons-angular';
 
 @Component({
   templateUrl: 'dashboard.component.html',
@@ -10,6 +16,10 @@ import { RowComponent } from '@coreui/angular-pro';
   imports: [
     CommonModule,
     RowComponent,
+    ColComponent,
+    CardComponent,
+    CardBodyComponent,
+    IconComponent,
   ],
 })
 export class DashboardComponent implements OnInit {

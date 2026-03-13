@@ -1,20 +1,17 @@
-<div
-  class="bg-gradient-light min-vh-100 d-flex flex-row align-items-center"
-  [style]="pageStyle"
->
+<div class="login-wrapper min-vh-100 d-flex flex-row align-items-center">
   <c-container breakpoint="md">
     <c-row class="justify-content-center">
       <c-col lg="10" xl="8">
         <c-card-group>
           <!-- Formulario de Login -->
-          <c-card class="p-4 shadow border-0">
+          <c-card class="login-card p-4">
             <c-card-body>
               <div class="text-center mb-4">
-                <h2 class="text-primary">
-                  Bienvenido a <span class="text-warning">Depromos</span> ERP
+                <h2 class="text-primary mb-1">
+                  Bienvenido a <span style="color: #f57c00;">Depromos</span> ERP
                 </h2>
-                <p class="text-muted">
-                  Ingresa tus credenciales para acceder.
+                <p class="text-muted small">
+                  Ingresa tus credenciales para acceder al panel de administración.
                 </p>
               </div>
 
@@ -25,28 +22,24 @@
             </c-card-body>
           </c-card>
 
-          <!-- Tarjeta Lateral con Imagen -->
+          <!-- Panel Lateral con Logo -->
           <c-card
             [ngStyle]="{ 'minWidth.%': 44 }"
-            class="text-white py-5 border-0 shadow"
-            style="
-              background: linear-gradient(
-                135deg,
-                rgba(0, 143, 193, 0.8),
-                rgba(255, 255, 255, 0.8)
-              );
-            "
+            class="login-brand-panel text-white py-5 d-none d-md-flex"
           >
             <c-card-body
-              class="text-center d-flex flex-column justify-content-center"
+              class="text-center d-flex flex-column justify-content-center align-items-center"
             >
               <img
                 [src]="logo"
-                alt="logo"
-                class="d-block mx-auto mb-4"
-                style="max-width: 200px"
+                alt="Depromos"
+                class="d-block mx-auto mb-3"
+                style="max-width: 220px; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));"
                 loading="lazy"
               />
+              <p class="text-white-50 small mt-2 mb-0">
+                Panel de Administración
+              </p>
             </c-card-body>
           </c-card>
         </c-card-group>

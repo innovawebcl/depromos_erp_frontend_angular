@@ -3,19 +3,17 @@
     <c-row class="justify-content-center">
       <c-col md="6">
         <span class="clearfix">
-          <h1 class="float-start display-3 me-4">500</h1>
-          <h4 class="pt-3">Houston, we have a problem!</h4>
+          <h1 class="float-start display-3 me-4" style="color: #ef376e;">500</h1>
+          <h4 class="pt-3">Error del servidor</h4>
           <p class="text-body-secondary float-start">
-            The page you are looking for is temporarily unavailable.
+            La página que buscas no está disponible temporalmente. Intenta nuevamente en unos minutos.
           </p>
         </span>
-        <c-input-group class="input-prepend">
-          <span cInputGroupText>
-            <svg cIcon name="cilMagnifyingGlass"></svg>
-          </span>
-          <input cFormControl placeholder="What are you looking for?" type="text" />
-          <button cButton color="info">Search</button>
-        </c-input-group>
+        <div class="mt-4">
+          <a routerLink="/dashboard" class="btn btn-depromos">
+            Volver al Dashboard
+          </a>
+        </div>
       </c-col>
     </c-row>
   </c-container>

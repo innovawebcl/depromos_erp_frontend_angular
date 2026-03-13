@@ -1,16 +1,17 @@
-// Variable overrides
+// Variable overrides – Depromos ERP Brand Colors (from Adobe XD)
 //
-// If you want to customize your project please add your variables below.
+// Paleta extraída del diseño Adobe XD de Depromos:
+// Cyan/Turquesa principal, Naranja CTA, Azul oscuro acentos
 
 $enable-deprecation-messages: false !default;
 
 
 
-$primary: #008fc1 !default; //* Azul corporativo
-$warning: #fc8500 !default; //* Naranja corporativo
-$success: #51cc8a !default; //* Verde éxito (no modificado)
-$danger: #ef376e !default; //* Rojo para errores
-$info: #00dbff !default; //* Azul adicional para información
+$primary: #0099cc !default;       //* Cyan/Turquesa – color principal del brand
+$warning: #f57c00 !default;       //* Naranja – botones CTA, acciones principales
+$success: #00c853 !default;       //* Verde – éxito, confirmaciones
+$danger: #ef376e !default;        //* Rojo/Rosa – errores, alertas
+$info: #00b8d4 !default;          //* Cyan claro – información, badges
 
 
 $custom-colors: (
@@ -83,7 +84,7 @@ $table-cell-padding-y: 0.75rem !default;
 $table-cell-padding-x: 0.75rem !default;
 
 // Importar la fuente Montserrat de Google Fonts
-@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap");
 
 // Establecer la fuente global
-$font-family-base: "Montserrat", serif !default;
+$font-family-base: "Montserrat", sans-serif !default;
