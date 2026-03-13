@@ -31,5 +31,7 @@ export {
   cilPlus,
   cilSearch,
   cilSpreadsheet,
+  cilTags,
   cilTrash,
+  cilTruck,
 } from '@coreui/icons';
