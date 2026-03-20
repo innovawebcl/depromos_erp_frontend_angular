@@ -18,9 +18,35 @@ type Product = { id: number; code: string; name: string; price: number; active: 
   template: `
   <div class="d-flex justify-content-between align-items-center mb-3">
     <h2 class="mb-0">Productos</h2>
-    <div class="d-flex gap-2">
+    <div class="d-flex gap-2 flex-wrap">
+      <button class="btn btn-outline-success" (click)="showProductImportModal=true">Carga masiva productos</button>
       <button class="btn btn-outline-warning" (click)="showImportModal=true">Carga masiva ofertas</button>
       <a class="btn btn-primary" [routerLink]="['/products/new']">Crear producto</a>
+    </div>
+  </div>
+
+  <!-- Modal de importación de productos -->
+  <div *ngIf="showProductImportModal" class="card mb-3 border-success">
+    <div class="card-header bg-success text-white d-flex justify-content-between">
+      <strong>Carga masiva de productos</strong>
+      <button class="btn btn-sm btn-light" (click)="showProductImportModal=false">&times;</button>
+    </div>
+    <div class="card-body">
+      <p class="mb-2">Suba un archivo CSV con las columnas: <code>code, name, description, brand_id, price, active, sizes</code></p>
+      <p class="text-muted small">La columna <code>sizes</code> debe ser JSON: <code>[{{"{"}}size,price,barcode,stock{{"}"}}]</code></p>
+      <div class="d-flex gap-2 mb-2">
+        <a class="btn btn-sm btn-outline-primary" [href]="apiBase + '/products/template/products'" target="_blank">Descargar plantilla</a>
+      </div>
+      <input type="file" class="form-control mb-2" accept=".csv,.txt" (change)="onProductFileSelected($event)" />
+      <button class="btn btn-success" [disabled]="!productFile || productImporting" (click)="importProducts()">
+        {{productImporting ? 'Importando...' : 'Importar productos'}}
+      </button>
+      <div *ngIf="productImportResult" class="mt-2 alert" [class.alert-success]="!productImportResult.errors?.length" [class.alert-warning]="productImportResult.errors?.length">
+        <strong>{{productImportResult.created ?? 0}} creados, {{productImportResult.updated ?? 0}} actualizados</strong>
+        <div *ngIf="productImportResult.errors?.length">
+          <small *ngFor="let e of productImportResult.errors" class="d-block text-danger">{{e}}</small>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -80,11 +106,11 @@ type Product = { id: number; code: string; name: string; price: number; active: 
         <table class="table table-sm align-middle">
           <thead>
             <tr>
-              <th>ID</th>
-              <th>Código</th>
-              <th>Nombre</th>
+              <th class="sortable" [class.sort-asc]="sortCol==='id'&&sortDir==='asc'" [class.sort-desc]="sortCol==='id'&&sortDir==='desc'" (click)="toggleSort('id')">ID</th>
+              <th class="sortable" [class.sort-asc]="sortCol==='code'&&sortDir==='asc'" [class.sort-desc]="sortCol==='code'&&sortDir==='desc'" (click)="toggleSort('code')">Código</th>
+              <th class="sortable" [class.sort-asc]="sortCol==='name'&&sortDir==='asc'" [class.sort-desc]="sortCol==='name'&&sortDir==='desc'" (click)="toggleSort('name')">Nombre</th>
               <th>Marca</th>
-              <th>Precio</th>
+              <th class="sortable" [class.sort-asc]="sortCol==='price'&&sortDir==='asc'" [class.sort-desc]="sortCol==='price'&&sortDir==='desc'" (click)="toggleSort('price')">Precio</th>
               <th>Ofertas</th>
               <th>Stock</th>
               <th>Estado</th>
@@ -92,7 +118,7 @@ type Product = { id: number; code: string; name: string; price: number; active: 
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let p of items">
+            <tr *ngFor="let p of sortedItems">
               <td>{{p.id}}</td>
               <td>{{p.code}}</td>
               <td>{{p.name}}</td>
@@ -104,7 +130,7 @@ type Product = { id: number; code: string; name: string; price: number; active: 
               </td>
               <td>{{stockTotal(p)}}</td>
               <td>
-                <span class="badge" [class.bg-success]="p.active" [class.bg-secondary]="!p.active">{{p.active?'Activo':'Inactivo'}}</span>
+                <span class="badge" [class.badge-active]="p.active" [class.badge-inactive]="!p.active">{{p.active?'Activo':'Inactivo'}}</span>
               </td>
               <td class="text-end">
                 <a class="btn btn-sm btn-outline-primary" [routerLink]="['/products', p.id]">Editar</a>
@@ -126,14 +152,44 @@ export class ProductsListComponent {
   search = '';
   active: '' | '1' | '0' = '';
 
-  // Import
+  // Sorting
+  sortCol = '';
+  sortDir: 'asc' | 'desc' = 'asc';
+
+  // Import offers
   showImportModal = false;
   selectedFile: File | null = null;
   importing = false;
   importResult: any = null;
 
+  // Import products
+  showProductImportModal = false;
+  productFile: File | null = null;
+  productImporting = false;
+  productImportResult: any = null;
+
   async ngOnInit() {
     await this.load();
+  }
+
+  get sortedItems(): Product[] {
+    if (!this.sortCol) return this.items;
+    const dir = this.sortDir === 'asc' ? 1 : -1;
+    return [...this.items].sort((a: any, b: any) => {
+      const va = a[this.sortCol] ?? '';
+      const vb = b[this.sortCol] ?? '';
+      if (typeof va === 'number') return (va - vb) * dir;
+      return String(va).localeCompare(String(vb)) * dir;
+    });
+  }
+
+  toggleSort(col: string): void {
+    if (this.sortCol === col) {
+      this.sortDir = this.sortDir === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.sortCol = col;
+      this.sortDir = 'asc';
+    }
   }
 
   stockTotal(p: Product): number {
@@ -153,6 +209,11 @@ export class ProductsListComponent {
     this.importResult = null;
   }
 
+  onProductFileSelected(event: any) {
+    this.productFile = event.target.files[0] ?? null;
+    this.productImportResult = null;
+  }
+
   async importOffers() {
     if (!this.selectedFile) return;
     this.importing = true;
@@ -160,15 +221,30 @@ export class ProductsListComponent {
     try {
       const formData = new FormData();
       formData.append('file', this.selectedFile);
-      const res = await firstValueFrom(
-        this.http.post<any>(`${this.apiBase}/products/import-offers`, formData)
-      );
+      const res = await firstValueFrom(this.api.post<any>('/products/import-offers', formData));
       this.importResult = res;
       if (res.updated > 0) await this.load();
     } catch (err: any) {
       this.importResult = { updated: 0, errors: [err?.error?.message || 'Error en importación'] };
     } finally {
       this.importing = false;
+    }
+  }
+
+  async importProducts() {
+    if (!this.productFile) return;
+    this.productImporting = true;
+    this.productImportResult = null;
+    try {
+      const formData = new FormData();
+      formData.append('file', this.productFile);
+      const res = await firstValueFrom(this.api.post<any>('/products/import', formData));
+      this.productImportResult = res;
+      await this.load();
+    } catch (err: any) {
+      this.productImportResult = { created: 0, updated: 0, errors: [err?.error?.message || 'Error en importación'] };
+    } finally {
+      this.productImporting = false;
     }
   }
 
@@ -179,7 +255,6 @@ export class ProductsListComponent {
         search: this.search,
         active: this.active,
       }));
-      // backend usa paginate => {data:[], ...}
       this.items = (res.data ?? res) as Product[];
     } finally {
       this.loading = false;

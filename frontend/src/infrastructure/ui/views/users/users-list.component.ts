@@ -1,9 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { debounceTime, distinctUntilChanged, Subject, switchMap } from 'rxjs';
+import { debounceTime, distinctUntilChanged, firstValueFrom, Subject, switchMap } from 'rxjs';
 import { UsersService } from './users.service';
+import { BackofficeApi } from '@infra-adapters/services/backoffice-api.service';
 import type { Paginated, RoleSummary, UserRow } from './users.models';
 
 @Component({
@@ -13,6 +14,7 @@ import type { Paginated, RoleSummary, UserRow } from './users.models';
   templateUrl: './users-list.component.html',
 })
 export class UsersListComponent implements OnInit {
+  private api = inject(BackofficeApi);
   loading = false;
   search = '';
   role_id: number | 'all' = 'all';
@@ -23,6 +25,12 @@ export class UsersListComponent implements OnInit {
 
   roles: RoleSummary[] = [];
   data: Paginated<UserRow> = { data: [] };
+
+  // Import
+  showImportModal = false;
+  selectedFile: File | null = null;
+  importing = false;
+  importResult: any = null;
 
   private reload$ = new Subject<void>();
 
@@ -89,5 +97,34 @@ export class UsersListComponent implements OnInit {
 
   badge(active: boolean): string {
     return active ? 'success' : 'secondary';
+  }
+
+  formatDate(d: string | null | undefined): string {
+    if (!d) return '—';
+    try {
+      return new Date(d).toLocaleDateString('es-CL', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    } catch { return d; }
+  }
+
+  onFileSelected(event: any) {
+    this.selectedFile = event.target.files[0] ?? null;
+    this.importResult = null;
+  }
+
+  async importUsers() {
+    if (!this.selectedFile) return;
+    this.importing = true;
+    this.importResult = null;
+    try {
+      const fd = new FormData();
+      fd.append('file', this.selectedFile);
+      const res = await firstValueFrom(this.api.post<any>('/users/import', fd));
+      this.importResult = res;
+      this.reload();
+    } catch (err: any) {
+      this.importResult = { created: 0, errors: [err?.error?.message || 'Error en importación'] };
+    } finally {
+      this.importing = false;
+    }
   }
 }

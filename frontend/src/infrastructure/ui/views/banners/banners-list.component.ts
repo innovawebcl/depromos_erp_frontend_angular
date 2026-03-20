@@ -5,7 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { BackofficeApi } from '@infra-adapters/services/backoffice-api.service';
 import { firstValueFrom } from 'rxjs';
 
-type Banner = { id: number; title: string; image_url: string; target_url?: string | null; active: boolean; starts_at?: string | null; ends_at?: string | null };
+type Banner = { id: number; title: string; image_url: string; target_url?: string | null; active: boolean; starts_at?: string | null; ends_at?: string | null; countdown_hours?: number | null; countdown_ends_at?: string | null };
 
 @Component({
   standalone: true,
@@ -24,16 +24,36 @@ type Banner = { id: number; title: string; image_url: string; target_url?: strin
         <table class="table table-sm align-middle">
           <thead>
             <tr>
-              <th>ID</th><th>Título</th><th>Activo</th><th>Vigencia</th><th></th>
+              <th>ID</th>
+              <th>Título</th>
+              <th>Estado</th>
+              <th>Vigencia</th>
+              <th>Countdown</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
             <tr *ngFor="let b of items">
               <td>{{b.id}}</td>
-              <td>{{b.title}}</td>
-              <td><span class="badge" [class.bg-success]="b.active" [class.bg-secondary]="!b.active">{{b.active?'Sí':'No'}}</span></td>
-              <td>{{b.starts_at || '-'}} → {{b.ends_at || '-'}}</td>
-              <td class="text-end"><a class="btn btn-sm btn-outline-primary" [routerLink]="['/banners', b.id]">Editar</a></td>
+              <td class="fw-semibold">{{b.title}}</td>
+              <td>
+                <span class="badge" [class.badge-active]="b.active" [class.badge-inactive]="!b.active">{{b.active?'Activo':'Inactivo'}}</span>
+              </td>
+              <td class="small">
+                {{formatDate(b.starts_at)}} → {{formatDate(b.ends_at)}}
+              </td>
+              <td>
+                <span *ngIf="b.countdown_hours" class="badge bg-warning text-dark">{{b.countdown_hours}}h</span>
+                <span *ngIf="b.countdown_ends_at && !b.countdown_hours" class="badge bg-info text-white">Hasta {{formatDate(b.countdown_ends_at)}}</span>
+                <span *ngIf="!b.countdown_hours && !b.countdown_ends_at" class="text-muted">—</span>
+              </td>
+              <td class="text-end">
+                <a class="btn btn-sm btn-outline-primary me-1" [routerLink]="['/banners', b.id]">Editar</a>
+                <button class="btn btn-sm btn-outline-danger" (click)="remove(b)">Eliminar</button>
+              </td>
+            </tr>
+            <tr *ngIf="items.length===0">
+              <td colspan="6" class="text-center py-3 text-muted">Sin banners registrados</td>
             </tr>
           </tbody>
         </table>
@@ -57,5 +77,21 @@ export class BannersListComponent {
     } finally {
       this.loading = false;
     }
+  }
+
+  formatDate(d: string | null | undefined): string {
+    if (!d) return '—';
+    try {
+      const dt = new Date(d);
+      return dt.toLocaleDateString('es-CL', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    } catch { return d; }
+  }
+
+  async remove(b: Banner): Promise<void> {
+    if (!confirm('¿Eliminar banner "' + b.title + '"?')) return;
+    try {
+      await firstValueFrom(this.api.delete('/banners/' + b.id));
+      this.items = this.items.filter(x => x.id !== b.id);
+    } catch { alert('Error al eliminar'); }
   }
 }

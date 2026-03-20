@@ -19,20 +19,38 @@ import { firstValueFrom } from 'rxjs';
     <div class="card-body">
       <form [formGroup]="form" (ngSubmit)="save()">
         <div class="row g-3">
-          <div class="col-md-8">
+          <div class="col-md-6">
             <label class="form-label">Nombre</label>
             <input class="form-control" formControlName="name" />
           </div>
-          <div class="col-md-4">
+          <div class="col-md-3">
+            <label class="form-label">Teléfono</label>
+            <input class="form-control" formControlName="phone" />
+          </div>
+          <div class="col-md-3">
             <label class="form-label">Activo</label>
             <select class="form-select" formControlName="active">
               <option [ngValue]="true">Sí</option>
               <option [ngValue]="false">No</option>
             </select>
           </div>
-          <div class="col-md-6">
-            <label class="form-label">Teléfono</label>
-            <input class="form-control" formControlName="phone" />
+        </div>
+
+        <hr class="my-3" />
+        <h6>Acceso al sistema (opcional)</h6>
+        <p class="text-muted small">Si se asigna usuario y contraseña, el repartidor podrá iniciar sesión en la app móvil.</p>
+        <div class="row g-3">
+          <div class="col-md-4">
+            <label class="form-label">Usuario</label>
+            <input class="form-control" formControlName="username" placeholder="Ej: jperez" />
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Email</label>
+            <input type="email" class="form-control" formControlName="email" placeholder="repartidor@depromos.cl" />
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">{{isNew ? 'Contraseña' : 'Nueva contraseña (dejar vacío para no cambiar)'}}</label>
+            <input type="password" class="form-control" formControlName="password" />
           </div>
         </div>
 
@@ -58,6 +76,9 @@ export class CouriersFormComponent {
     name: ['', Validators.required],
     phone: [''],
     active: [true],
+    username: [''],
+    email: [''],
+    password: [''],
   });
 
   async ngOnInit() {
@@ -66,7 +87,13 @@ export class CouriersFormComponent {
     if (id) {
       this.id = Number(id);
       const c: any = await firstValueFrom(this.api.get<any>(`/couriers/${this.id}`));
-      this.form.patchValue({ name: c.name, phone: c.phone ?? '', active: !!c.active });
+      this.form.patchValue({
+        name: c.name,
+        phone: c.phone ?? '',
+        active: !!c.active,
+        username: c.user?.username ?? '',
+        email: c.user?.email ?? '',
+      });
     }
   }
 
@@ -74,7 +101,14 @@ export class CouriersFormComponent {
     this.saving = true;
     try {
       const v = this.form.value;
-      const payload = { name: v.name, phone: v.phone || null, active: !!v.active };
+      const payload: any = {
+        name: v.name,
+        phone: v.phone || null,
+        active: !!v.active,
+        username: v.username || null,
+        email: v.email || null,
+      };
+      if (v.password) payload.password = v.password;
       if (this.isNew) await firstValueFrom(this.api.post('/couriers', payload));
       else await firstValueFrom(this.api.put(`/couriers/${this.id}`, payload));
       this.router.navigate(['/couriers']);

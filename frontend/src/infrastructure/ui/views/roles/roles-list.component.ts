@@ -32,4 +32,19 @@ export class RolesListComponent implements OnInit {
       },
     });
   }
+
+  /** Safely extract description - prevents [object Object] display */
+  getDescription(r: RoleRow): string {
+    if (!r.description) return '—';
+    if (typeof r.description === 'string') return r.description;
+    // If it's an object (bug), return a safe string
+    return '—';
+  }
+
+  formatDate(d: string | null | undefined): string {
+    if (!d) return '—';
+    try {
+      return new Date(d).toLocaleDateString('es-CL', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    } catch { return d; }
+  }
 }

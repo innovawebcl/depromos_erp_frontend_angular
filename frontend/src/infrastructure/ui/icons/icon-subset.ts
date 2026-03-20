@@ -41,4 +41,6 @@ export {
   cilLayers,
   cilChart,
   cilMap,
+  cilStar,
+  cilBike,
 } from '@coreui/icons';

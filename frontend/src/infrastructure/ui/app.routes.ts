@@ -22,6 +22,13 @@ export const routes: Routes = [
           import('./views/dashboard/routes').then((m) => m.routes),
       },
       {
+        path: 'brands',
+        canActivate: [AuthGuard, ModuleGuard],
+        data: { module: 'brands' },
+        loadChildren: () =>
+          import('./views/brands/routes').then((m) => m.routes),
+      },
+      {
         path: 'products',
         canActivate: [AuthGuard, ModuleGuard],
         data: { module: 'products' },

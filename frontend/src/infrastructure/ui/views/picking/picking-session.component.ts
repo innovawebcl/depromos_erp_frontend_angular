@@ -53,12 +53,11 @@ export class PickingSessionComponent implements OnInit {
         if (res.order) {
           this.order = res.order as any;
         } else {
-          // refresca para asegurar coherencia
           this.load(this.order!.id);
         }
 
         if (res.ok) {
-          this.lastMessage = { type: 'success', text: res.message || 'Código validado' };
+          this.lastMessage = { type: 'success', text: res.message || 'Código validado (1 unidad)' };
         } else {
           this.lastMessage = { type: 'warning', text: res.message || 'Código no válido para este pedido' };
         }
@@ -92,6 +91,23 @@ export class PickingSessionComponent implements OnInit {
         };
       },
     });
+  }
+
+  /** Safely extract product name - prevents [object Object] display */
+  getProductName(it: any): string {
+    if (!it) return '—';
+    if (typeof it.product_name === 'string') return it.product_name;
+    if (it.product && typeof it.product === 'object') return it.product.name || '—';
+    if (typeof it.product_name === 'object') return (it.product_name as any)?.name || JSON.stringify(it.product_name);
+    return String(it.product_name || '—');
+  }
+
+  /** Safely extract size - prevents [object Object] display */
+  getSize(it: any): string {
+    if (!it) return '—';
+    if (typeof it.size === 'string') return it.size;
+    if (typeof it.size === 'object' && it.size !== null) return (it.size as any)?.name || (it.size as any)?.label || JSON.stringify(it.size);
+    return String(it.size || '—');
   }
 
   progress(it: any): string {

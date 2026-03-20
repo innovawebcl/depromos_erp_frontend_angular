@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { debounceTime, distinctUntilChanged, Subject, switchMap } from 'rxjs';
 import { OrdersService } from './orders.service';
+import { environment } from '@infra-env/environment';
 import type { Order, OrderStatus, Paginated } from './orders.models';
 
 @Component({
@@ -18,6 +19,7 @@ export class OrdersListComponent implements OnInit {
   search = '';
   page = 1;
   per_page = 20;
+  exportUrl = environment.apiUrl + '/orders/export';
 
   data: Paginated<Order> = { data: [] };
 
@@ -78,20 +80,32 @@ export class OrdersListComponent implements OnInit {
 
   statusBadge(status: string): string {
     switch (status) {
-      case 'pending':
-        return 'secondary';
-      case 'picking':
-        return 'warning';
-      case 'ready':
-        return 'info';
-      case 'en_route':
-        return 'primary';
-      case 'delivered':
-        return 'success';
-      case 'cancelled':
-        return 'danger';
-      default:
-        return 'secondary';
+      case 'pending': return 'secondary';
+      case 'picking': return 'warning';
+      case 'ready': return 'info';
+      case 'en_route': return 'primary';
+      case 'delivered': return 'success';
+      case 'cancelled': return 'danger';
+      default: return 'secondary';
     }
+  }
+
+  statusLabel(status: string): string {
+    switch (status) {
+      case 'pending': return 'Pendiente';
+      case 'picking': return 'En picking';
+      case 'ready': return 'Listo';
+      case 'en_route': return 'En ruta';
+      case 'delivered': return 'Entregado';
+      case 'cancelled': return 'Cancelado';
+      default: return status;
+    }
+  }
+
+  formatDate(d: string | null | undefined): string {
+    if (!d) return '—';
+    try {
+      return new Date(d).toLocaleDateString('es-CL', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+    } catch { return d; }
   }
 }

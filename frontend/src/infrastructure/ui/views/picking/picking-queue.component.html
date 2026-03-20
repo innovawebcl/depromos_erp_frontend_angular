@@ -34,11 +34,11 @@
             </td>
             <td>{{ o.commune_name || '—' }}</td>
             <td>
-              <span class="badge" [ngClass]="'bg-' + statusBadge(o.status)">{{ o.status }}</span>
+              <span class="badge" [ngClass]="'bg-' + statusBadge(o.status)">{{ statusLabel(o.status) }}</span>
             </td>
-            <td>{{ o.total | number }}</td>
+            <td>${{ o.total | number:'1.0-0' }}</td>
             <td class="text-end">
-              <a class="btn btn-sm btn-primary" [routerLink]="['/picking', o.id]">Abrir</a>
+              <a class="btn btn-sm btn-primary" [routerLink]="['/picking', o.id]">Abrir picking</a>
             </td>
           </tr>
           <tr *ngIf="!loading && orders.length === 0">

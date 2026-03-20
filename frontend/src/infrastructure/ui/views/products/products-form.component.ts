@@ -3,6 +3,7 @@ import { Component, inject } from '@angular/core';
 import { FormArray, FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { BackofficeApi } from '@infra-adapters/services/backoffice-api.service';
+import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 
 type Brand = { id: number; name: string };
@@ -48,8 +49,15 @@ type Brand = { id: number; name: string };
             </select>
           </div>
           <div class="col-md-12">
-            <label class="form-label">Foto (URL)</label>
-            <input class="form-control" formControlName="photo_url" />
+            <label class="form-label">Foto del producto</label>
+            <div class="d-flex gap-2 align-items-center">
+              <input type="file" class="form-control" accept="image/*" (change)="onPhotoSelected($event)" />
+              <span *ngIf="uploading" class="text-muted small">Subiendo...</span>
+            </div>
+            <div *ngIf="photoPreview" class="mt-2">
+              <img [src]="photoPreview" alt="Preview" style="max-height:80px; border-radius:4px;" />
+            </div>
+            <input type="hidden" formControlName="photo_url" />
           </div>
           <div class="col-md-12">
             <label class="form-label">Descripción</label>
@@ -69,7 +77,7 @@ type Brand = { id: number; name: string };
             <thead>
               <tr>
                 <th>Talla</th>
-                <th>Barcode</th>
+                <th>Código de barras</th>
                 <th>Precio</th>
                 <th>Precio Oferta</th>
                 <th>Stock</th>
@@ -99,7 +107,7 @@ type Brand = { id: number; name: string };
         </div>
 
         <div class="mt-3 d-flex gap-2">
-          <button class="btn btn-primary" type="submit" [disabled]="saving || form.invalid">
+          <button class="btn btn-primary" type="submit" [disabled]="saving || form.invalid || uploading">
             {{saving ? 'Guardando...' : 'Guardar'}}
           </button>
         </div>
@@ -111,13 +119,16 @@ type Brand = { id: number; name: string };
 export class ProductsFormComponent {
   private fb = inject(FormBuilder);
   private api = inject(BackofficeApi);
+  private http = inject(HttpClient);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
 
   saving = false;
+  uploading = false;
   isNew = true;
   id?: number;
   brands: Brand[] = [];
+  photoPreview: string | null = null;
 
   form = this.fb.group({
     code: ['', [Validators.required]],
@@ -169,6 +180,25 @@ export class ProductsFormComponent {
     this.sizes.removeAt(i);
   }
 
+  async onPhotoSelected(event: Event): Promise<void> {
+    const input = event.target as HTMLInputElement;
+    if (!input.files?.length) return;
+    const file = input.files[0];
+    this.uploading = true;
+    try {
+      const fd = new FormData();
+      fd.append('file', file);
+      fd.append('folder', 'products');
+      const res: any = await firstValueFrom(this.api.post('/upload', fd));
+      const url = res.url || res.path || '';
+      this.form.patchValue({ photo_url: url });
+      this.photoPreview = url;
+    } catch (e) {
+      alert('Error al subir la imagen');
+    }
+    this.uploading = false;
+  }
+
   private async load() {
     const p: any = await firstValueFrom(this.api.get<any>(`/products/${this.id}`));
     this.form.patchValue({
@@ -180,6 +210,7 @@ export class ProductsFormComponent {
       brand_id: p.brand_id ?? null,
       active: !!p.active,
     });
+    if (p.photo_url) this.photoPreview = p.photo_url;
     this.sizes.clear();
     for (const s of (p.sizes ?? [])) {
       this.sizes.push(

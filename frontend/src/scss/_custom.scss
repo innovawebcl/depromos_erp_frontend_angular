@@ -6,7 +6,7 @@
 // custom tweaks for scrollbar styling (wip)
 @import "scrollbar";
 
- // custom calendar today cell color
+// custom calendar today cell color
 .calendar-cell.today {
   --cui-calendar-cell-today-color: var(--cui-info) !important;
 }
@@ -16,7 +16,6 @@
   cursor: pointer;
 }
 
-
 .canvas-container {
   border: 1px solid var(--cui-border-color);
 }
@@ -25,7 +24,81 @@
   color: var(--cui-calendar-nav-date-color) !important;
 }
 
+// ══════════════════════════════════════════════════════════════
 // ── Depromos ERP Global Styles ──
+// ══════════════════════════════════════════════════════════════
+
+// ── PUNTO 1: Corrección de botones ──
+// Los botones deben mantener su color principal siempre, no solo en hover.
+.btn-primary {
+  background-color: #0099cc !important;
+  border-color: #0099cc !important;
+  color: #fff !important;
+  &:hover, &:focus {
+    background-color: #007ba3 !important;
+    border-color: #007ba3 !important;
+  }
+}
+.btn-outline-primary {
+  color: #0099cc !important;
+  border-color: #0099cc !important;
+  &:hover, &:focus {
+    background-color: #0099cc !important;
+    color: #fff !important;
+  }
+}
+.btn-warning {
+  background-color: #f57c00 !important;
+  border-color: #f57c00 !important;
+  color: #fff !important;
+  &:hover, &:focus {
+    background-color: #e65100 !important;
+    border-color: #e65100 !important;
+    color: #fff !important;
+  }
+}
+.btn-outline-warning {
+  color: #f57c00 !important;
+  border-color: #f57c00 !important;
+  &:hover, &:focus {
+    background-color: #f57c00 !important;
+    color: #fff !important;
+  }
+}
+.btn-success {
+  background-color: #00c853 !important;
+  border-color: #00c853 !important;
+  color: #fff !important;
+  &:hover, &:focus {
+    background-color: #00a344 !important;
+    border-color: #00a344 !important;
+  }
+}
+.btn-danger {
+  background-color: #ef376e !important;
+  border-color: #ef376e !important;
+  color: #fff !important;
+  &:hover, &:focus {
+    background-color: #d32f2f !important;
+    border-color: #d32f2f !important;
+  }
+}
+.btn-outline-danger {
+  color: #ef376e !important;
+  border-color: #ef376e !important;
+  &:hover, &:focus {
+    background-color: #ef376e !important;
+    color: #fff !important;
+  }
+}
+.btn-outline-secondary {
+  color: #6c757d !important;
+  border-color: #6c757d !important;
+  &:hover, &:focus {
+    background-color: #6c757d !important;
+    color: #fff !important;
+  }
+}
 
 // Botón primario estilo Depromos (naranja CTA)
 .btn-depromos {
@@ -36,11 +109,53 @@
   border-radius: 8px;
   transition: all 0.3s ease;
   box-shadow: 0 2px 8px rgba(245, 124, 0, 0.25);
-
   &:hover {
     background: linear-gradient(135deg, #e65100, #f57c00) !important;
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(245, 124, 0, 0.35);
+  }
+}
+
+// ── PUNTO 1: Etiquetas de Estado ──
+// Activo = No → badge rojo con texto blanco
+.badge-inactive, .badge-no {
+  background-color: #ef376e !important;
+  color: #fff !important;
+  font-weight: 600;
+  padding: 0.3em 0.6em;
+  border-radius: 4px;
+}
+.badge-active, .badge-yes {
+  background-color: #00c853 !important;
+  color: #fff !important;
+  font-weight: 600;
+  padding: 0.3em 0.6em;
+  border-radius: 4px;
+}
+
+// ── PUNTO 1: Ordenamiento de tablas ──
+// Cabeceras clickeables con indicador de dirección
+th.sortable {
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+  &:hover {
+    background-color: rgba(0, 153, 204, 0.06);
+  }
+  &::after {
+    content: " ⇅";
+    opacity: 0.3;
+    font-size: 0.8em;
+  }
+  &.sort-asc::after {
+    content: " ▲";
+    opacity: 0.7;
+    color: #0099cc;
+  }
+  &.sort-desc::after {
+    content: " ▼";
+    opacity: 0.7;
+    color: #0099cc;
   }
 }
 
@@ -61,13 +176,20 @@
   color: #333;
 }
 
-.badge-active {
-  background-color: #00c853;
-  color: white;
+// Blacklist button (punto 10)
+.btn-blacklist {
+  background-color: #ef376e !important;
+  border-color: #ef376e !important;
+  color: #fff !important;
+  &:hover, &:focus {
+    background-color: #d32f2f !important;
+    border-color: #d32f2f !important;
+  }
 }
 
-.badge-inactive {
-  background-color: #ef376e;
-  color: white;
+// ── Dashboard chart container ──
+.chart-container {
+  position: relative;
+  width: 100%;
+  min-height: 300px;
 }
-

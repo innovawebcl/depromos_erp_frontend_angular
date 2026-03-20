@@ -96,6 +96,7 @@ export class RolesFormComponent implements OnInit {
   private defaultModules(): ModuleDef[] {
     return [
       { key: 'products', name: 'Productos' },
+      { key: 'brands', name: 'Marcas' },
       { key: 'inventory', name: 'Inventario' },
       { key: 'banners', name: 'Banners' },
       { key: 'orders', name: 'Pedidos' },
@@ -103,6 +104,8 @@ export class RolesFormComponent implements OnInit {
       { key: 'couriers', name: 'Repartidores' },
       { key: 'communes', name: 'Tarifas por comuna' },
       { key: 'customers', name: 'Clientes' },
+      { key: 'discount_codes', name: 'Códigos de descuento' },
+      { key: 'notifications', name: 'Notificaciones push' },
       { key: 'users', name: 'Usuarios' },
       { key: 'roles', name: 'Roles y módulos' },
     ];

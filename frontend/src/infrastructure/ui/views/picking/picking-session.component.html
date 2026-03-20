@@ -2,9 +2,12 @@
   <div>
     <h2 class="mb-0">Picking — Pedido #{{ order?.id }}</h2>
     <div class="text-medium-emphasis small" *ngIf="order">
-      Estado actual: <span class="badge bg-warning text-dark" *ngIf="order.status === 'picking'">picking</span>
-      <span class="badge bg-secondary" *ngIf="order.status === 'pending'">pending</span>
-      <span class="badge bg-info" *ngIf="order.status === 'ready'">ready</span>
+      Estado actual:
+      <span class="badge bg-warning text-dark" *ngIf="order.status === 'picking'">En picking</span>
+      <span class="badge bg-secondary" *ngIf="order.status === 'pending'">Pendiente</span>
+      <span class="badge bg-info" *ngIf="order.status === 'ready'">Listo</span>
+      <span class="badge bg-primary" *ngIf="order.status === 'en_route'">En ruta</span>
+      <span class="badge bg-success" *ngIf="order.status === 'delivered'">Entregado</span>
     </div>
   </div>
   <div class="d-flex gap-2">
@@ -22,14 +25,14 @@
       <div class="card-body">
         <label class="form-label">Código (barcode)</label>
         <div class="input-group">
-          <input class="form-control" [(ngModel)]="code" (keyup.enter)="scan()" placeholder="Escanea o escribe el código" />
-          <button class="btn btn-primary" (click)="scan()" [disabled]="scanning">
+          <input class="form-control" [(ngModel)]="code" (keyup.enter)="scan()" placeholder="Escanea o escribe el código" [disabled]="order.status !== 'picking'" />
+          <button class="btn btn-primary" (click)="scan()" [disabled]="scanning || order.status !== 'picking'">
             <span *ngIf="!scanning">Validar</span>
             <span *ngIf="scanning">...</span>
           </button>
         </div>
-        <div class="small text-medium-emphasis mt-2">
-          Si escaneas un ítem equivocado, talla incorrecta o que no pertenece al pedido, el backend debe devolver error/advertencia.
+        <div class="small text-muted mt-2">
+          Cada escaneo registra <strong>1 unidad</strong>. Escanee el código tantas veces como unidades necesite validar.
         </div>
 
         <div *ngIf="lastMessage" class="alert mt-3" [ngClass]="'alert-' + lastMessage.type">
@@ -37,12 +40,12 @@
         </div>
       </div>
       <div class="card-footer">
-        <button class="btn btn-success w-100" (click)="closePicking()" [disabled]="closing">
+        <button class="btn btn-success w-100" (click)="closePicking()" [disabled]="closing || order.status !== 'picking'">
           <span *ngIf="!closing">Cerrar picking y habilitar despacho</span>
           <span *ngIf="closing">Cerrando...</span>
         </button>
-        <div class="small text-medium-emphasis mt-2">
-          Regla: no se puede cerrar si falta un producto, si la talla es incorrecta o si se escaneó un ítem equivocado.
+        <div class="small text-muted mt-2">
+          No se puede cerrar si falta un producto, si la talla es incorrecta o si se escaneó un item equivocado.
         </div>
       </div>
     </div>
@@ -66,10 +69,10 @@
             <tbody>
               <tr *ngFor="let it of order.items || []">
                 <td>
-                  <div class="fw-semibold">{{ it.product_name }}</div>
-                  <div class="small text-medium-emphasis">Código esperado: {{ it.barcode || '—' }}</div>
+                  <div class="fw-semibold">{{ getProductName(it) }}</div>
+                  <div class="small text-muted">Código esperado: {{ it.barcode || '—' }}</div>
                 </td>
-                <td>{{ it.size }}</td>
+                <td>{{ getSize(it) }}</td>
                 <td>{{ it.quantity }}</td>
                 <td>
                   <span class="badge" [ngClass]="isComplete(it) ? 'bg-success' : 'bg-light text-dark'">
@@ -78,13 +81,13 @@
                 </td>
                 <td>
                   <div class="progress" style="height: 10px">
-                    <div class="progress-bar" [style.width]="progress(it)"></div>
+                    <div class="progress-bar" [ngClass]="isComplete(it) ? 'bg-success' : 'bg-primary'" [style.width]="progress(it)"></div>
                   </div>
-                  <div class="small text-medium-emphasis mt-1">{{ progress(it) }}</div>
+                  <div class="small text-muted mt-1">{{ progress(it) }}</div>
                 </td>
               </tr>
               <tr *ngIf="(order.items || []).length === 0">
-                <td colspan="5" class="text-center text-medium-emphasis py-4">Sin items</td>
+                <td colspan="5" class="text-center text-muted py-4">Sin items</td>
               </tr>
             </tbody>
           </table>

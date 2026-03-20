@@ -22,19 +22,36 @@ type Courier = { id: number; name: string; phone?: string | null; active: boolea
       <div class="table-responsive" *ngIf="!loading">
         <table class="table table-sm align-middle">
           <thead>
-            <tr><th>ID</th><th>Nombre</th><th>Teléfono</th><th>Activo</th><th>Rating</th><th></th></tr>
+            <tr>
+              <th>ID</th>
+              <th>Nombre</th>
+              <th>Teléfono</th>
+              <th>Estado</th>
+              <th>Rating</th>
+              <th></th>
+            </tr>
           </thead>
           <tbody>
             <tr *ngFor="let c of items">
               <td>{{c.id}}</td>
-              <td>{{c.name}}</td>
-              <td>{{c.phone || '-'}}</td>
-              <td><span class="badge" [class.bg-success]="c.active" [class.bg-secondary]="!c.active">{{c.active?'Sí':'No'}}</span></td>
-              <td>{{(c.ratings_avg_rating ?? 0) | number:'1.1-1'}}</td>
+              <td class="fw-semibold">{{c.name}}</td>
+              <td>{{c.phone || '—'}}</td>
+              <td>
+                <span class="badge" [class.badge-active]="c.active" [class.badge-inactive]="!c.active">
+                  {{c.active ? 'Activo' : 'Inactivo'}}
+                </span>
+              </td>
+              <td>
+                <span *ngIf="(c.ratings_avg_rating ?? 0) > 0">{{c.ratings_avg_rating | number:'1.1-1'}} / 5</span>
+                <span *ngIf="!(c.ratings_avg_rating ?? 0)" class="text-muted">—</span>
+              </td>
               <td class="text-end">
-                <a class="btn btn-sm btn-outline-secondary me-2" [routerLink]="['/couriers', c.id, 'ratings']">Ratings</a>
+                <a class="btn btn-sm btn-outline-secondary me-1" [routerLink]="['/couriers', c.id, 'ratings']">Ratings</a>
                 <a class="btn btn-sm btn-outline-primary" [routerLink]="['/couriers', c.id]">Editar</a>
               </td>
+            </tr>
+            <tr *ngIf="items.length===0">
+              <td colspan="6" class="text-center py-3 text-muted">Sin repartidores registrados</td>
             </tr>
           </tbody>
         </table>

@@ -14,6 +14,10 @@ const backofficeCatalog: { key: string; item: INavData }[] = [
     item: { name: 'Productos', url: '/products', iconComponent: { name: 'cil-tags' } },
   },
   {
+    key: 'brands',
+    item: { name: 'Marcas', url: '/brands', iconComponent: { name: 'cil-star' } },
+  },
+  {
     key: 'inventory',
     item: { name: 'Inventario', url: '/inventory', iconComponent: { name: 'cil-layers' } },
   },
