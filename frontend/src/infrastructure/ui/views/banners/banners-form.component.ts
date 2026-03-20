@@ -48,6 +48,20 @@ import { firstValueFrom } from 'rxjs';
           </div>
         </div>
 
+        <hr class="my-3" />
+        <h6>Temporizador / Countdown (opcional)</h6>
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label">Horas de countdown</label>
+            <input type="number" class="form-control" formControlName="countdown_hours" min="1" placeholder="Ej: 24" />
+            <small class="text-muted">Se calcula desde el momento de guardar</small>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">O fecha/hora de fin</label>
+            <input type="datetime-local" class="form-control" formControlName="countdown_ends_at" />
+          </div>
+        </div>
+
         <div class="mt-3">
           <button class="btn btn-primary" type="submit" [disabled]="saving || form.invalid">{{saving?'Guardando...':'Guardar'}}</button>
         </div>
@@ -73,6 +87,8 @@ export class BannersFormComponent {
     starts_at: [''],
     ends_at: [''],
     active: [true],
+    countdown_hours: [null as number | null],
+    countdown_ends_at: [''],
   });
 
   async ngOnInit() {
@@ -88,6 +104,8 @@ export class BannersFormComponent {
         starts_at: (b.starts_at ?? '').substring(0, 10),
         ends_at: (b.ends_at ?? '').substring(0, 10),
         active: !!b.active,
+        countdown_hours: b.countdown_hours ?? null,
+        countdown_ends_at: b.countdown_ends_at ? b.countdown_ends_at.substring(0, 16) : '',
       });
     }
   }
@@ -103,6 +121,8 @@ export class BannersFormComponent {
         starts_at: v.starts_at || null,
         ends_at: v.ends_at || null,
         active: !!v.active,
+        countdown_hours: v.countdown_hours || null,
+        countdown_ends_at: v.countdown_ends_at || null,
       };
       if (this.isNew) await firstValueFrom(this.api.post('/banners', payload));
       else await firstValueFrom(this.api.put(`/banners/${this.id}`, payload));

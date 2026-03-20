@@ -34,4 +34,11 @@ export {
   cilTags,
   cilTrash,
   cilTruck,
+  // New module icons
+  cilBell,
+  cilGift,
+  cilImage,
+  cilLayers,
+  cilChart,
+  cilMap,
 } from '@coreui/icons';

@@ -46,6 +46,14 @@ const backofficeCatalog: { key: string; item: INavData }[] = [
     item: { name: 'Usuarios', url: '/users', iconComponent: { name: 'cil-people' } },
   },
   {
+    key: 'discount_codes',
+    item: { name: 'Códigos Descuento', url: '/discount-codes', iconComponent: { name: 'cil-gift' } },
+  },
+  {
+    key: 'notifications',
+    item: { name: 'Notificaciones', url: '/push-notifications', iconComponent: { name: 'cil-bell' } },
+  },
+  {
     key: 'roles',
     item: { name: 'Roles y módulos', url: '/roles', iconComponent: { name: 'cil-settings' } },
   },

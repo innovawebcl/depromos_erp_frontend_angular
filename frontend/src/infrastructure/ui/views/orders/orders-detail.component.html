@@ -80,6 +80,32 @@
   </div>
 
   <div class="col-lg-4">
+    <!-- Cambiar dirección de despacho -->
+    <div class="card mb-3">
+      <div class="card-header fw-semibold">Dirección de despacho</div>
+      <div class="card-body">
+        <div class="mb-2">
+          <small class="text-medium-emphasis">Dirección actual:</small>
+          <div class="fw-semibold">{{ order.delivery_address?.address_line || order.delivery_address || '—' }}</div>
+        </div>
+        <div *ngIf="customerAddresses.length > 0">
+          <label class="form-label">Cambiar a otra dirección del cliente</label>
+          <select class="form-select" [(ngModel)]="selectedAddressId">
+            <option [ngValue]="null">— seleccionar —</option>
+            <option *ngFor="let a of customerAddresses" [ngValue]="a.id">
+              {{ a.label ? a.label + ': ' : '' }}{{ a.address_line }}
+            </option>
+          </select>
+          <button class="btn btn-outline-warning w-100 mt-2" (click)="changeAddress()" [disabled]="saving || !selectedAddressId">
+            Cambiar dirección
+          </button>
+        </div>
+        <div *ngIf="customerAddresses.length === 0" class="text-muted small mt-1">
+          El cliente no tiene otras direcciones registradas
+        </div>
+      </div>
+    </div>
+
     <div class="card mb-3">
       <div class="card-header fw-semibold">Despacho</div>
       <div class="card-body">

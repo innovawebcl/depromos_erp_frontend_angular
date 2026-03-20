@@ -5,6 +5,8 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { BackofficeApi } from '@infra-adapters/services/backoffice-api.service';
 import { firstValueFrom } from 'rxjs';
 
+type Brand = { id: number; name: string };
+
 @Component({
   standalone: true,
   selector: 'app-products-form',
@@ -19,16 +21,23 @@ import { firstValueFrom } from 'rxjs';
     <div class="card-body">
       <form [formGroup]="form" (ngSubmit)="save()">
         <div class="row g-3">
-          <div class="col-md-4" *ngIf="isNew">
+          <div class="col-md-3" *ngIf="isNew">
             <label class="form-label">Código</label>
             <input class="form-control" formControlName="code" />
           </div>
-          <div class="col-md-8">
+          <div class="col-md-5">
             <label class="form-label">Nombre</label>
             <input class="form-control" formControlName="name" />
           </div>
           <div class="col-md-4">
-            <label class="form-label">Precio</label>
+            <label class="form-label">Marca</label>
+            <select class="form-select" formControlName="brand_id">
+              <option [ngValue]="null">Sin marca</option>
+              <option *ngFor="let b of brands" [ngValue]="b.id">{{b.name}}</option>
+            </select>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Precio base</label>
             <input type="number" class="form-control" formControlName="price" min="0" />
           </div>
           <div class="col-md-4">
@@ -61,6 +70,8 @@ import { firstValueFrom } from 'rxjs';
               <tr>
                 <th>Talla</th>
                 <th>Barcode</th>
+                <th>Precio</th>
+                <th>Precio Oferta</th>
                 <th>Stock</th>
                 <th>Activa</th>
                 <th></th>
@@ -70,6 +81,8 @@ import { firstValueFrom } from 'rxjs';
               <tr *ngFor="let g of sizes.controls; let i = index" [formGroupName]="i">
                 <td><input class="form-control form-control-sm" formControlName="size" /></td>
                 <td><input class="form-control form-control-sm" formControlName="barcode" /></td>
+                <td><input type="number" class="form-control form-control-sm" formControlName="price" min="0" /></td>
+                <td><input type="number" class="form-control form-control-sm" formControlName="offer_price" min="0" placeholder="0 = sin oferta" /></td>
                 <td><input type="number" class="form-control form-control-sm" formControlName="stock" min="0" /></td>
                 <td>
                   <select class="form-select form-select-sm" formControlName="active">
@@ -104,13 +117,15 @@ export class ProductsFormComponent {
   saving = false;
   isNew = true;
   id?: number;
+  brands: Brand[] = [];
 
   form = this.fb.group({
     code: ['', [Validators.required]],
     name: ['', [Validators.required]],
     description: [''],
-    price: [0, [Validators.required, Validators.min(0)]],
+    price: [0, [Validators.min(0)]],
     photo_url: [''],
+    brand_id: [null as number | null],
     active: [true],
     sizes: this.fb.array([] as any[]),
   });
@@ -120,12 +135,17 @@ export class ProductsFormComponent {
   }
 
   async ngOnInit() {
+    // Cargar marcas
+    try {
+      const res: any = await firstValueFrom(this.api.get<any>('/brands'));
+      this.brands = (res.data ?? res) as Brand[];
+    } catch {}
+
     const idParam = this.route.snapshot.paramMap.get('id');
     this.isNew = !idParam;
     if (!this.isNew) {
       this.id = Number(idParam);
       await this.load();
-      // code no editable
       this.form.get('code')?.disable();
     } else {
       this.addSize();
@@ -137,6 +157,8 @@ export class ProductsFormComponent {
       this.fb.group({
         size: ['', Validators.required],
         barcode: [''],
+        price: [0, [Validators.min(0)]],
+        offer_price: [null as number | null],
         stock: [0, [Validators.min(0)]],
         active: [true],
       })
@@ -155,6 +177,7 @@ export class ProductsFormComponent {
       description: p.description ?? '',
       price: p.price,
       photo_url: p.photo_url ?? '',
+      brand_id: p.brand_id ?? null,
       active: !!p.active,
     });
     this.sizes.clear();
@@ -163,6 +186,8 @@ export class ProductsFormComponent {
         this.fb.group({
           size: [s.size, Validators.required],
           barcode: [s.barcode ?? ''],
+          price: [s.price ?? 0, [Validators.min(0)]],
+          offer_price: [s.offer_price ?? null],
           stock: [s.stock ?? 0, [Validators.min(0)]],
           active: [!!s.active],
         })
@@ -180,10 +205,13 @@ export class ProductsFormComponent {
         description: raw.description,
         price: raw.price,
         photo_url: raw.photo_url,
+        brand_id: raw.brand_id,
         active: raw.active,
         sizes: (raw.sizes ?? []).map((s: any) => ({
           size: s.size,
           barcode: s.barcode || null,
+          price: Number(s.price ?? 0),
+          offer_price: s.offer_price && Number(s.offer_price) > 0 ? Number(s.offer_price) : null,
           stock: Number(s.stock ?? 0),
           active: !!s.active,
         })),

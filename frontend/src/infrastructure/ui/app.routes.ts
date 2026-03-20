@@ -85,6 +85,20 @@ export const routes: Routes = [
           import('./views/users/routes').then((m) => m.routes),
       },
       {
+        path: 'discount-codes',
+        canActivate: [AuthGuard, ModuleGuard],
+        data: { module: 'discount_codes' },
+        loadChildren: () =>
+          import('./views/discount-codes/routes').then((m) => m.routes),
+      },
+      {
+        path: 'push-notifications',
+        canActivate: [AuthGuard, ModuleGuard],
+        data: { module: 'notifications' },
+        loadChildren: () =>
+          import('./views/push-notifications/routes').then((m) => m.routes),
+      },
+      {
         path: 'roles',
         canActivate: [AuthGuard, ModuleGuard],
         data: { module: 'roles' },

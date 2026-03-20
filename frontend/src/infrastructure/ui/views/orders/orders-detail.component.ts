@@ -13,6 +13,13 @@ interface CourierMini {
   rating?: number | null;
 }
 
+interface CustomerAddress {
+  id: number;
+  label: string;
+  address_line: string;
+  is_default: boolean;
+}
+
 @Component({
   selector: 'app-orders-detail',
   standalone: true,
@@ -29,6 +36,8 @@ export class OrdersDetailComponent implements OnInit {
   eta_minutes: number = 30;
   receiver_rut: string = '';
   delivery_photo_url: string = '';
+  customerAddresses: CustomerAddress[] = [];
+  selectedAddressId: number | null = null;
 
   constructor(
     private route: ActivatedRoute,
@@ -42,6 +51,30 @@ export class OrdersDetailComponent implements OnInit {
     this.loadCouriers();
   }
 
+  loadCustomerAddresses(customerId: number): void {
+    this.http.get<any>(`${environment.apiUrl}/customers/${customerId}/addresses`).subscribe({
+      next: (res) => {
+        this.customerAddresses = Array.isArray(res) ? res : (res?.data ?? []);
+      },
+      error: () => { this.customerAddresses = []; },
+    });
+  }
+
+  changeAddress(): void {
+    if (!this.order || !this.selectedAddressId) return;
+    this.saving = true;
+    this.http.patch<any>(`${environment.apiUrl}/orders/${this.order.id}/address`, {
+      customer_address_id: this.selectedAddressId
+    }).subscribe({
+      next: (o) => {
+        this.order = o;
+        this.selectedAddressId = null;
+        this.saving = false;
+      },
+      error: () => (this.saving = false),
+    });
+  }
+
   load(id: number): void {
     this.loading = true;
     this.orders.get(id).subscribe({
@@ -51,6 +84,7 @@ export class OrdersDetailComponent implements OnInit {
         this.eta_minutes = o.eta_minutes ?? 30;
         this.receiver_rut = o.receiver_rut ?? '';
         this.delivery_photo_url = o.delivery_photo_url ?? '';
+        if (o.customer_id) this.loadCustomerAddresses(o.customer_id);
         this.loading = false;
       },
       error: () => {
