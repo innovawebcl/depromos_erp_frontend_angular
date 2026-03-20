@@ -76,14 +76,14 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   async loadStats(): Promise<void> {
     try {
       const stats: any = await firstValueFrom(this.api.get('/dashboard/stats'));
-      this.totalOrders = stats.total_orders ?? 0;
-      this.totalProducts = stats.total_products ?? 0;
-      this.totalCustomers = stats.total_customers ?? 0;
-      this.totalCouriers = stats.total_couriers ?? 0;
-      this.totalRevenue = stats.total_revenue ?? 0;
-      this.pendingOrders = stats.pending_orders ?? 0;
-      this.enRouteOrders = stats.en_route_orders ?? 0;
-      this.deliveredOrders = stats.delivered_orders ?? 0;
+      this.totalOrders = stats.orders_count ?? 0;
+      this.totalProducts = stats.products_count ?? 0;
+      this.totalCustomers = stats.customers_count ?? 0;
+      this.totalCouriers = stats.couriers_active ?? 0;
+      this.totalRevenue = stats.revenue_total ?? 0;
+      this.pendingOrders = stats.orders_pending ?? 0;
+      this.enRouteOrders = stats.orders_en_route ?? 0;
+      this.deliveredOrders = stats.orders_delivered ?? 0;
     } catch (e) {
       console.error('Error loading dashboard stats', e);
     }
@@ -94,8 +94,8 @@ export class DashboardComponent implements OnInit, AfterViewInit {
       const data: any = await firstValueFrom(
         this.api.get(`/dashboard/sales-chart?from=${this.chartFrom}&to=${this.chartTo}`)
       );
-      const labels = (data.data || []).map((d: any) => this.formatDateLabel(d.date));
-      const values = (data.data || []).map((d: any) => d.total);
+      const labels = (data.data || []).map((d: any) => this.formatDateLabel(d.period || d.date));
+      const values = (data.data || []).map((d: any) => parseFloat(d.revenue || d.total || 0));
 
       if (this.chartInstance) {
         this.chartInstance.destroy();
