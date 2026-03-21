@@ -24,7 +24,7 @@ type Row = { productId: number; code: string; name: string; size: string; stock:
 
   <!-- Modal de importación de stock -->
   <div *ngIf="showImportModal" class="card mb-3 border-success">
-    <div class="card-header bg-success text-white d-flex justify-content-between">
+    <div class="card-header bg-primary text-white d-flex justify-content-between">
       <strong>Carga masiva de stock</strong>
       <button class="btn btn-sm btn-light" (click)="showImportModal=false">&times;</button>
     </div>

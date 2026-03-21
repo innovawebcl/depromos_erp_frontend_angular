@@ -27,7 +27,7 @@ type Product = { id: number; code: string; name: string; price: number; active: 
 
   <!-- Modal de importación de productos -->
   <div *ngIf="showProductImportModal" class="card mb-3 border-success">
-    <div class="card-header bg-success text-white d-flex justify-content-between">
+    <div class="card-header bg-primary text-white d-flex justify-content-between">
       <strong>Carga masiva de productos</strong>
       <button class="btn btn-sm btn-light" (click)="showProductImportModal=false">&times;</button>
     </div>
@@ -52,7 +52,7 @@ type Product = { id: number; code: string; name: string; price: number; active: 
 
   <!-- Modal de importación de ofertas -->
   <div *ngIf="showImportModal" class="card mb-3 border-warning">
-    <div class="card-header bg-warning text-white d-flex justify-content-between">
+    <div class="card-header bg-info text-white d-flex justify-content-between">
       <strong>Carga masiva de ofertas</strong>
       <button class="btn btn-sm btn-light" (click)="showImportModal=false">&times;</button>
     </div>

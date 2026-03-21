@@ -42,7 +42,7 @@ type PushNotification = {
               <td>{{n.id}}</td>
               <td>{{n.title}}</td>
               <td>
-                <span class="badge" [class.bg-success]="n.status==='sent'" [class.bg-warning]="n.status==='draft'">
+                <span class="badge" [class.badge-active]="n.status==='sent'" [class.badge-inactive]="n.status==='draft'">
                   {{n.status === 'sent' ? 'Enviada' : 'Borrador'}}
                 </span>
               </td>

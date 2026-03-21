@@ -22,7 +22,7 @@ type Commune = { id: number; name: string; active: boolean; current_tariff?: num
 
   <!-- Modal de importación de tarifas -->
   <div *ngIf="showImportModal" class="card mb-3 border-success">
-    <div class="card-header bg-success text-white d-flex justify-content-between">
+    <div class="card-header bg-primary text-white d-flex justify-content-between">
       <strong>Carga masiva de tarifas</strong>
       <button class="btn btn-sm btn-light" (click)="showImportModal=false">&times;</button>
     </div>

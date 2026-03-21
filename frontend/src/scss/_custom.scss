@@ -28,79 +28,110 @@
 // ── Depromos ERP Global Styles ──
 // ══════════════════════════════════════════════════════════════
 
-// ── PUNTO 1: Corrección de botones ──
-// Los botones deben mantener su color principal siempre, no solo en hover.
+// ── Botones: Usar CSS Variables de CoreUI para no romper outline buttons ──
+// CoreUI usa --cui-btn-color, --cui-btn-bg, --cui-btn-border-color
+// NO usar color: #fff !important en .btn genérico, eso rompe los outline
+
 .btn-primary {
-  background-color: #0099cc !important;
-  border-color: #0099cc !important;
-  color: #fff !important;
-  &:hover, &:focus {
-    background-color: #007ba3 !important;
-    border-color: #007ba3 !important;
-  }
-}
-.btn-outline-primary {
-  color: #0099cc !important;
-  border-color: #0099cc !important;
-  &:hover, &:focus {
-    background-color: #0099cc !important;
-    color: #fff !important;
-  }
-}
-.btn-warning {
-  background-color: #f57c00 !important;
-  border-color: #f57c00 !important;
-  color: #fff !important;
-  &:hover, &:focus {
-    background-color: #e65100 !important;
-    border-color: #e65100 !important;
-    color: #fff !important;
-  }
-}
-.btn-outline-warning {
-  color: #f57c00 !important;
-  border-color: #f57c00 !important;
-  &:hover, &:focus {
-    background-color: #f57c00 !important;
-    color: #fff !important;
-  }
-}
-.btn-success {
-  background-color: #00c853 !important;
-  border-color: #00c853 !important;
-  color: #fff !important;
-  &:hover, &:focus {
-    background-color: #00a344 !important;
-    border-color: #00a344 !important;
-  }
-}
-.btn-danger {
-  background-color: #ef376e !important;
-  border-color: #ef376e !important;
-  color: #fff !important;
-  &:hover, &:focus {
-    background-color: #d32f2f !important;
-    border-color: #d32f2f !important;
-  }
-}
-.btn-outline-danger {
-  color: #ef376e !important;
-  border-color: #ef376e !important;
-  &:hover, &:focus {
-    background-color: #ef376e !important;
-    color: #fff !important;
-  }
-}
-.btn-outline-secondary {
-  color: #6c757d !important;
-  border-color: #6c757d !important;
-  &:hover, &:focus {
-    background-color: #6c757d !important;
-    color: #fff !important;
-  }
+  --cui-btn-color: #fff;
+  --cui-btn-bg: #0099cc;
+  --cui-btn-border-color: #0099cc;
+  --cui-btn-hover-color: #fff;
+  --cui-btn-hover-bg: #007ba3;
+  --cui-btn-hover-border-color: #007ba3;
+  --cui-btn-active-color: #fff;
+  --cui-btn-active-bg: #006d91;
+  --cui-btn-active-border-color: #006d91;
 }
 
-// Botón primario estilo Depromos (naranja CTA)
+.btn-outline-primary {
+  --cui-btn-color: #0099cc;
+  --cui-btn-bg: transparent;
+  --cui-btn-border-color: #0099cc;
+  --cui-btn-hover-color: #fff;
+  --cui-btn-hover-bg: #0099cc;
+  --cui-btn-hover-border-color: #0099cc;
+  --cui-btn-active-color: #fff;
+  --cui-btn-active-bg: #007ba3;
+  --cui-btn-active-border-color: #007ba3;
+}
+
+.btn-warning {
+  --cui-btn-color: #fff;
+  --cui-btn-bg: #f57c00;
+  --cui-btn-border-color: #f57c00;
+  --cui-btn-hover-color: #fff;
+  --cui-btn-hover-bg: #e65100;
+  --cui-btn-hover-border-color: #e65100;
+  --cui-btn-active-color: #fff;
+  --cui-btn-active-bg: #d84a00;
+  --cui-btn-active-border-color: #d84a00;
+}
+
+.btn-outline-warning {
+  --cui-btn-color: #f57c00;
+  --cui-btn-bg: transparent;
+  --cui-btn-border-color: #f57c00;
+  --cui-btn-hover-color: #fff;
+  --cui-btn-hover-bg: #f57c00;
+  --cui-btn-hover-border-color: #f57c00;
+}
+
+.btn-success {
+  --cui-btn-color: #fff;
+  --cui-btn-bg: #00c853;
+  --cui-btn-border-color: #00c853;
+  --cui-btn-hover-color: #fff;
+  --cui-btn-hover-bg: #00a344;
+  --cui-btn-hover-border-color: #00a344;
+}
+
+.btn-outline-success {
+  --cui-btn-color: #00c853;
+  --cui-btn-bg: transparent;
+  --cui-btn-border-color: #00c853;
+  --cui-btn-hover-color: #fff;
+  --cui-btn-hover-bg: #00c853;
+  --cui-btn-hover-border-color: #00c853;
+}
+
+.btn-danger {
+  --cui-btn-color: #fff;
+  --cui-btn-bg: #e53935;
+  --cui-btn-border-color: #e53935;
+  --cui-btn-hover-color: #fff;
+  --cui-btn-hover-bg: #c62828;
+  --cui-btn-hover-border-color: #c62828;
+}
+
+.btn-outline-danger {
+  --cui-btn-color: #e53935;
+  --cui-btn-bg: transparent;
+  --cui-btn-border-color: #e53935;
+  --cui-btn-hover-color: #fff;
+  --cui-btn-hover-bg: #e53935;
+  --cui-btn-hover-border-color: #e53935;
+}
+
+.btn-outline-secondary {
+  --cui-btn-color: #6c757d;
+  --cui-btn-bg: transparent;
+  --cui-btn-border-color: #6c757d;
+  --cui-btn-hover-color: #fff;
+  --cui-btn-hover-bg: #6c757d;
+  --cui-btn-hover-border-color: #6c757d;
+}
+
+.btn-info {
+  --cui-btn-color: #fff;
+  --cui-btn-bg: #00b8d4;
+  --cui-btn-border-color: #00b8d4;
+  --cui-btn-hover-color: #fff;
+  --cui-btn-hover-bg: #0097ae;
+  --cui-btn-hover-border-color: #0097ae;
+}
+
+// Botón CTA naranja Depromos
 .btn-depromos {
   background: linear-gradient(135deg, #f57c00, #ff9800) !important;
   border: none !important;
@@ -116,25 +147,50 @@
   }
 }
 
-// ── PUNTO 1: Etiquetas de Estado ──
-// Activo = No → badge rojo con texto blanco
-.badge-inactive, .badge-no {
-  background-color: #ef376e !important;
-  color: #fff !important;
-  font-weight: 600;
-  padding: 0.3em 0.6em;
-  border-radius: 4px;
-}
+// ── Etiquetas de Estado (Badges) ──
 .badge-active, .badge-yes {
-  background-color: #00c853 !important;
+  background-color: #0099cc !important;
   color: #fff !important;
   font-weight: 600;
   padding: 0.3em 0.6em;
   border-radius: 4px;
 }
 
-// ── PUNTO 1: Ordenamiento de tablas ──
-// Cabeceras clickeables con indicador de dirección
+.badge-inactive, .badge-no {
+  background-color: #78909c !important;
+  color: #fff !important;
+  font-weight: 600;
+  padding: 0.3em 0.6em;
+  border-radius: 4px;
+}
+
+// Status badges para pedidos
+.badge-pending {
+  background-color: #ffa726 !important;
+  color: #fff !important;
+}
+.badge-picking {
+  background-color: #42a5f5 !important;
+  color: #fff !important;
+}
+.badge-ready {
+  background-color: #66bb6a !important;
+  color: #fff !important;
+}
+.badge-en-route {
+  background-color: #ab47bc !important;
+  color: #fff !important;
+}
+.badge-delivered {
+  background-color: #0099cc !important;
+  color: #fff !important;
+}
+.badge-cancelled {
+  background-color: #e53935 !important;
+  color: #fff !important;
+}
+
+// ── Ordenamiento de tablas ──
 th.sortable {
   cursor: pointer;
   user-select: none;
@@ -170,21 +226,14 @@ th.sortable {
   padding-left: 12px;
 }
 
-// Status badges con colores Depromos
-.badge-pending {
-  background-color: #f9cc50;
-  color: #333;
-}
-
-// Blacklist button (punto 10)
+// Blacklist button
 .btn-blacklist {
-  background-color: #ef376e !important;
-  border-color: #ef376e !important;
-  color: #fff !important;
-  &:hover, &:focus {
-    background-color: #d32f2f !important;
-    border-color: #d32f2f !important;
-  }
+  --cui-btn-color: #fff;
+  --cui-btn-bg: #e53935;
+  --cui-btn-border-color: #e53935;
+  --cui-btn-hover-color: #fff;
+  --cui-btn-hover-bg: #c62828;
+  --cui-btn-hover-border-color: #c62828;
 }
 
 // ── Dashboard chart container ──
@@ -193,3 +242,9 @@ th.sortable {
   width: 100%;
   min-height: 300px;
 }
+
+// ── Stock level colors ──
+.stock-critical { color: #e53935; font-weight: 700; }
+.stock-low { color: #ffa726; font-weight: 600; }
+.stock-ok { color: #66bb6a; font-weight: 600; }
+.stock-high { color: #0099cc; font-weight: 600; }

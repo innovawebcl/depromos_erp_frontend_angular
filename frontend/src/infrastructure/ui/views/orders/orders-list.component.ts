@@ -80,11 +80,11 @@ export class OrdersListComponent implements OnInit {
 
   statusBadge(status: string): string {
     switch (status) {
-      case 'pending': return 'secondary';
-      case 'picking': return 'warning';
-      case 'ready': return 'info';
+      case 'pending': return 'warning text-dark';
+      case 'picking': return 'info text-white';
+      case 'ready': return 'success';
       case 'en_route': return 'primary';
-      case 'delivered': return 'success';
+      case 'delivered': return 'dark';
       case 'cancelled': return 'danger';
       default: return 'secondary';
     }

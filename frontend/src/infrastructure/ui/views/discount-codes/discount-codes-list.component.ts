@@ -66,7 +66,7 @@ type DiscountCode = {
               </td>
               <td>{{c.times_used}}<span *ngIf="c.max_uses"> / {{c.max_uses}}</span></td>
               <td>
-                <span class="badge" [class.bg-success]="c.active" [class.bg-secondary]="!c.active">{{c.active?'Activo':'Inactivo'}}</span>
+                <span class="badge" [class.badge-active]="c.active" [class.badge-inactive]="!c.active">{{c.active?'Activo':'Inactivo'}}</span>
               </td>
               <td class="text-end">
                 <a class="btn btn-sm btn-outline-primary" [routerLink]="['/discount-codes', c.id]">Editar</a>
