@@ -105,8 +105,10 @@ export class PickingSessionComponent implements OnInit {
   /** Safely extract size - prevents [object Object] display */
   getSize(it: any): string {
     if (!it) return '—';
+    // Check appended size_label first (from backend $appends)
+    if (typeof it.size_label === 'string' && it.size_label !== '—') return it.size_label;
     if (typeof it.size === 'string') return it.size;
-    if (typeof it.size === 'object' && it.size !== null) return (it.size as any)?.name || (it.size as any)?.label || JSON.stringify(it.size);
+    if (typeof it.size === 'object' && it.size !== null) return (it.size as any)?.size || (it.size as any)?.name || (it.size as any)?.label || JSON.stringify(it.size);
     return String(it.size || '—');
   }
 

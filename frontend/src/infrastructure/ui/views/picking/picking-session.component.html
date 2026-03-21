@@ -70,7 +70,7 @@
               <tr *ngFor="let it of order.items || []">
                 <td>
                   <div class="fw-semibold">{{ getProductName(it) }}</div>
-                  <div class="small text-muted">Código esperado: {{ it.barcode || '—' }}</div>
+                  <div class="small text-muted">Código esperado: {{ it.barcode || it.size?.barcode || '—' }}</div>
                 </td>
                 <td>{{ getSize(it) }}</td>
                 <td>{{ it.quantity }}</td>

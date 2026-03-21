@@ -38,10 +38,6 @@ type Brand = { id: number; name: string };
             </select>
           </div>
           <div class="col-md-4">
-            <label class="form-label">Precio base</label>
-            <input type="number" class="form-control" formControlName="price" min="0" />
-          </div>
-          <div class="col-md-4">
             <label class="form-label">Activo</label>
             <select class="form-select" formControlName="active">
               <option [ngValue]="true">Sí</option>

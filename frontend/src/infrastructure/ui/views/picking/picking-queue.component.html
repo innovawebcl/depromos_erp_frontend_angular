@@ -29,10 +29,10 @@
           <tr *ngFor="let o of orders">
             <td>#{{ o.id }}</td>
             <td>
-              <div class="fw-semibold">{{ o.customer_name || '—' }}</div>
-              <div class="small text-medium-emphasis">{{ o.customer_email || '' }}</div>
+              <div class="fw-semibold">{{ o.customer?.name || o.customer_name || '—' }}</div>
+              <div class="small text-medium-emphasis">{{ o.customer?.email || o.customer_email || '' }}</div>
             </td>
-            <td>{{ o.commune_name || '—' }}</td>
+            <td>{{ o.commune?.name || o.commune_name || '—' }}</td>
             <td>
               <span class="badge" [ngClass]="'bg-' + statusBadge(o.status)">{{ statusLabel(o.status) }}</span>
             </td>

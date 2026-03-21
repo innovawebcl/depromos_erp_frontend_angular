@@ -110,7 +110,6 @@ type Product = { id: number; code: string; name: string; price: number; active: 
               <th class="sortable" [class.sort-asc]="sortCol==='code'&&sortDir==='asc'" [class.sort-desc]="sortCol==='code'&&sortDir==='desc'" (click)="toggleSort('code')">Código</th>
               <th class="sortable" [class.sort-asc]="sortCol==='name'&&sortDir==='asc'" [class.sort-desc]="sortCol==='name'&&sortDir==='desc'" (click)="toggleSort('name')">Nombre</th>
               <th>Marca</th>
-              <th class="sortable" [class.sort-asc]="sortCol==='price'&&sortDir==='asc'" [class.sort-desc]="sortCol==='price'&&sortDir==='desc'" (click)="toggleSort('price')">Precio</th>
               <th>Ofertas</th>
               <th>Stock</th>
               <th>Estado</th>
@@ -123,7 +122,6 @@ type Product = { id: number; code: string; name: string; price: number; active: 
               <td>{{p.code}}</td>
               <td>{{p.name}}</td>
               <td>{{p.brand?.name || '—'}}</td>
-              <td>\${{p.price | number:'1.0-0'}}</td>
               <td>
                 <span *ngIf="hasOffers(p)" class="badge bg-warning text-dark">{{offersCount(p)}} en oferta</span>
                 <span *ngIf="!hasOffers(p)" class="text-muted">—</span>
