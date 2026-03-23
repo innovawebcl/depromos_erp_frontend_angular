@@ -4,7 +4,9 @@
     <div class="text-medium-emphasis small">Lista de pedidos y estados operativos.</div>
   </div>
   <div class="d-flex gap-2">
-    <a class="btn btn-outline-success" [href]="exportUrl" target="_blank">Exportar pedidos</a>
+    <button class="btn btn-outline-success" (click)="exportOrders()" [disabled]="exporting">
+      {{ exporting ? 'Exportando...' : 'Exportar pedidos' }}
+    </button>
   </div>
 </div>
 

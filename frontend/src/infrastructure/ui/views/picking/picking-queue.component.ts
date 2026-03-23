@@ -39,7 +39,7 @@ export class PickingQueueComponent implements OnInit {
 
   statusBadge(status: string): string {
     switch (status) {
-      case 'pending': return 'secondary';
+      case 'pending': return 'info';
       case 'picking': return 'warning';
       case 'ready': return 'info';
       default: return 'secondary';

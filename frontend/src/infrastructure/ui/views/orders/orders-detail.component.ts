@@ -63,7 +63,7 @@ export class OrdersDetailComponent implements OnInit {
   changeAddress(): void {
     if (!this.order || !this.selectedAddressId) return;
     this.saving = true;
-    this.http.patch<any>(`${environment.apiUrl}/orders/${this.order.id}/address`, {
+    this.http.patch<any>(`${environment.apiUrl}/orders/${this.order.id}/change-address`, {
       customer_address_id: this.selectedAddressId
     }).subscribe({
       next: (o) => {
@@ -96,7 +96,6 @@ export class OrdersDetailComponent implements OnInit {
   loadCouriers(): void {
     this.http.get<any>(`${environment.apiUrl}/couriers`).subscribe({
       next: (res) => {
-        // soporta array directo o {data:[]}
         const list = Array.isArray(res) ? res : (res?.data ?? []);
         this.couriers = list.map((c: any) => ({
           id: c.id,
@@ -151,20 +150,89 @@ export class OrdersDetailComponent implements OnInit {
 
   statusBadge(status: string): string {
     switch (status) {
-      case 'pending':
-        return 'secondary';
-      case 'picking':
-        return 'warning';
-      case 'ready':
-        return 'info';
-      case 'en_route':
-        return 'primary';
-      case 'delivered':
-        return 'success';
-      case 'cancelled':
-        return 'danger';
-      default:
-        return 'secondary';
+      case 'pending': return 'info';
+      case 'picking': return 'warning';
+      case 'ready': return 'primary';
+      case 'en_route': return 'primary';
+      case 'delivered': return 'success';
+      case 'cancelled': return 'danger';
+      default: return 'secondary';
+    }
+  }
+
+  statusLabel(status: string): string {
+    switch (status) {
+      case 'pending': return 'Pendiente';
+      case 'picking': return 'En picking';
+      case 'ready': return 'Listo';
+      case 'en_route': return 'En ruta';
+      case 'delivered': return 'Entregado';
+      case 'cancelled': return 'Cancelado';
+      default: return status;
+    }
+  }
+
+  /** Safely extract product name - prevents [object Object] display */
+  getProductName(it: any): string {
+    if (!it) return '—';
+    if (typeof it.product_name === 'string') return it.product_name;
+    if (it.product && typeof it.product === 'object') return it.product.name || '—';
+    return String(it.product_name || '—');
+  }
+
+  /** Safely extract size - prevents [object Object] display */
+  getSize(it: any): string {
+    if (!it) return '—';
+    if (typeof it.size_label === 'string' && it.size_label !== '—') return it.size_label;
+    if (typeof it.size === 'string') return it.size;
+    if (typeof it.size === 'object' && it.size !== null) return it.size?.size || it.size?.name || '—';
+    return String(it.size || '—');
+  }
+
+  /** Safely extract barcode */
+  getBarcode(it: any): string {
+    if (!it) return '—';
+    if (typeof it.barcode === 'string' && it.barcode) return it.barcode;
+    if (typeof it.size === 'object' && it.size?.barcode) return it.size.barcode;
+    return '—';
+  }
+
+  /** Safely extract delivery address */
+  getDeliveryAddress(order: any): string {
+    if (!order?.delivery_address) return '—';
+    const da = order.delivery_address;
+    if (typeof da === 'string') return da;
+    if (typeof da === 'object') {
+      return da.address_line || da.street || [da.street_name, da.number].filter(Boolean).join(' ') || JSON.stringify(da);
+    }
+    return String(da);
+  }
+
+  /** Safely extract commune name */
+  getCommune(order: any): string {
+    if (!order) return '—';
+    if (typeof order.commune_name === 'string') return order.commune_name;
+    if (order.commune && typeof order.commune === 'object') return order.commune.name || '—';
+    return '—';
+  }
+
+  /** Format date to DD/MM/YYYY HH:mm (Chile timezone) */
+  formatDate(dateStr: string | null | undefined): string {
+    if (!dateStr) return '—';
+    try {
+      const d = new Date(dateStr);
+      return d.toLocaleDateString('es-CL', {
+        timeZone: 'America/Santiago',
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+      }) + ' ' + d.toLocaleTimeString('es-CL', {
+        timeZone: 'America/Santiago',
+        hour: '2-digit',
+        minute: '2-digit',
+      });
+    } catch {
+      return dateStr;
     }
   }
 }

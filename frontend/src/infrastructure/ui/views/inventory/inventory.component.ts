@@ -3,6 +3,7 @@ import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { BackofficeApi } from '@infra-adapters/services/backoffice-api.service';
+import { HttpClient } from '@angular/common/http';
 import { environment } from '@infra-env/environment';
 import { firstValueFrom } from 'rxjs';
 
@@ -17,7 +18,7 @@ type Row = { productId: number; code: string; name: string; size: string; stock:
     <h2 class="mb-0">Inventario</h2>
     <div class="d-flex gap-2">
       <button class="btn btn-outline-success" (click)="showImportModal=true">Importar stock</button>
-      <a class="btn btn-outline-primary" [href]="apiBase + '/inventory/export'" target="_blank">Exportar inventario</a>
+      <button class="btn btn-outline-primary" (click)="exportInventory()">Exportar inventario</button>
       <a class="btn btn-outline-secondary" [routerLink]="['/products']">Ir a Productos</a>
     </div>
   </div>
@@ -32,7 +33,7 @@ type Row = { productId: number; code: string; name: string; size: string; stock:
       <p class="mb-2">Suba un archivo CSV con las columnas: <code>code, size, stock</code></p>
       <p class="text-muted small">El stock se reemplaza por el valor indicado en el archivo.</p>
       <div class="d-flex gap-2 mb-2">
-        <a class="btn btn-sm btn-outline-primary" [href]="apiBase + '/inventory/template/download'" target="_blank">Descargar plantilla</a>
+        <button class="btn btn-sm btn-outline-primary" (click)="downloadTemplate()">Descargar plantilla</button>
       </div>
       <input type="file" class="form-control mb-2" accept=".csv,.txt" (change)="onStockFileSelected($event)" />
       <button class="btn btn-success" [disabled]="!stockFile || stockImporting" (click)="importStock()">
@@ -107,6 +108,7 @@ type Row = { productId: number; code: string; name: string; size: string; stock:
 })
 export class InventoryComponent {
   private api = inject(BackofficeApi);
+  private http = inject(HttpClient);
   apiBase = environment.apiUrl;
 
   loading = false;
@@ -167,6 +169,34 @@ export class InventoryComponent {
     } finally {
       this.stockImporting = false;
     }
+  }
+
+  downloadTemplate(): void {
+    this.http.get(`${this.apiBase}/products/template/stock`, { responseType: 'blob' }).subscribe({
+      next: (blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'template_stock.csv';
+        a.click();
+        window.URL.revokeObjectURL(url);
+      },
+      error: () => alert('Error al descargar plantilla'),
+    });
+  }
+
+  exportInventory(): void {
+    this.http.get(`${this.apiBase}/inventory/export`, { responseType: 'blob' }).subscribe({
+      next: (blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `inventario_${new Date().toISOString().slice(0, 10)}.csv`;
+        a.click();
+        window.URL.revokeObjectURL(url);
+      },
+      error: () => alert('Error al exportar inventario'),
+    });
   }
 
   async load() {

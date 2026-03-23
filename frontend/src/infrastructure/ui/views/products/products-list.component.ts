@@ -35,7 +35,7 @@ type Product = { id: number; code: string; name: string; price: number; active: 
       <p class="mb-2">Suba un archivo CSV con las columnas: <code>code, name, description, brand_id, price, active, sizes</code></p>
       <p class="text-muted small">La columna <code>sizes</code> debe ser JSON: <code>[{{"{"}}size,price,barcode,stock{{"}"}}]</code></p>
       <div class="d-flex gap-2 mb-2">
-        <a class="btn btn-sm btn-outline-primary" [href]="apiBase + '/products/template/products'" target="_blank">Descargar plantilla</a>
+        <button class="btn btn-sm btn-outline-primary" (click)="downloadTemplate('products')">Descargar plantilla</button>
       </div>
       <input type="file" class="form-control mb-2" accept=".csv,.txt" (change)="onProductFileSelected($event)" />
       <button class="btn btn-success" [disabled]="!productFile || productImporting" (click)="importProducts()">
@@ -60,7 +60,7 @@ type Product = { id: number; code: string; name: string; price: number; active: 
       <p class="mb-2">Suba un archivo CSV con las columnas: <code>code, size, offer_price</code></p>
       <p class="text-muted small">Si offer_price > 0, se aplica como precio oferta. Si es 0 o vacío, se elimina la oferta.</p>
       <div class="d-flex gap-2 mb-2">
-        <a class="btn btn-sm btn-outline-primary" [href]="apiBase + '/products/template/offers'" target="_blank">Descargar plantilla</a>
+        <button class="btn btn-sm btn-outline-primary" (click)="downloadTemplate('offers')">Descargar plantilla</button>
       </div>
       <input type="file" class="form-control mb-2" accept=".csv,.txt" (change)="onFileSelected($event)" />
       <button class="btn btn-warning" [disabled]="!selectedFile || importing" (click)="importOffers()">
@@ -244,6 +244,20 @@ export class ProductsListComponent {
     } finally {
       this.productImporting = false;
     }
+  }
+
+  downloadTemplate(type: string): void {
+    this.http.get(`${this.apiBase}/products/template/${type}`, { responseType: 'blob' }).subscribe({
+      next: (blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `template_${type}.csv`;
+        a.click();
+        window.URL.revokeObjectURL(url);
+      },
+      error: () => alert('Error al descargar plantilla'),
+    });
   }
 
   async load() {

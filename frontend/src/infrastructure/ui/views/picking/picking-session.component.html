@@ -4,10 +4,10 @@
     <div class="text-medium-emphasis small" *ngIf="order">
       Estado actual:
       <span class="badge bg-warning text-dark" *ngIf="order.status === 'picking'">En picking</span>
-      <span class="badge bg-secondary" *ngIf="order.status === 'pending'">Pendiente</span>
-      <span class="badge bg-info" *ngIf="order.status === 'ready'">Listo</span>
+      <span class="badge bg-info text-white" *ngIf="order.status === 'pending'">Pendiente</span>
+      <span class="badge bg-success" *ngIf="order.status === 'ready'">Listo</span>
       <span class="badge bg-primary" *ngIf="order.status === 'en_route'">En ruta</span>
-      <span class="badge bg-success" *ngIf="order.status === 'delivered'">Entregado</span>
+      <span class="badge bg-dark" *ngIf="order.status === 'delivered'">Entregado</span>
     </div>
   </div>
   <div class="d-flex gap-2">
@@ -25,8 +25,8 @@
       <div class="card-body">
         <label class="form-label">Código (barcode)</label>
         <div class="input-group">
-          <input class="form-control" [(ngModel)]="code" (keyup.enter)="scan()" placeholder="Escanea o escribe el código" [disabled]="order.status !== 'picking'" />
-          <button class="btn btn-primary" (click)="scan()" [disabled]="scanning || order.status !== 'picking'">
+          <input class="form-control" [(ngModel)]="code" (keyup.enter)="scan()" placeholder="Escanea o escribe el código" [disabled]="!canScan()" />
+          <button class="btn btn-primary" (click)="scan()" [disabled]="scanning || !canScan()">
             <span *ngIf="!scanning">Validar</span>
             <span *ngIf="scanning">...</span>
           </button>
@@ -40,7 +40,7 @@
         </div>
       </div>
       <div class="card-footer">
-        <button class="btn btn-success w-100" (click)="closePicking()" [disabled]="closing || order.status !== 'picking'">
+        <button class="btn btn-success w-100" (click)="closePicking()" [disabled]="closing || !canScan()">
           <span *ngIf="!closing">Cerrar picking y habilitar despacho</span>
           <span *ngIf="closing">Cerrando...</span>
         </button>
@@ -70,7 +70,7 @@
               <tr *ngFor="let it of order.items || []">
                 <td>
                   <div class="fw-semibold">{{ getProductName(it) }}</div>
-                  <div class="small text-muted">Código esperado: {{ it.barcode || it.size?.barcode || '—' }}</div>
+                  <div class="small text-muted">Código esperado: {{ getBarcode(it) }}</div>
                 </td>
                 <td>{{ getSize(it) }}</td>
                 <td>{{ it.quantity }}</td>

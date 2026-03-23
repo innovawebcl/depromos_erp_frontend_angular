@@ -3,11 +3,11 @@
     <h2 class="mb-0">Pedido #{{ order?.id }}</h2>
     <div class="text-medium-emphasis small" *ngIf="order">
       Estado:
-      <span class="badge" [ngClass]="'bg-' + statusBadge(order.status)">{{ order.status }}</span>
-      <span class="mx-2">•</span>
-      Total: {{ order.total | number }}
-      <span class="mx-2">•</span>
-      Comuna: {{ order.commune_name || '—' }}
+      <span class="badge" [ngClass]="'bg-' + statusBadge(order.status)">{{ statusLabel(order.status) }}</span>
+      <span class="mx-2">|</span>
+      Total: ${{ order.total | number:'1.0-0' }}
+      <span class="mx-2">|</span>
+      Comuna: {{ getCommune(order) }}
     </div>
   </div>
   <div>
@@ -36,15 +36,15 @@
             <tbody>
               <tr *ngFor="let it of order.items || []">
                 <td>
-                  <div class="fw-semibold">{{ it.product_name }}</div>
+                  <div class="fw-semibold">{{ getProductName(it) }}</div>
                   <div class="small text-medium-emphasis">ID producto: {{ it.product_id }}</div>
                 </td>
-                <td>{{ it.size }}</td>
+                <td>{{ getSize(it) }}</td>
                 <td>{{ it.quantity }}</td>
                 <td>
                   <span class="badge bg-light text-dark">{{ it.scanned_quantity || 0 }} / {{ it.quantity }}</span>
                 </td>
-                <td class="small text-medium-emphasis">{{ it.barcode || '—' }}</td>
+                <td class="small text-medium-emphasis">{{ getBarcode(it) }}</td>
               </tr>
               <tr *ngIf="(order.items || []).length === 0">
                 <td colspan="5" class="text-center text-medium-emphasis py-4">Sin items</td>
@@ -55,7 +55,7 @@
       </div>
       <div class="card-footer d-flex justify-content-between">
         <div class="text-medium-emphasis small">
-          Creado: {{ order.created_at || '—' }}
+          Creado: {{ formatDate(order.created_at) }}
         </div>
         <div>
           <a class="btn btn-sm btn-outline-primary" [routerLink]="['/picking', order.id]">Ir a picking</a>
@@ -68,7 +68,7 @@
       <div class="card-body">
         <ul class="mb-0" *ngIf="(order.timeline || []).length > 0">
           <li *ngFor="let t of order.timeline">
-            <span class="small text-medium-emphasis">{{ t.at }}</span>
+            <span class="small text-medium-emphasis">{{ formatDate(t.at) }}</span>
             <span class="mx-2">—</span>
             <span class="fw-semibold">{{ t.status }}</span>
             <span *ngIf="t.note" class="text-medium-emphasis"> ({{ t.note }})</span>
@@ -86,7 +86,7 @@
       <div class="card-body">
         <div class="mb-2">
           <small class="text-medium-emphasis">Dirección actual:</small>
-          <div class="fw-semibold">{{ order.delivery_address?.address_line || order.delivery_address || '—' }}</div>
+          <div class="fw-semibold">{{ getDeliveryAddress(order) }}</div>
         </div>
         <div *ngIf="customerAddresses.length > 0">
           <label class="form-label">Cambiar a otra dirección del cliente</label>
@@ -113,7 +113,7 @@
         <select class="form-select" [(ngModel)]="courier_id">
           <option [ngValue]="null">— sin asignar —</option>
           <option *ngFor="let c of couriers" [ngValue]="c.id">
-            {{ c.name }} <span *ngIf="c.rating">(⭐ {{ c.rating }})</span>
+            {{ c.name }}
           </option>
         </select>
 
@@ -127,7 +127,7 @@
         <input type="number" class="form-control" [(ngModel)]="eta_minutes" min="0" />
 
         <button class="btn btn-primary w-100 mt-2" (click)="markEnRoute()" [disabled]="saving">
-          Marcar “En ruta”
+          Marcar "En ruta"
         </button>
 
         <div class="small text-medium-emphasis mt-2">

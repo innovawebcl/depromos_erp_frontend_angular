@@ -27,7 +27,7 @@ type Commune = { id: number; name: string; active: boolean; current_tariff?: num
       <button class="btn btn-sm btn-light" (click)="showImportModal=false">&times;</button>
     </div>
     <div class="card-body">
-      <p class="mb-2">Suba un archivo CSV con las columnas: <code>commune_id, price</code></p>
+      <p class="mb-2">Suba un archivo CSV con las columnas: <code>commune_name, amount</code> (o <code>commune_id, price</code>)</p>
       <p class="text-muted small">Se creará una nueva tarifa vigente para cada comuna indicada.</p>
       <input type="file" class="form-control mb-2" accept=".csv,.txt" (change)="onFileSelected($event)" />
       <button class="btn btn-success" [disabled]="!selectedFile || importing" (click)="importTariffs()">

@@ -180,6 +180,14 @@ export class ProductsFormComponent {
     const input = event.target as HTMLInputElement;
     if (!input.files?.length) return;
     const file = input.files[0];
+
+    // Show local preview immediately
+    const reader = new FileReader();
+    reader.onload = (e: any) => {
+      this.photoPreview = e.target.result;
+    };
+    reader.readAsDataURL(file);
+
     this.uploading = true;
     try {
       const fd = new FormData();
@@ -188,9 +196,11 @@ export class ProductsFormComponent {
       const res: any = await firstValueFrom(this.api.post('/upload', fd));
       const url = res.url || res.path || '';
       this.form.patchValue({ photo_url: url });
-      this.photoPreview = url;
+      // Update preview with server URL (relative path for proper serving)
+      if (url) this.photoPreview = url;
     } catch (e) {
       alert('Error al subir la imagen');
+      this.photoPreview = null;
     }
     this.uploading = false;
   }

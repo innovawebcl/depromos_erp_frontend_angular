@@ -2,7 +2,8 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { debounceTime, distinctUntilChanged, Subject, switchMap } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { debounceTime, Subject, switchMap } from 'rxjs';
 import { OrdersService } from './orders.service';
 import { environment } from '@infra-env/environment';
 import type { Order, OrderStatus, Paginated } from './orders.models';
@@ -15,23 +16,22 @@ import type { Order, OrderStatus, Paginated } from './orders.models';
 })
 export class OrdersListComponent implements OnInit {
   loading = false;
+  exporting = false;
   status: OrderStatus | 'all' = 'all';
   search = '';
   page = 1;
   per_page = 20;
-  exportUrl = environment.apiUrl + '/orders/export';
 
   data: Paginated<Order> = { data: [] };
 
   private search$ = new Subject<void>();
 
-  constructor(private orders: OrdersService) {}
+  constructor(private orders: OrdersService, private http: HttpClient) {}
 
   ngOnInit(): void {
     this.search$
       .pipe(
         debounceTime(250),
-        distinctUntilChanged(),
         switchMap(() => {
           this.loading = true;
           return this.orders.list({
@@ -78,10 +78,36 @@ export class OrdersListComponent implements OnInit {
     this.reload();
   }
 
+  /** Export orders as CSV/Excel with auth token via programmatic download */
+  exportOrders(): void {
+    this.exporting = true;
+    this.http.get(`${environment.apiUrl}/orders/export`, {
+      responseType: 'blob',
+      params: {
+        status: this.status !== 'all' ? this.status : '',
+        search: this.search || '',
+      }
+    }).subscribe({
+      next: (blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `pedidos_${new Date().toISOString().slice(0, 10)}.csv`;
+        a.click();
+        window.URL.revokeObjectURL(url);
+        this.exporting = false;
+      },
+      error: () => {
+        this.exporting = false;
+        alert('Error al exportar pedidos');
+      },
+    });
+  }
+
   statusBadge(status: string): string {
     switch (status) {
-      case 'pending': return 'warning text-dark';
-      case 'picking': return 'info text-white';
+      case 'pending': return 'info text-white';
+      case 'picking': return 'warning text-dark';
       case 'ready': return 'success';
       case 'en_route': return 'primary';
       case 'delivered': return 'dark';
@@ -105,7 +131,14 @@ export class OrdersListComponent implements OnInit {
   formatDate(d: string | null | undefined): string {
     if (!d) return '—';
     try {
-      return new Date(d).toLocaleDateString('es-CL', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+      return new Date(d).toLocaleDateString('es-CL', {
+        timeZone: 'America/Santiago',
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+      });
     } catch { return d; }
   }
 }

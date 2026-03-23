@@ -40,6 +40,12 @@ export class PickingSessionComponent implements OnInit {
     });
   }
 
+  /** Permite escanear si el pedido está en pending o picking */
+  canScan(): boolean {
+    if (!this.order) return false;
+    return this.order.status === 'pending' || this.order.status === 'picking';
+  }
+
   scan(): void {
     if (!this.order) return;
     const value = (this.code || '').trim();
@@ -50,17 +56,10 @@ export class PickingSessionComponent implements OnInit {
     this.picking.scan(this.order.id, value).subscribe({
       next: (res) => {
         this.scanning = false;
-        if (res.order) {
-          this.order = res.order as any;
-        } else {
-          this.load(this.order!.id);
-        }
-
-        if (res.ok) {
-          this.lastMessage = { type: 'success', text: res.message || 'Código validado (1 unidad)' };
-        } else {
-          this.lastMessage = { type: 'warning', text: res.message || 'Código no válido para este pedido' };
-        }
+        // El backend retorna el PickingScan object directamente en 201
+        // Recargar el pedido para obtener los datos actualizados
+        this.load(this.order!.id);
+        this.lastMessage = { type: 'success', text: 'Código validado (1 unidad)' };
         this.code = '';
       },
       error: (err) => {
@@ -98,18 +97,24 @@ export class PickingSessionComponent implements OnInit {
     if (!it) return '—';
     if (typeof it.product_name === 'string') return it.product_name;
     if (it.product && typeof it.product === 'object') return it.product.name || '—';
-    if (typeof it.product_name === 'object') return (it.product_name as any)?.name || JSON.stringify(it.product_name);
     return String(it.product_name || '—');
   }
 
   /** Safely extract size - prevents [object Object] display */
   getSize(it: any): string {
     if (!it) return '—';
-    // Check appended size_label first (from backend $appends)
     if (typeof it.size_label === 'string' && it.size_label !== '—') return it.size_label;
     if (typeof it.size === 'string') return it.size;
-    if (typeof it.size === 'object' && it.size !== null) return (it.size as any)?.size || (it.size as any)?.name || (it.size as any)?.label || JSON.stringify(it.size);
+    if (typeof it.size === 'object' && it.size !== null) return it.size?.size || it.size?.name || '—';
     return String(it.size || '—');
+  }
+
+  /** Safely extract barcode */
+  getBarcode(it: any): string {
+    if (!it) return '—';
+    if (typeof it.barcode === 'string' && it.barcode) return it.barcode;
+    if (typeof it.size === 'object' && it.size?.barcode) return it.size.barcode;
+    return '—';
   }
 
   progress(it: any): string {
