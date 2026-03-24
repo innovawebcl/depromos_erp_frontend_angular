@@ -92,7 +92,7 @@ export class OrdersListComponent implements OnInit {
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `pedidos_${new Date().toISOString().slice(0, 10)}.csv`;
+        a.download = `pedidos_${new Date().toISOString().slice(0, 10)}.xlsx`;
         a.click();
         window.URL.revokeObjectURL(url);
         this.exporting = false;
@@ -110,7 +110,7 @@ export class OrdersListComponent implements OnInit {
       case 'picking': return 'warning text-dark';
       case 'ready': return 'success';
       case 'en_route': return 'primary';
-      case 'delivered': return 'dark';
+      case 'delivered': return 'success';
       case 'cancelled': return 'danger';
       default: return 'secondary';
     }

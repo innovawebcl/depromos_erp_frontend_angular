@@ -71,9 +71,8 @@ export function buildBackofficeNav(modules?: Record<string, boolean> | null): IN
   if (!modules) {
     return backofficeCatalog.map((x) => x.item);
   }
-  // dashboard siempre visible
-  const forced = new Set(['dashboard']);
+  // Dashboard ahora es controlado por permisos de rol, no forzado
   return backofficeCatalog
-    .filter((x) => forced.has(x.key) || !!modules[x.key])
+    .filter((x) => !!modules[x.key])
     .map((x) => x.item);
 }

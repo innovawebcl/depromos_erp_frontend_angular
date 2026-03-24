@@ -74,12 +74,20 @@ export class PickingSessionComponent implements OnInit {
 
   closePicking(): void {
     if (!this.order) return;
+    const orderId = this.order.id;
     this.closing = true;
     this.lastMessage = null;
-    this.picking.close(this.order.id).subscribe({
+    this.picking.close(orderId).subscribe({
       next: (o) => {
-        this.order = o;
-        this.closing = false;
+        // El backend ahora retorna el Order completo.
+        // Si tiene id, usarlo directamente; si no, recargar.
+        if (o && o.id) {
+          this.order = o;
+          this.closing = false;
+        } else {
+          this.load(orderId);
+          this.closing = false;
+        }
         this.lastMessage = { type: 'success', text: 'Picking cerrado. Pedido listo para despacho.' };
       },
       error: (err) => {

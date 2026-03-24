@@ -80,8 +80,8 @@
   </div>
 
   <div class="col-lg-4">
-    <!-- Cambiar dirección de despacho -->
-    <div class="card mb-3">
+    <!-- Cambiar dirección de despacho: solo si no está entregado ni cancelado -->
+    <div class="card mb-3" *ngIf="order.status !== 'delivered' && order.status !== 'cancelled'">
       <div class="card-header fw-semibold">Dirección de despacho</div>
       <div class="card-body">
         <div class="mb-2">
@@ -106,7 +106,12 @@
       </div>
     </div>
 
-    <div class="card mb-3">
+    <!--
+      Bloque DESPACHO: visible solo si el pedido NO está en ruta, entregado ni cancelado.
+      Si está en_route ya se asignó repartidor y se marcó en ruta.
+      Si está delivered o cancelled, no aplica.
+    -->
+    <div class="card mb-3" *ngIf="order.status !== 'en_route' && order.status !== 'delivered' && order.status !== 'cancelled'">
       <div class="card-header fw-semibold">Despacho</div>
       <div class="card-body">
         <label class="form-label">Repartidor</label>
@@ -136,7 +141,12 @@
       </div>
     </div>
 
-    <div class="card">
+    <!--
+      Bloque ENTREGA: visible solo si el pedido está en_route (listo para entregar).
+      Si está delivered o cancelled, ya no aplica.
+      Si aún no está en_route (pending, picking, ready), primero debe pasar por despacho.
+    -->
+    <div class="card" *ngIf="order.status === 'en_route'">
       <div class="card-header fw-semibold">Entrega</div>
       <div class="card-body">
         <label class="form-label">RUT receptor (opcional)</label>
@@ -152,6 +162,21 @@
         <div class="small text-medium-emphasis mt-2">
           En el flujo final puedes integrar subida de imagen real; aquí se deja por URL para demo.
         </div>
+      </div>
+    </div>
+
+    <!-- Info para estados finales -->
+    <div class="card" *ngIf="order.status === 'delivered'">
+      <div class="card-body text-center text-success">
+        <div class="h5 mb-1">Pedido entregado</div>
+        <div class="small text-muted">No hay acciones disponibles para este pedido.</div>
+      </div>
+    </div>
+
+    <div class="card" *ngIf="order.status === 'cancelled'">
+      <div class="card-body text-center text-danger">
+        <div class="h5 mb-1">Pedido cancelado</div>
+        <div class="small text-muted">No hay acciones disponibles para este pedido.</div>
       </div>
     </div>
   </div>

@@ -95,6 +95,7 @@ export class RolesFormComponent implements OnInit {
 
   private defaultModules(): ModuleDef[] {
     return [
+      { key: 'dashboard', name: 'Dashboard' },
       { key: 'products', name: 'Productos' },
       { key: 'brands', name: 'Marcas' },
       { key: 'inventory', name: 'Inventario' },

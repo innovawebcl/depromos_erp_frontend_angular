@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { debounceTime, distinctUntilChanged, firstValueFrom, Subject, switchMap } from 'rxjs';
+import { debounceTime, firstValueFrom, Subject, switchMap } from 'rxjs';
 import { UsersService } from './users.service';
 import { BackofficeApi } from '@infra-adapters/services/backoffice-api.service';
 import type { Paginated, RoleSummary, UserRow } from './users.models';
@@ -45,7 +45,6 @@ export class UsersListComponent implements OnInit {
     this.reload$
       .pipe(
         debounceTime(200),
-        distinctUntilChanged(),
         switchMap(() => {
           this.loading = true;
           return this.users.list({
